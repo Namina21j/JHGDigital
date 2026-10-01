@@ -401,6 +401,24 @@ textarea:focus{outline:none; border-color:var(--accent-2); box-shadow:0 0 0 4px 
 .help-body b{color:var(--text);}
 .pager{display:flex; align-items:center; justify-content:space-between; margin-top:14px; font-size:13px; color:var(--text-muted);}
 .small-muted{font-size:12px; color:var(--text-muted);}
+
+/* ---------- Catatan & Refleksi Guru ---------- */
+.rf-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+.rf-tab{padding:8px 16px; border-radius:var(--radius-pill); border:1.5px solid var(--border); background:var(--surface); color:var(--text); font-size:13px; font-weight:700; transition:all .15s var(--ease);}
+.rf-tab.active{background:var(--accent-grad); color:#fff; border-color:transparent;}
+.rf-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:16px;}
+.rf-card{background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--accent-2); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:8px;}
+.rf-card.refleksi{border-left-color:#7c3aed;}
+.rf-card.pinned{background:var(--yellow-bg);}
+.rf-top{display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; color:var(--text-muted);}
+.rf-title{font-size:15px; font-weight:800; margin:0;}
+.rf-text{font-size:13.5px; line-height:1.6; white-space:pre-wrap; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;}
+.rf-actions{display:flex; gap:6px; margin-top:auto;}
+.rf-actions button{background:var(--gray-100); border:none; border-radius:var(--radius-sm); padding:6px 10px; font-size:14px;}
+.rf-actions button:hover{background:var(--gray-200);}
+.rf-stars{color:#f59e0b; letter-spacing:2px;}
+.rf-sec{margin-bottom:14px;}
+.rf-sec b{display:block; font-size:11.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px;}
 </style>
 </head>
 <body>
@@ -480,7 +498,8 @@ const STORAGE_KEYS = {
   ATTENDANCE: "jhgd_attendance",
   SCORES: "jhgd_scores",
   SETTINGS: "jhgd_settings",
-  SCHEDULE: "jhgd_schedule"
+  SCHEDULE: "jhgd_schedule",
+  REFLECTIONS: "jhgd_reflections"
 };
 
 const DAY_ORDER = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
@@ -499,6 +518,7 @@ const appState = {
   attendance: [],
   scores: [],
   schedule: [],
+  reflections: [],
   settings: {
     theme: "system",
     passGrade: 75,
@@ -1043,6 +1063,7 @@ function persistProfile(){ saveLocal(STORAGE_KEYS.PROFILE, appState.profile); }
 const NAV_ITEMS = [
   { page:"dashboard", label:"Dashboard", icon:"🏠" },
   { page:"jurnal", label:"Jurnal Harian", icon:"📖" },
+  { page:"refleksi", label:"Catatan & Refleksi", icon:"🪞" },
   { page:"jadwal", label:"Jadwal Pelajaran", icon:"🗓️" },
   { page:"siswa", label:"Data Siswa", icon:"🧑‍🎓" },
   { page:"kalender", label:"Kalender", icon:"📅" },
@@ -1055,6 +1076,7 @@ const NAV_ITEMS = [
 const PAGE_TITLES = {
   dashboard:["Dashboard","Ringkasan aktivitas pembelajaran Anda"],
   jurnal:["Jurnal Harian","Kelola catatan pembelajaran harian"],
+  refleksi:["Catatan & Refleksi Guru","Tulis catatan dan refleksi pembelajaran Anda"],
   jadwal:["Jadwal Pelajaran","Atur jadwal mengajar mingguan Anda"],
   siswa:["Data Siswa","Lihat dan cari data siswa tersimpan di perangkat"],
   kalender:["Kalender Pembelajaran","Lihat jurnal berdasarkan tanggal"],
@@ -1092,6 +1114,7 @@ function renderPage(){
   switch(appState.currentPage){
     case "dashboard": bodyHtml = renderDashboardPage(); break;
     case "jurnal": bodyHtml = renderJournalListPage(); break;
+    case "refleksi": bodyHtml = renderReflectionPage(); break;
     case "jadwal": bodyHtml = renderSchedulePage(); break;
     case "siswa": bodyHtml = renderStudentsPage(); break;
     case "kalender": bodyHtml = renderCalendarPage(); break;
@@ -1114,6 +1137,7 @@ function renderPage(){
 function afterPageRender(){
   if (appState.currentPage === "dashboard") { initDashboardCharts(); bindQuickActions(); }
   if (appState.currentPage === "jurnal") { bindJournalListEvents(); }
+  if (appState.currentPage === "refleksi") { bindReflectionEvents(); }
   if (appState.currentPage === "jadwal") { bindScheduleEvents(); }
   if (appState.currentPage === "siswa") { bindStudentsPageEvents(); }
   if (appState.currentPage === "kalender") { bindCalendarEvents(); }
@@ -1223,6 +1247,7 @@ async function initializeApp(){
   loadAttendanceFromDevice();
   loadScoresFromDevice();
   loadScheduleFromDevice();
+  loadReflectionsFromDevice();
   updateTopbarUser();
   renderSidebarNav();
   navigateTo("dashboard");
@@ -1454,6 +1479,7 @@ function renderJournalListPage(){
               <button title="Absensi" data-act="att" data-id="${j.journalId}">👥</button>
               <button title="Nilai" data-act="score" data-id="${j.journalId}">📝</button>
               <button title="Detail" data-act="detail" data-id="${j.journalId}">🔍</button>
+              <button title="Refleksi" data-act="refleksi" data-id="${j.journalId}">🪞</button>
               <button title="Edit" data-act="edit" data-id="${j.journalId}">✏️</button>
               <button title="Hapus" data-act="delete" data-id="${j.journalId}">🗑️</button>
             </div>
@@ -1470,6 +1496,7 @@ function renderJournalListPage(){
           <div class="row-actions">
             <button data-act="att" data-id="${j.journalId}" title="Absensi">👥</button>
             <button data-act="score" data-id="${j.journalId}" title="Nilai">📝</button>
+            <button data-act="refleksi" data-id="${j.journalId}" title="Refleksi">🪞</button>
             <button data-act="edit" data-id="${j.journalId}" title="Edit">✏️</button>
             <button data-act="delete" data-id="${j.journalId}" title="Hapus">🗑️</button>
           </div>
@@ -1556,6 +1583,7 @@ function bindJournalListEvents(){
       else if (act==="att") openAttendanceModal(j);
       else if (act==="score") openScoreModal(j);
       else if (act==="detail") openJournalDetailModal(j);
+      else if (act==="refleksi") openReflectionModal(null,"refleksi",id);
     });
   });
 }
@@ -1731,10 +1759,11 @@ function openJournalDetailModal(j){
       <h3 class="card-title" style="margin-bottom:8px;">Status Kehadiran per Siswa — Kelas ${escapeHtml(j.kelas)}</h3>
       <div style="max-height:260px; overflow-y:auto;">${studentAttRows}</div>
     </div>
-    <div class="modal-foot"><button class="btn btn-outline" id="jd-close2">Tutup</button></div>
+    <div class="modal-foot"><button class="btn btn-secondary" id="jd-refleksi">🪞 Tulis Refleksi</button><button class="btn btn-outline" id="jd-close2">Tutup</button></div>
   `, "modal-lg");
   $("#jd-close").addEventListener("click", closeModal);
   $("#jd-close2").addEventListener("click", closeModal);
+  $("#jd-refleksi").addEventListener("click", ()=>openReflectionModal(null,"refleksi",j.journalId));
 }
 /* =========================================================================
    12. ATTENDANCE MODULE (LOKAL DI PERANGKAT)
@@ -2772,6 +2801,7 @@ function bindBackupEvents(){
       attendance: appState.attendance,
       scores: appState.scores,
       schedule: appState.schedule,
+      reflections: appState.reflections,
       settings: appState.settings
     };
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type:"application/json" });
@@ -2808,10 +2838,11 @@ function bindBackupEvents(){
       appState.attendance = Array.isArray(json.attendance) ? json.attendance : [];
       appState.scores = Array.isArray(json.scores) ? json.scores : [];
       appState.schedule = Array.isArray(json.schedule) ? json.schedule : [];
+      appState.reflections = Array.isArray(json.reflections) ? json.reflections : [];
       if (json.settings) appState.settings = Object.assign(appState.settings, json.settings);
 
       // Satu kali tulis per jenis data (bukan berulang) untuk performa terbaik.
-      persistProfile(); persistStudents(); persistJournals(); persistAttendance(); persistScores(); persistSchedule(); saveSettings();
+      persistProfile(); persistStudents(); persistJournals(); persistAttendance(); persistScores(); persistSchedule(); persistReflections(); saveSettings();
       applyTheme();
       updateTopbarUser();
       hideLoading();
@@ -2903,6 +2934,7 @@ async function handleDeleteAllData(){
   removeLocal(STORAGE_KEYS.ATTENDANCE);
   removeLocal(STORAGE_KEYS.SCORES);
   removeLocal(STORAGE_KEYS.SCHEDULE);
+  removeLocal(STORAGE_KEYS.REFLECTIONS);
   removeLocal(DRAFT_KEY);
 
   appState.profile = { namaGuru:"", nip:"", mataPelajaran:"" };
@@ -2912,10 +2944,241 @@ async function handleDeleteAllData(){
   appState.attendance = [];
   appState.scores = [];
   appState.schedule = [];
+  appState.reflections = [];
 
   updateTopbarUser();
   notifySuccess("Seluruh data aplikasi telah dihapus dari perangkat.");
   navigateTo("dashboard");
+}
+
+/* =========================================================================
+   20c. CATATAN & REFLEKSI GURU
+   ========================================================================= */
+const RF_KATEGORI = ["Umum","Pembelajaran","Siswa","Administrasi","Pengingat"];
+const RF_BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const RF_RATING = [["","— Belum dinilai —"],[5,"5 · Sangat efektif"],[4,"4 · Efektif"],[3,"3 · Cukup"],[2,"2 · Kurang"],[1,"1 · Perlu perbaikan besar"]];
+let rfFilters = { tab:"semua", search:"", kelas:"", bulan:"" };
+
+function loadReflectionsFromDevice(){
+  const l = loadLocal(STORAGE_KEYS.REFLECTIONS, []);
+  appState.reflections = Array.isArray(l) ? l : [];
+}
+function persistReflections(){ saveLocal(STORAGE_KEYS.REFLECTIONS, appState.reflections); }
+function getReflectionById(id){ return appState.reflections.find(r=>r.id===id); }
+function rfStars(n){ n = Number(n)||0; return n ? "★".repeat(n)+"☆".repeat(5-n) : ""; }
+function rfPreview(r){ return r.tipe==="refleksi" ? (r.baik||r.kendala||r.perbaikan||"") : (r.isi||""); }
+
+function filterReflections(){
+  const s = rfFilters.search.trim().toLowerCase();
+  return appState.reflections.filter(r=>{
+    if (rfFilters.tab==="catatan" && r.tipe==="refleksi") return false;
+    if (rfFilters.tab==="refleksi" && r.tipe!=="refleksi") return false;
+    if (rfFilters.tab==="penting" && !r.pinned) return false;
+    if (rfFilters.kelas && r.kelas!==rfFilters.kelas) return false;
+    if (rfFilters.bulan && (r.tanggal||"").slice(5,7)!==rfFilters.bulan) return false;
+    if (s && ![r.judul,r.isi,r.baik,r.kendala,r.perbaikan,r.kelas,r.kategori].some(v=>(v||"").toLowerCase().includes(s))) return false;
+    return true;
+  }).sort((a,b)=> (b.pinned?1:0)-(a.pinned?1:0) || (b.tanggal||"").localeCompare(a.tanggal||"") || (b.createdAt||0)-(a.createdAt||0));
+}
+
+function renderReflectionPage(){
+  const all = appState.reflections;
+  const ym = todayISO().slice(0,7);
+  const rated = all.filter(r=>r.rating);
+  const avg = rated.length ? (rated.reduce((s,r)=>s+Number(r.rating),0)/rated.length).toFixed(1) : "-";
+  const kelasOpts = ['<option value="">Semua Kelas</option>'].concat(appState.classes.map(k=>`<option value="${escapeHtml(k)}" ${rfFilters.kelas===k?"selected":""}>${escapeHtml(k)}</option>`)).join("");
+  const bulanOpts = ['<option value="">Semua Bulan</option>'].concat(RF_BULAN.map((b,i)=>{ const v=String(i+1).padStart(2,"0"); return `<option value="${v}" ${rfFilters.bulan===v?"selected":""}>${b}</option>`; })).join("");
+  const tabs = [["semua","Semua"],["catatan","📝 Catatan"],["refleksi","🪞 Refleksi"],["penting","📌 Disematkan"]];
+  return `
+    <div class="stat-grid">
+      <div class="stat-card"><div class="sv">${all.filter(r=>r.tipe!=="refleksi").length}</div><div class="sl">Total Catatan</div></div>
+      <div class="stat-card"><div class="sv">${all.filter(r=>r.tipe==="refleksi").length}</div><div class="sl">Total Refleksi</div></div>
+      <div class="stat-card"><div class="sv">${avg}</div><div class="sl">Rata-rata Efektivitas (1–5)</div></div>
+      <div class="stat-card"><div class="sv">${all.filter(r=>(r.tanggal||"").slice(0,7)===ym).length}</div><div class="sl">Tulisan Bulan Ini</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h3 class="card-title" id="rf-count">Catatan & Refleksi</h3>
+        <div class="flex gap-2" style="flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" id="rf-add-catatan">➕ Catatan</button>
+          <button class="btn btn-primary btn-sm" id="rf-add-refleksi">🪞 Refleksi</button>
+          <button class="btn btn-outline btn-sm" id="rf-export">📥 Excel</button>
+        </div>
+      </div>
+      <div class="rf-tabs">${tabs.map(([k,l])=>`<button class="rf-tab ${rfFilters.tab===k?"active":""}" data-tab="${k}">${l}</button>`).join("")}</div>
+      <div class="toolbar">
+        <div class="search-box"><span class="ico">🔎</span><input type="text" id="rf-search" placeholder="Cari judul atau isi..." value="${escapeHtml(rfFilters.search)}"></div>
+        <select id="rf-kelas">${kelasOpts}</select>
+        <select id="rf-bulan">${bulanOpts}</select>
+      </div>
+      <div id="rf-list"></div>
+    </div>`;
+}
+
+function rfCardHtml(r){
+  const isRef = r.tipe==="refleksi";
+  const jr = r.journalId ? getJournalById(r.journalId) : null;
+  const meta = [r.kelas, jr ? "Jurnal: "+jr.materi : ""].filter(Boolean).map(escapeHtml).join(" · ");
+  return `
+    <div class="rf-card ${isRef?"refleksi":""} ${r.pinned?"pinned":""}">
+      <div class="rf-top">
+        <span class="badge ${isRef?"badge-blue":"badge-gray"}">${isRef?"🪞 Refleksi":"📝 "+escapeHtml(r.kategori||"Catatan")}</span>
+        <span>${formatDateShort(r.tanggal)}</span>
+      </div>
+      <h4 class="rf-title">${r.pinned?"📌 ":""}${escapeHtml(r.judul||(isRef?"Refleksi Pembelajaran":"Catatan"))}</h4>
+      <div class="small-muted">${meta} ${r.rating?`<span class="rf-stars">${rfStars(r.rating)}</span>`:""}</div>
+      <div class="rf-text">${escapeHtml(rfPreview(r))}</div>
+      <div class="rf-actions">
+        <button data-ract="view" data-id="${r.id}" title="Lihat">👁️</button>
+        <button data-ract="edit" data-id="${r.id}" title="Edit">✏️</button>
+        <button data-ract="pin" data-id="${r.id}" title="${r.pinned?"Lepas sematan":"Sematkan"}">📌</button>
+        <button data-ract="delete" data-id="${r.id}" title="Hapus">🗑️</button>
+      </div>
+    </div>`;
+}
+
+function refreshReflectionList(){
+  const list = filterReflections();
+  $("#rf-count").textContent = `Catatan & Refleksi (${list.length})`;
+  $("#rf-list").innerHTML = list.length
+    ? `<div class="rf-grid">${list.map(rfCardHtml).join("")}</div>`
+    : emptyStateHtml("🪞","Belum ada catatan atau refleksi yang sesuai. Mulai menulis lewat tombol di atas.");
+  $$("[data-ract]", $("#rf-list")).forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const r = getReflectionById(b.dataset.id); if (!r) return;
+      const a = b.dataset.ract;
+      if (a==="view") openReflectionDetail(r);
+      else if (a==="edit") openReflectionModal(r, r.tipe);
+      else if (a==="pin") toggleReflectionPin(r);
+      else if (a==="delete") deleteReflection(r.id);
+    });
+  });
+}
+
+function bindReflectionEvents(){
+  $("#rf-add-catatan").addEventListener("click", ()=>openReflectionModal(null,"catatan"));
+  $("#rf-add-refleksi").addEventListener("click", ()=>openReflectionModal(null,"refleksi"));
+  $("#rf-export").addEventListener("click", exportReflectionsToExcel);
+  $$(".rf-tab").forEach(b=>b.addEventListener("click", ()=>{
+    rfFilters.tab = b.dataset.tab;
+    $$(".rf-tab").forEach(x=>x.classList.toggle("active", x===b));
+    refreshReflectionList();
+  }));
+  $("#rf-search").addEventListener("input", debounce(e=>{ rfFilters.search = e.target.value; refreshReflectionList(); }, 250));
+  $("#rf-kelas").addEventListener("change", e=>{ rfFilters.kelas = e.target.value; refreshReflectionList(); });
+  $("#rf-bulan").addEventListener("change", e=>{ rfFilters.bulan = e.target.value; refreshReflectionList(); });
+  refreshReflectionList();
+}
+
+function openReflectionModal(existing, tipe, journalId){
+  const isEdit = !!existing;
+  const isRef = (existing ? existing.tipe : tipe) === "refleksi";
+  const j0 = journalId ? getJournalById(journalId) : null;
+  const d = existing || {
+    tanggal: j0?.tanggal || todayISO(), kelas: j0?.kelas || "", journalId: journalId || "",
+    judul: j0 ? "Refleksi: "+j0.materi : "", kategori:"Umum", isi:"", baik:"", kendala:"", perbaikan:"", rating:"", pinned:false
+  };
+  const jOpts = ['<option value="">— Tidak dikaitkan —</option>'].concat(
+    appState.journals.slice().sort((a,b)=>(b.tanggal||"").localeCompare(a.tanggal||"")).slice(0,100)
+      .map(j=>`<option value="${escapeHtml(j.journalId)}" ${d.journalId===j.journalId?"selected":""}>${escapeHtml(formatDateShort(j.tanggal)+" · "+j.kelas+" · "+j.materi)}</option>`)
+  ).join("");
+  const ta = (id,label,val,ph)=>`<div class="field full"><label>${label}</label><textarea id="${id}" placeholder="${ph}">${escapeHtml(val)}</textarea></div>`;
+
+  openModal(`
+    <div class="modal-head"><h3>${isEdit?"Edit":"Tulis"} ${isRef?"Refleksi Pembelajaran":"Catatan Guru"}</h3><button class="modal-close" id="rf-close">✕</button></div>
+    <div class="modal-body"><div class="form-grid">
+      <div class="field"><label>Tanggal</label><input type="date" id="rf-tanggal" value="${escapeHtml(d.tanggal)}"></div>
+      <div class="field"><label>Kelas (opsional)</label><select id="rf-kelas-f">${classOptionsHtml(d.kelas)}</select></div>
+      <div class="field full"><label>Judul</label><input type="text" id="rf-judul" value="${escapeHtml(d.judul)}" placeholder="${isRef?"Mis. Refleksi pertemuan 3 — Pecahan":"Mis. Siswa perlu remedial"}"></div>
+      ${isRef ? `
+        <div class="field"><label>Kaitkan dengan Jurnal (opsional)</label><select id="rf-jurnal">${jOpts}</select></div>
+        <div class="field"><label>Efektivitas Pembelajaran</label><select id="rf-rating">${RF_RATING.map(([v,l])=>`<option value="${v}" ${Number(d.rating)===v&&v!==""?"selected":""}>${l}</option>`).join("")}</select></div>
+        ${ta("rf-baik","Apa yang berjalan baik?",d.baik,"Metode, media, atau respons siswa yang berhasil")}
+        ${ta("rf-kendala","Kendala / tantangan",d.kendala,"Hal yang kurang berhasil atau menghambat")}
+        ${ta("rf-perbaikan","Rencana perbaikan / tindak lanjut",d.perbaikan,"Apa yang akan dilakukan pada pertemuan berikutnya")}
+      ` : `
+        <div class="field"><label>Kategori</label><select id="rf-kategori">${RF_KATEGORI.map(k=>`<option ${d.kategori===k?"selected":""}>${k}</option>`).join("")}</select></div>
+        <div class="field full"><label>Isi Catatan</label><textarea id="rf-isi" style="min-height:150px;" placeholder="Tulis catatan Anda...">${escapeHtml(d.isi)}</textarea></div>
+      `}
+      <div class="field full"><label style="display:flex; align-items:center; gap:8px; margin:0;"><input type="checkbox" id="rf-pinned" style="width:auto; padding:0;" ${d.pinned?"checked":""}> 📌 Sematkan di bagian atas</label></div>
+    </div></div>
+    <div class="modal-foot"><button class="btn btn-outline" id="rf-cancel">Batal</button><button class="btn btn-primary" id="rf-save">💾 Simpan</button></div>
+  `, "modal-lg");
+
+  $("#rf-close").addEventListener("click", closeModal);
+  $("#rf-cancel").addEventListener("click", closeModal);
+  const jsel = $("#rf-jurnal");
+  if (jsel) jsel.addEventListener("change", ()=>{
+    const j = getJournalById(jsel.value); if (!j) return;
+    $("#rf-tanggal").value = j.tanggal; $("#rf-kelas-f").value = j.kelas;
+    if (!$("#rf-judul").value.trim()) $("#rf-judul").value = "Refleksi: "+j.materi;
+  });
+  $("#rf-save").addEventListener("click", ()=>{
+    const v = sel => ($(sel)?.value || "").trim();
+    const rec = Object.assign({}, existing || {}, {
+      id: existing?.id || uid("rfl"), tipe: isRef?"refleksi":"catatan",
+      tanggal: v("#rf-tanggal") || todayISO(), kelas: v("#rf-kelas-f"), judul: v("#rf-judul"),
+      journalId: v("#rf-jurnal"), rating: Number(v("#rf-rating")) || 0,
+      kategori: v("#rf-kategori"), isi: v("#rf-isi"),
+      baik: v("#rf-baik"), kendala: v("#rf-kendala"), perbaikan: v("#rf-perbaikan"),
+      pinned: $("#rf-pinned").checked, createdAt: existing?.createdAt || Date.now(), updatedAt: Date.now()
+    });
+    if (isRef ? !(rec.baik||rec.kendala||rec.perbaikan) : !(rec.judul||rec.isi))
+      return notifyWarning(isRef ? "Isi minimal satu bagian refleksi." : "Isi judul atau isi catatan terlebih dahulu.");
+    if (isEdit){ const i = appState.reflections.findIndex(r=>r.id===rec.id); if (i>-1) appState.reflections[i] = rec; }
+    else appState.reflections.unshift(rec);
+    persistReflections(); closeModal();
+    notifySuccess(isEdit ? "Perubahan tersimpan." : (isRef ? "Refleksi tersimpan." : "Catatan tersimpan."));
+    renderPage();
+  });
+}
+
+function openReflectionDetail(r){
+  const isRef = r.tipe==="refleksi";
+  const jr = r.journalId ? getJournalById(r.journalId) : null;
+  const sec = (t,v)=> v ? `<div class="rf-sec"><b>${t}</b><div style="white-space:pre-wrap; font-size:14px; line-height:1.65;">${escapeHtml(v)}</div></div>` : "";
+  openModal(`
+    <div class="modal-head"><h3>${escapeHtml(r.judul || (isRef?"Refleksi Pembelajaran":"Catatan"))}</h3><button class="modal-close" id="rfd-close">✕</button></div>
+    <div class="modal-body">
+      <p class="small-muted" style="margin:0 0 16px;">${formatDateID(r.tanggal)}${r.kelas?" · "+escapeHtml(r.kelas):""}${jr?" · Jurnal: "+escapeHtml(jr.materi):""} ${r.rating?`<span class="rf-stars">${rfStars(r.rating)}</span>`:""}</p>
+      ${isRef ? sec("Yang berjalan baik",r.baik)+sec("Kendala / tantangan",r.kendala)+sec("Rencana perbaikan / tindak lanjut",r.perbaikan)
+              : sec("Kategori",r.kategori)+sec("Isi catatan",r.isi)}
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" id="rfd-close2">Tutup</button><button class="btn btn-primary" id="rfd-edit">✏️ Edit</button></div>
+  `);
+  $("#rfd-close").addEventListener("click", closeModal);
+  $("#rfd-close2").addEventListener("click", closeModal);
+  $("#rfd-edit").addEventListener("click", ()=>openReflectionModal(r, r.tipe));
+}
+
+function toggleReflectionPin(r){
+  r.pinned = !r.pinned;
+  persistReflections();
+  refreshReflectionList();
+}
+
+async function deleteReflection(id){
+  const ok = await confirmDialog("Hapus Tulisan Ini?", "Catatan/refleksi akan dihapus permanen dari perangkat.", "Ya, Hapus");
+  if (!ok) return;
+  appState.reflections = appState.reflections.filter(r=>r.id!==id);
+  persistReflections();
+  notifySuccess("Berhasil dihapus.");
+  renderPage();
+}
+
+function exportReflectionsToExcel(){
+  const list = filterReflections();
+  if (!list.length) return notifyWarning("Tidak ada data untuk diexport.");
+  if (!window.XLSX) return notifyError("Library Excel belum termuat (butuh koneksi sekali untuk memuatnya).");
+  const rows = list.map((r,i)=>({
+    No:i+1, Tanggal:r.tanggal, Jenis:r.tipe==="refleksi"?"Refleksi":"Catatan", Kategori:r.kategori||"", Kelas:r.kelas||"",
+    Judul:r.judul||"", "Isi Catatan":r.isi||"", "Yang Berjalan Baik":r.baik||"", "Kendala":r.kendala||"",
+    "Rencana Perbaikan":r.perbaikan||"", "Efektivitas (1-5)":r.rating||""
+  }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), "Catatan Refleksi");
+  XLSX.writeFile(wb, `Catatan_Refleksi_${todayISO()}.xlsx`);
+  notifySuccess("File Excel berhasil dibuat.");
 }
 
 /* =========================================================================
@@ -3013,6 +3276,17 @@ const HELP_SECTIONS = [
       <p style="color:var(--red);"><b>⚠️ Hapus Semua Data</b> pada menu ini akan menghapus SELURUH data di perangkat secara permanen — hanya gunakan jika benar-benar yakin, dan pastikan sudah Export Backup terlebih dahulu.</p>`
   },
   {
+    icon: "🪞",
+    title: "Catatan & Refleksi Guru",
+    body: `
+      <ol>
+        <li>Buka menu <b>🪞 Catatan & Refleksi</b>.</li>
+        <li>Tekan <b>➕ Catatan</b> untuk catatan bebas, atau <b>🪞 Refleksi</b> untuk refleksi pembelajaran (yang berjalan baik, kendala, rencana perbaikan, dan penilaian efektivitas 1–5).</li>
+        <li>Refleksi bisa dikaitkan dengan jurnal tertentu, atau langsung dari daftar Jurnal Harian tekan ikon <b>🪞</b>.</li>
+        <li>Gunakan tab, pencarian, dan filter untuk menemukan tulisan; tekan <b>📥 Excel</b> untuk mengunduhnya. Data ikut tersimpan pada Backup.</li>
+      </ol>`
+  },
+  {
     icon: "❓",
     title: "Pertanyaan Umum (FAQ)",
     body: `
@@ -3066,6 +3340,10 @@ function bindGlobalSearch(){
       if (s.nama.toLowerCase().includes(q)){
         items.push({ type:"Siswa", label:s.nama, sub:s.kelas, action:()=>{ navigateTo("jurnal"); journalFilters.kelas = s.kelas; } });
       }
+    });
+    appState.reflections.forEach(r=>{
+      const teks = [r.judul,r.isi,r.baik,r.kendala,r.perbaikan].join(" ").toLowerCase();
+      if (teks.includes(q)) items.push({ type:r.tipe==="refleksi"?"Refleksi":"Catatan", label:r.judul||"(tanpa judul)", sub:formatDateShort(r.tanggal), action:()=>{ navigateTo("refleksi"); } });
     });
     appState.classes.forEach(k=>{
       if (k.toLowerCase().includes(q)){
