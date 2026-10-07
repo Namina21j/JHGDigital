@@ -839,6 +839,57 @@ function normalizeImportedRow(row){
   });
 }
 
+/* =========================================================================
+   DOWNLOAD DATA SISWA (Excel) — mengikuti pilihan kelas di halaman Data Siswa
+   Format kolom sama dengan format import (No, NIS, NISN, Nama, Jenis Kelamin, Kelas),
+   sehingga file hasil unduhan bisa langsung di-import kembali.
+   ========================================================================= */
+function downloadStudentData(){
+  if (!window.XLSX) return notifyError("Library Excel belum tersedia. Pastikan perangkat online sekali, lalu coba lagi.");
+
+  const kelas = ($("#sw-kelas") && $("#sw-kelas").value) || "";      // "" = Semua Kelas
+  const list = appState.students
+    .filter(s => !kelas || s.kelas === kelas)
+    .sort((a, b) => (a.kelas || "").localeCompare(b.kelas || "", "id", { numeric: true })
+                 || (a.nama || "").localeCompare(b.nama || "", "id"));
+  if (!list.length) return notifyWarning(kelas ? "Tidak ada siswa di kelas " + kelas + "." : "Belum ada data siswa untuk diunduh.");
+
+  const toRows = arr => arr.map((s, i) => ({
+    "No": i + 1, "NIS": String(s.nis || ""), "NISN": String(s.nisn || ""),   // teks, agar angka 0 di depan tidak hilang
+    "Nama": s.nama || "", "Jenis Kelamin": s.jenisKelamin || "", "Kelas": s.kelas || ""
+  }));
+  const cols = [{ wch: 5 }, { wch: 14 }, { wch: 16 }, { wch: 32 }, { wch: 14 }, { wch: 12 }];
+
+  showLoading("Menyiapkan file Excel...");
+  try {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(toRows(list));
+    ws["!cols"] = cols;
+    XLSX.utils.book_append_sheet(wb, ws, "Data Siswa");        // sheet pertama = dipakai saat import ulang
+
+    if (!kelas){                                               // semua kelas: tambahkan 1 sheet per kelas
+      const used = new Set(["Data Siswa"]);
+      appState.classes.forEach(k => {
+        const arr = list.filter(s => s.kelas === k);
+        if (!arr.length) return;
+        let name = String(k).replace(/[\[\]\*\?\/\\:]/g, "-").slice(0, 28) || "Kelas";
+        while (used.has(name)) name += "_";
+        used.add(name);
+        const w = XLSX.utils.json_to_sheet(toRows(arr));
+        w["!cols"] = cols;
+        XLSX.utils.book_append_sheet(wb, w, name);
+      });
+    }
+
+    const slug = String(kelas || "Semua_Kelas").replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "");
+    XLSX.writeFile(wb, "Data_Siswa_" + slug + "_" + todayISO().replace(/-/g, "") + ".xlsx");
+    notifySuccess("Data " + list.length + " siswa berhasil diunduh.");
+  } catch (e) {
+    console.error(e);
+    notifyError("Gagal membuat file Excel. Silakan coba lagi.");
+  } finally { hideLoading(); }
+}
+  
 /** Mengunduh format/template Excel agar sesuai atribut data siswa (No, NIS, NISN, Nama, Jenis Kelamin, Kelas). */
 function downloadStudentImportTemplate(){
   if (!window.XLSX) return notifyError("Library Excel belum tersedia. Silakan coba kembali.");
@@ -984,6 +1035,7 @@ function renderStudentsPage(){
         <div class="flex gap-2" style="flex-wrap:wrap;">
           <button class="btn btn-outline btn-sm" id="btn-download-template">📥 Unduh Format Excel</button>
           <button class="btn btn-primary btn-sm" id="btn-import-students">📤 Import Data Siswa</button>
+          <button class="btn btn-secondary btn-sm" id="btn-download-students">${icon("download",15)} Download Data Siswa</button>
           <input type="file" id="import-file-input" accept=".xlsx,.xls" class="hidden">
         </div>
       </div>
@@ -1087,6 +1139,9 @@ function bindStudentsPageEvents(){
 
   const templateBtn = $("#btn-download-template");
   if (templateBtn) templateBtn.addEventListener("click", downloadStudentImportTemplate);
+
+  const dlBtn = $("#btn-download-students");
+if (dlBtn) dlBtn.addEventListener("click", downloadStudentData);
 
   const importBtn = $("#btn-import-students");
   const fileInput = $("#import-file-input");
