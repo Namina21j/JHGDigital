@@ -59,10 +59,10 @@ body{
   font-family:'Inter',system-ui,sans-serif;
   background:var(--bg); color:var(--text);
   -webkit-font-smoothing:antialiased;
-  min-height:100vh;
+  min-height:100vh; min-height:100dvh;
 }
 h1,h2,h3,.font-display{font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
-#app-root{min-height:100vh;}
+#app-root{min-height:100vh; min-height:100dvh;}
 button{font-family:inherit; cursor:pointer;}
 input,select,textarea{font-family:inherit;}
 ::selection{background:var(--blue-100);}
@@ -125,7 +125,7 @@ a{color:inherit;}
 .auth-switch{margin-top:14px;}
 
 /* ---------- App shell ---------- */
-#app-view{display:flex; min-height:100vh;}
+#app-view{display:flex; min-height:100vh; min-height:100dvh;}
 #sidebar{
   width:var(--sidebar-w); background:linear-gradient(180deg,#0d1730 0%, var(--navy) 55%, #16264a 100%);
   color:#dbe4f5; flex-shrink:0;
@@ -136,7 +136,7 @@ a{color:inherit;}
 .sb-brand .emoji{font-size:26px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));}
 .sb-brand-text{font-weight:800; font-size:15px; color:#fff; line-height:1.25;}
 .sb-brand-sub{font-size:11px; color:#8fa5cc;}
-.sb-nav{flex:1; overflow-y:auto; padding:16px 14px;}
+.sb-nav{flex:1; overflow-y:auto; padding:16px 14px; overscroll-behavior:contain;}
 .sb-link{
   display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:var(--radius-sm);
   color:#b9c8e6; text-decoration:none; font-size:14px; font-weight:600; margin-bottom:4px;
@@ -149,7 +149,8 @@ a{color:inherit;}
 .sb-foot{padding:16px 22px 22px; border-top:1px solid rgba(255,255,255,.08); font-size:11px; color:#7f93b8;}
 
 #main-col{flex:1; margin-left:var(--sidebar-w); display:flex; flex-direction:column; min-width:0; max-width:100%;}
-html,body{overflow-x:hidden; width:100%;}
+html,body{width:100%;}
+@supports (overflow:clip){ body{overflow-x:clip;} }   /* mencegah geser samping TANPA menjadikan body sebagai kontainer scroll */
 #topbar{
   background:var(--surface); border-bottom:1px solid var(--border); padding:14px 26px;
   display:flex; align-items:center; justify-content:space-between; gap:16px; position:sticky; top:0; z-index:30;
@@ -279,10 +280,10 @@ tbody tr:hover{background:var(--gray-50);}
 .modal-backdrop{
   position:fixed; inset:0; background:rgba(9,13,26,.6); z-index:100; display:flex;
   align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(3px);
-  animation:fadeIn .18s var(--ease);
+  animation:fadeIn .18s var(--ease); overscroll-behavior:contain;
 }
 .modal{
-  background:var(--surface); border-radius:var(--radius-lg); width:100%; max-width:640px; max-height:88vh;
+  background:var(--surface); border-radius:var(--radius-lg); width:100%; max-width:640px; max-height:88vh; max-height:88dvh;
   display:flex; flex-direction:column; box-shadow:var(--shadow-lg);
   animation:modalPop .22s var(--ease);
 }
@@ -293,7 +294,7 @@ tbody tr:hover{background:var(--gray-50);}
 .modal-head h3{margin:0; font-size:16.5px; font-weight:800; letter-spacing:-.01em;}
 .modal-close{background:var(--gray-100); border:none; width:32px; height:32px; border-radius:var(--radius-sm); font-size:15px; transition:background .15s var(--ease), transform .15s var(--ease);}
 .modal-close:hover{background:var(--gray-200); transform:rotate(90deg);}
-.modal-body{padding:22px 24px; overflow-y:auto;}
+.modal-body{padding:22px 24px; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;}
 .modal-foot{padding:16px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px;}
 
 .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
@@ -470,7 +471,7 @@ body{background:var(--bg);}
 .auth-logo{width:62px;height:62px;margin:0 auto 12px;border-radius:19px;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0;box-shadow:0 12px 26px rgba(13,148,136,.35);}
 .empty-state .es-emoji{display:flex;justify-content:center;color:var(--accent-2);font-size:0;filter:none;opacity:.8;}
 @media (max-width:900px){ #bottom-nav{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 4px);} #topbar{padding-top:calc(14px + env(safe-area-inset-top,0px));} }
-@media (display-mode:standalone){ body{overscroll-behavior-y:none;} }
+@media (display-mode:standalone){ html{overscroll-behavior-y:none;} }   /* di html (layar), bukan body, agar scroll tidak terputus */
 .install-card{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--accent-grad-soft);border:1px solid var(--border);}
 .install-card img{width:56px;height:56px;border-radius:15px;box-shadow:var(--shadow);}
 .install-card .ic-text{flex:1;min-width:200px;} .install-card ol{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--text-muted);line-height:1.7;}
@@ -739,8 +740,11 @@ async function confirmDialog(title, text, confirmText="Ya, lanjutkan", icon="war
    3. LOADING SYSTEM
    ========================================================================= */
 let loadingCount = 0;
+let loadingGuard = null;
 function showLoading(text="Memproses data..."){
   loadingCount++;
+  clearTimeout(loadingGuard);
+  loadingGuard = setTimeout(()=>{ loadingCount = 0; $("#loading-overlay").classList.remove("show"); setFormsDisabled(false); }, 90000);
   $("#loading-text").textContent = text;
   $("#loading-overlay").classList.add("show");
   setFormsDisabled(true);
@@ -748,6 +752,7 @@ function showLoading(text="Memproses data..."){
 function hideLoading(){
   loadingCount = Math.max(0, loadingCount-1);
   if (loadingCount === 0){
+    clearTimeout(loadingGuard);
     $("#loading-overlay").classList.remove("show");
     setFormsDisabled(false);
   }
@@ -2208,10 +2213,29 @@ function refreshInstallCard(){
 }
 function bindInstallCard(){ $("#btn-install-card")?.addEventListener("click", triggerInstall); }
 
+/* Pengaman scroll: kadang SweetAlert2 meninggalkan "kunci scroll" di body (terutama di iOS/PWA)
+   bila dialog ditutup/ditumpuk cepat. Jika tidak ada dialog aktif, bersihkan sisa kuncinya. */
+function rescueScrollLock(){
+  if (document.querySelector(".swal2-container")) return;
+  const b = document.body, h = document.documentElement;
+  const stuck = ["swal2-shown","swal2-height-auto","swal2-ios-fix","swal2-no-backdrop","swal2-toast-shown"];
+  if (!stuck.some(c=>b.classList.contains(c) || h.classList.contains(c)) && b.style.position !== "fixed") return;
+  stuck.forEach(c=>{ b.classList.remove(c); h.classList.remove(c); });
+  ["position","top","overflow","padding-right"].forEach(k=>b.style.removeProperty(k));
+  h.style.removeProperty("overflow"); h.style.removeProperty("height");
+}
+function initScrollGuard(){
+  try{ new MutationObserver(rescueScrollLock).observe(document.body, { childList:true }); }catch(e){}
+  window.addEventListener("touchstart", rescueScrollLock, { passive:true });
+  window.addEventListener("pageshow", rescueScrollLock);
+  document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState === "visible") rescueScrollLock(); });
+}
+
 async function initializeApp(){
   $("#brand-ico").innerHTML = icon("cap",24); $("#auth-ico").innerHTML = icon("cap",32);
   $$("[data-ico]").forEach(e=>e.innerHTML = icon(e.dataset.ico,20));
   initPWA();
+  initScrollGuard();
   bindShellEvents();
   bindAuthEvents();
   bindCloudEvents();
