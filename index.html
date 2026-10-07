@@ -2,7 +2,16 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d9488">
+<meta name="application-name" content="Jurnal Guru">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Jurnal Guru">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Jurnal Harian Guru Digital</title>
 
 <!-- CDN Libraries -->
@@ -460,6 +469,11 @@ body{background:var(--bg);}
 #auth-view{background:linear-gradient(160deg,#0f766e 0%,#0891b2 55%,#38bdf8 100%);}
 .auth-logo{width:62px;height:62px;margin:0 auto 12px;border-radius:19px;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0;box-shadow:0 12px 26px rgba(13,148,136,.35);}
 .empty-state .es-emoji{display:flex;justify-content:center;color:var(--accent-2);font-size:0;filter:none;opacity:.8;}
+@media (max-width:900px){ #bottom-nav{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 4px);} #topbar{padding-top:calc(14px + env(safe-area-inset-top,0px));} }
+@media (display-mode:standalone){ body{overscroll-behavior-y:none;} }
+.install-card{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--accent-grad-soft);border:1px solid var(--border);}
+.install-card img{width:56px;height:56px;border-radius:15px;box-shadow:var(--shadow);}
+.install-card .ic-text{flex:1;min-width:200px;} .install-card ol{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--text-muted);line-height:1.7;}
 /* ---- Catatan & Refleksi ---- */
 .note-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;}
 .note-toolbar input,.note-toolbar select{padding:10px 14px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font-size:14px;}
@@ -570,6 +584,7 @@ body{background:var(--bg);}
           <div id="gs-results" class="gs-results hidden"></div>
         </div>
         <div class="topbar-right">
+          <button class="icon-btn hidden" id="btn-install" title="Pasang aplikasi di layar HP"></button>
           <button class="icon-btn" id="btn-sync" title="Status sinkronisasi">☁️</button>
           <button class="icon-btn" id="btn-theme" title="Ganti tema">🌙</button>
           <button class="icon-btn" id="btn-quick-add" title="Tambah jurnal (Ctrl+J)">➕</button>
@@ -605,7 +620,7 @@ const CONFIG = {
   // >>> WAJIB DIISI: tempel URL Web App Google Apps Script Anda (berakhiran /exec).
   // Cara mendapatkannya ada di PANDUAN_SETUP.md. Contoh:
   // "https://script.google.com/macros/s/AKfycb.../exec"
-  API_URL: "https://script.google.com/macros/s/AKfycbxzcdULH7TACJ8aM9l2_TxyRaCeLM_x1HuC6LZiiQmJ7lpmAUY85SsmqPHrlEpELeWt/exec"
+  API_URL: ""
 };
 
 const STORAGE_KEYS = {
@@ -788,23 +803,33 @@ function persistStudents(){
  * - NISN yang sudah ada di perangkat -> DILEWATI (tidak diduplikasi).
  * - NISN baru / tidak ditemukan -> DITAMBAHKAN.
  */
+function studentDupKeys(s){
+  const norm = v => String(v || "").trim().toLowerCase().replace(/\s+/g, " ");
+  const keys = [];
+  if (s.nisn) keys.push("nisn:" + norm(s.nisn));
+  if (s.nis && s.kelas) keys.push("nis:" + norm(s.nis) + "|" + norm(s.kelas));
+  if (!s.nisn) keys.push("nama:" + norm(s.nama) + "|" + norm(s.kelas));   // tanpa NISN: nama + kelas yang sama dianggap data yang sama
+  return keys;
+}
+
 function mergeAndSaveStudents(importedStudents){
-  const existingMap = new Map();
-  appState.students.forEach(s => { if (s.nisn) existingMap.set(s.nisn, s); });
+  const seen = new Set();
+  appState.students.forEach(s => studentDupKeys(s).forEach(k => seen.add(k)));
 
   let added = 0, skipped = 0;
   const toAdd = [];
   importedStudents.forEach(s => {
-    if (s.nisn && existingMap.has(s.nisn)) { skipped++; return; }
-    if (s.nisn) existingMap.set(s.nisn, s); // cegah duplikat di dalam batch import yang sama
+    const keys = studentDupKeys(s);
+    if (keys.some(k => seen.has(k))) { skipped++; return; }   // sudah ada -> dilewati, TIDAK menimpa data lama
+    keys.forEach(k => seen.add(k));                           // cegah duplikat di dalam batch yang sama
     toAdd.push(s);
     added++;
   });
 
-  // Satu operasi array + satu kali penulisan localStorage (bukan per-item) untuk performa terbaik.
-  appState.students = appState.students.concat(toAdd);
-  persistStudents();
-
+  if (toAdd.length){
+    appState.students = appState.students.concat(toAdd);
+    persistStudents();
+  }
   return { added, skipped, total: appState.students.length };
 }
 
@@ -889,7 +914,7 @@ function downloadStudentData(){
     notifyError("Gagal membuat file Excel. Silakan coba lagi.");
   } finally { hideLoading(); }
 }
-  
+
 /** Mengunduh format/template Excel agar sesuai atribut data siswa (No, NIS, NISN, Nama, Jenis Kelamin, Kelas). */
 function downloadStudentImportTemplate(){
   if (!window.XLSX) return notifyError("Library Excel belum tersedia. Silakan coba kembali.");
@@ -907,6 +932,35 @@ function downloadStudentImportTemplate(){
     console.error(e);
     notifyError("Gagal membuat file format. Silakan coba lagi.");
   }
+}
+
+/* =========================================================================
+   IMPORT DATA SISWA DARI SPREADSHEET (Sheet1 pada Spreadsheet database aplikasi)
+   Memakai alur yang sama dengan import file: pratinjau jumlah -> simpan -> NISN ganda dilewati.
+   ========================================================================= */
+async function importStudentsFromSheet(){
+  if (!CLOUD.session) return notifyWarning("Silakan masuk ke akun terlebih dahulu.");
+  if (!navigator.onLine) return notifyWarning("Perlu koneksi internet untuk mengambil data dari Spreadsheet.");
+
+  showLoading("Mengambil data dari Spreadsheet...");
+  let res;
+  try {
+    res = await cloudCall({ action: "sheetStudents" });
+  } catch (e) {
+    hideLoading();
+    return notifyError(describeNetError(e));
+  }
+  hideLoading();
+
+  if (!res.ok){
+    if (res.auth === false){ handleSessionExpired(); return; }
+    return notifyError(res.error || "Gagal mengambil data dari Spreadsheet.");
+  }
+  const students = (res.rows || []).map(normalizeImportedRow).filter(s => s.nama);
+  if (!students.length){
+    return notifyWarning("Sheet1 belum berisi data siswa yang valid. Pastikan baris 1 berisi judul kolom (NIS, NISN, Nama, Jenis Kelamin, Kelas) dan kolom Nama terisi.");
+  }
+  await confirmAndSaveImportedStudents(students, "Spreadsheet (Sheet1)");
 }
 
 /** Membaca & mem-parsing file Excel yang dipilih guru menjadi daftar siswa. */
@@ -950,12 +1004,12 @@ async function handleImportStudentsFile(file){
   await confirmAndSaveImportedStudents(students);
 }
 
-async function confirmAndSaveImportedStudents(students){
+async function confirmAndSaveImportedStudents(students, sourceLabel){
   if (!window.Swal){
     const proceed = window.confirm(`Ditemukan ${students.length} data siswa pada file.\n\nSimpan ke perangkat sekarang?`);
     if (proceed) {
       const r = mergeAndSaveStudents(students);
-      notifySuccess(`Tersimpan. ${r.added} siswa baru ditambahkan, ${r.skipped} dilewati (NISN sudah ada).`);
+      notifySuccess(`Tersimpan. ${r.added} siswa baru ditambahkan, ${r.skipped} dilewati (sudah ada).`);
       renderPage();
     }
     return;
@@ -965,11 +1019,11 @@ async function confirmAndSaveImportedStudents(students){
     icon: "success",
     title: "Data Siswa Ditemukan",
     html: `<div style="text-align:left;font-size:14px;line-height:1.7;">
-             Jumlah data siswa yang terbaca dari file Excel:
+             Jumlah data siswa yang terbaca dari ${sourceLabel || "file Excel"}:
              <div style="text-align:center;font-size:30px;font-weight:800;color:#2563eb;margin:10px 0;">${students.length}</div>
              <div class="small-muted" style="text-align:center;">
                Tekan <b>Simpan</b> untuk menyimpan ke perangkat.<br>
-               NISN yang sudah ada di perangkat akan otomatis dilewati (tidak diduplikasi).
+               Siswa yang sudah ada (NISN sama, atau nama+kelas sama jika tanpa NISN) akan dilewati dan <b>tidak ditimpa</b>.
              </div>
            </div>`,
     showCancelButton: true,
@@ -990,7 +1044,7 @@ async function confirmAndSaveImportedStudents(students){
     title: "Data Siswa Tersimpan",
     html: `<div style="text-align:left;font-size:13.5px;line-height:1.8;">
              <div>✅ Ditambahkan (baru): <b>${r.added}</b></div>
-             <div>⏭️ Dilewati (NISN sudah ada): <b>${r.skipped}</b></div>
+             <div>⏭️ Dilewati (data sudah ada, tidak ditimpa): <b>${r.skipped}</b></div>
              <div>👥 Total siswa di perangkat sekarang: <b>${r.total}</b></div>
            </div>`,
     confirmButtonText: "OK",
@@ -1035,7 +1089,8 @@ function renderStudentsPage(){
         <div class="flex gap-2" style="flex-wrap:wrap;">
           <button class="btn btn-outline btn-sm" id="btn-download-template">📥 Unduh Format Excel</button>
           <button class="btn btn-primary btn-sm" id="btn-import-students">📤 Import Data Siswa</button>
-          <button class="btn btn-secondary btn-sm" id="btn-download-students">📤 Download Data Siswa</button>
+          <button class="btn btn-primary btn-sm" id="btn-import-sheet">${icon("school",15)} Ambil dari Spreadsheet</button>
+          <button class="btn btn-secondary btn-sm" id="btn-download-students">${icon("download",15)} Download Data Siswa</button>
           <input type="file" id="import-file-input" accept=".xlsx,.xls" class="hidden">
         </div>
       </div>
@@ -1140,8 +1195,11 @@ function bindStudentsPageEvents(){
   const templateBtn = $("#btn-download-template");
   if (templateBtn) templateBtn.addEventListener("click", downloadStudentImportTemplate);
 
+  const sheetBtn = $("#btn-import-sheet");
+  if (sheetBtn) sheetBtn.addEventListener("click", importStudentsFromSheet);
+
   const dlBtn = $("#btn-download-students");
-if (dlBtn) dlBtn.addEventListener("click", downloadStudentData);
+  if (dlBtn) dlBtn.addEventListener("click", downloadStudentData);
 
   const importBtn = $("#btn-import-students");
   const fileInput = $("#import-file-input");
@@ -1255,6 +1313,7 @@ const ICONS = {
   receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
   upload:'<path d="M12 15V4m0 0-4 4m4-4 4 4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>',
   star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  download:'<path d="M12 4v11m0 0-4-4m4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>',
   search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'
 };
 function icon(name, size=20, stroke=1.9){
@@ -1959,9 +2018,70 @@ function bindCloudEvents(){
   });
 }
 
+/* =========================================================================
+   PWA: pasang di layar HP + dapat dibuka tanpa sinyal
+   ========================================================================= */
+let deferredInstall = null;
+const isStandalone = ()=> window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+const isIOS = ()=> /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+function initPWA(){
+  const btn = $("#btn-install");
+  btn.innerHTML = icon("download", 18);
+  btn.addEventListener("click", triggerInstall);
+  window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); deferredInstall = e; if (!isStandalone()) btn.classList.remove("hidden"); refreshInstallCard(); });
+  window.addEventListener("appinstalled", ()=>{ deferredInstall = null; btn.classList.add("hidden"); notifySuccess("Aplikasi berhasil dipasang di layar HP."); refreshInstallCard(); });
+
+  if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")){
+    window.addEventListener("load", ()=>{
+      const hadController = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.register("sw.js").catch(err=>console.warn("SW gagal didaftarkan:", err));
+      navigator.serviceWorker.addEventListener("controllerchange", ()=>{
+        if (hadController) notifyInfo("Versi baru aplikasi tersedia. Muat ulang halaman untuk memakainya.");
+      });
+    });
+  }
+}
+
+async function triggerInstall(){
+  if (deferredInstall){
+    deferredInstall.prompt();
+    await deferredInstall.userChoice.catch(()=>{});
+    deferredInstall = null; $("#btn-install").classList.add("hidden"); refreshInstallCard();
+  } else {
+    Swal.fire({ icon:"info", title:"Cara memasang aplikasi", html: installSteps(), confirmButtonText:"Mengerti" });
+  }
+}
+
+function installSteps(){
+  if (isIOS()) return '<ol style="text-align:left;line-height:1.8"><li>Buka halaman ini di <b>Safari</b>.</li><li>Ketuk tombol <b>Bagikan</b> (kotak dengan panah ke atas).</li><li>Pilih <b>Tambah ke Layar Utama</b>, lalu <b>Tambah</b>.</li></ol>';
+  return '<ol style="text-align:left;line-height:1.8"><li>Buka halaman ini di <b>Chrome</b> (Android) atau Edge/Chrome (laptop).</li><li>Ketuk menu <b>⋮</b> di pojok kanan atas.</li><li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.</li></ol>';
+}
+
+function renderInstallCard(){
+  const secure = location.protocol === "https:" || location.hostname === "localhost";
+  let body;
+  if (isStandalone()) body = '<div class="small-muted">✅ Aplikasi sudah terpasang dan sedang dibuka sebagai aplikasi.</div>';
+  else if (!secure) body = '<div class="small-muted">Pemasangan hanya tersedia jika aplikasi dibuka lewat alamat <b>https://</b> (hosting), bukan dari file di perangkat.</div>';
+  else body = `<div class="small-muted">Tampil seperti aplikasi dengan ikon sendiri dan tetap bisa dibuka tanpa sinyal.</div>
+      ${deferredInstall ? "" : `<div class="small-muted" style="margin-top:6px;">${installSteps()}</div>`}`;
+  const showBtn = secure && !isStandalone() && deferredInstall;
+  return `<div class="card install-card" id="install-card" style="max-width:560px;">
+    <img src="icon-192.png" alt="Ikon aplikasi">
+    <div class="ic-text"><h3 class="card-title" style="margin-bottom:4px;">Pasang di Layar HP</h3>${body}</div>
+    ${showBtn ? `<button class="btn btn-primary" id="btn-install-card">${icon("download",16)} Pasang Sekarang</button>` : ""}
+  </div>`;
+}
+function refreshInstallCard(){
+  const c = $("#install-card"); if (!c) return;
+  c.outerHTML = renderInstallCard(); bindInstallCard();
+}
+function bindInstallCard(){ $("#btn-install-card")?.addEventListener("click", triggerInstall); }
+
 async function initializeApp(){
   $("#brand-ico").innerHTML = icon("cap",24); $("#auth-ico").innerHTML = icon("cap",32);
   $$("[data-ico]").forEach(e=>e.innerHTML = icon(e.dataset.ico,20));
+  initPWA();
   bindShellEvents();
   bindAuthEvents();
   bindCloudEvents();
@@ -3234,7 +3354,7 @@ function renderRecapPage(){
           <option value="jurnal" ${recapDraft.jenis==='jurnal'?'selected':''}>Jurnal</option>
           <option value="absensi" ${recapDraft.jenis==='absensi'?'selected':''}>Absensi</option>
           <option value="nilai" ${recapDraft.jenis==='nilai'?'selected':''}>Nilai</option>
-          <option value="gabungan" ${recapDraft.jenis==='gabungan'?'selected':''}>Absensi+Nilai</option>
+          <option value="gabungan" ${recapDraft.jenis==='gabungan'?'selected':''}>Absensi + Nilai</option>
         </select>
         <button class="btn btn-primary btn-sm" id="btn-terapkan-rekap">✅ Terapkan</button>
       </div>
@@ -3551,7 +3671,8 @@ function exportRecapGabunganExcel(){
     notifyError("Gagal membuat file Excel. Silakan coba lagi.");
   } finally { hideLoading(); }
 }
-  
+
+
 function exportFileNameBase(){
   const nama = (appState.profile?.namaGuru || "Guru").replace(/[^a-zA-Z0-9]+/g,"_");
   const tgl = todayISO().replace(/-/g,"");
@@ -3845,6 +3966,7 @@ function loadSettings(){ appState.settings = Object.assign(appState.settings, lo
 function renderSettingsPage(){
   const s = appState.settings;
   return `
+    ${renderInstallCard()}
     ${renderAccountCard()}
     <div class="card" style="max-width:560px;">
       <h3 class="card-title" style="margin-bottom:16px;">Tema</h3>
@@ -3878,6 +4000,7 @@ function renderSettingsPage(){
 
 function bindSettingsEvents(){
   bindAccountEvents();
+  bindInstallCard();
   $("#st-theme").addEventListener("change", e=>{ appState.settings.theme = e.target.value; saveSettings(); applyTheme(); });
   $("#st-passgrade").addEventListener("change", e=>{
     let v = Math.max(0, Math.min(100, Number(e.target.value)||75));
