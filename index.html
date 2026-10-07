@@ -3179,12 +3179,12 @@ function renderRecapPage(){
           <option value="jurnal" ${recapDraft.jenis==='jurnal'?'selected':''}>Jurnal</option>
           <option value="absensi" ${recapDraft.jenis==='absensi'?'selected':''}>Absensi</option>
           <option value="nilai" ${recapDraft.jenis==='nilai'?'selected':''}>Nilai</option>
+          <option value="gabungan" ${recapDraft.jenis==='gabungan'?'selected':''}>Absensi+Nilai</option>
         </select>
         <button class="btn btn-primary btn-sm" id="btn-terapkan-rekap">✅ Terapkan</button>
       </div>
       <div class="recap-actions">
         <button class="btn btn-secondary btn-sm" id="btn-export-excel">📊 Export Excel</button>
-        <button class="btn btn-primary btn-sm" id="btn-export-gabungan">${icon("download",15)} Download Absensi + Nilai (1 File)</button>
         <button class="btn btn-secondary btn-sm" id="btn-export-csv">⬇️ Download CSV</button>
         <button class="btn btn-outline btn-sm" id="btn-print-report">🖨️ Cetak Laporan</button>
       </div>
@@ -3196,6 +3196,7 @@ function renderRecapPage(){
 function renderRecapContent(){
   if (recapFilters.jenis === "jurnal") return renderRecapJurnal();
   if (recapFilters.jenis === "absensi") return renderRecapAbsensi();
+  if (recapFilters.jenis === "gabungan") return renderRecapGabungan();
   return renderRecapNilai();
 }
 
@@ -3292,7 +3293,6 @@ function bindRecapEvents(){
   });
 
   $("#btn-export-excel").addEventListener("click", ()=> exportRecapToExcel());
-  $("#btn-export-gabungan").addEventListener("click", exportRekapGabungan);
   $("#btn-export-csv").addEventListener("click", ()=> exportRecapToCSV());
   $("#btn-print-report").addEventListener("click", printReport);
 }
@@ -3300,6 +3300,7 @@ function bindRecapEvents(){
    17. EXPORT EXCEL / CSV / PRINT
    ========================================================================= */
 function buildExportRows(){
+  if (recapFilters.jenis === "gabungan") return buildCombinedRecap().gabungan;
   if (recapFilters.jenis === "jurnal"){
     return filterJournalsForRecap().map((j,i)=>({ No:i+1, Tanggal:j.tanggal, Kelas:j.kelas, Mapel:j.mataPelajaran, Materi:j.materi, Status:j.status }));
   }
@@ -3335,9 +3336,10 @@ function buildExportRows(){
 }
 
 /* =========================================================================
-   EXPORT REKAP GABUNGAN: ABSENSI + NILAI DALAM 1 FILE EXCEL
-   Mengikuti filter di halaman Rekapitulasi (periode, rentang tanggal, kelas).
-   Isi file (4 sheet): Ringkasan | Gabungan | Rekap Absensi | Rekap Nilai
+   REKAP GABUNGAN "ABSENSI + NILAI" (pilihan baru di filter Jenis)
+   - Tampil sebagai tabel di halaman Rekapitulasi
+   - Diunduh lewat tombol Export Excel yang sudah ada (1 file, 4 sheet):
+     Ringkasan | Gabungan | Rekap Absensi | Rekap Nilai
    ========================================================================= */
 const REKAP_PERIODE_LABEL = {
   hari_ini: "Hari Ini", minggu_ini: "Minggu Ini", bulan_ini: "Bulan Ini",
@@ -3437,6 +3439,24 @@ function buildCombinedRecap(){
   return { gabungan, absensi, nilai, ringkasan, range, studentCount: students.length };
 }
 
+function renderRecapGabungan(){
+  const d = buildCombinedRecap();
+  if (!d.gabungan.length) return `<div class="card">${emptyStateHtml(icon("chart",52,1.5), "Belum ada data absensi maupun nilai pada rentang ini.")}</div>`;
+  const kkm = Number(appState.settings.passGrade) || 75;
+  const badge = r => r.Status === "Tuntas" ? '<span class="badge badge-green">Tuntas</span>'
+    : r.Status === "-" ? "-" : '<span class="badge badge-red">Perlu Bimbingan</span>';
+  const pctCell = v => v === "-" ? "-" : (v >= 90 ? "🟢 " : v >= 75 ? "🟡 " : "🔴 ") + v + "%";
+  return `<div class="card"><div class="small-muted" style="margin-bottom:10px;">${d.studentCount} siswa · KKM ${kkm} · unduh lewat tombol <b>Export Excel</b> untuk file lengkap (4 sheet)</div>
+    <div class="table-wrap"><table>
+    <thead><tr><th>No</th><th>Kelas</th><th>Nama Siswa</th><th>H</th><th>I</th><th>S</th><th>A</th><th>% Hadir</th>
+      <th>Tugas</th><th>Sikap</th><th>Keaktifan</th><th>Ulangan</th><th>Rata-rata</th><th>Status</th></tr></thead>
+    <tbody>${d.gabungan.map(r=>`<tr><td>${r["No"]}</td><td>${escapeHtml(r["Kelas"])}</td><td>${escapeHtml(r["Nama Siswa"])}</td>
+      <td>${r["Hadir"]}</td><td>${r["Izin"]}</td><td>${r["Sakit"]}</td><td>${r["Alpa"]}</td><td>${pctCell(r["% Kehadiran"])}</td>
+      <td>${r["Tugas"]}</td><td>${r["Sikap"]}</td><td>${r["Keaktifan"]}</td><td>${r["Ulangan"]}</td>
+      <td><b>${r["Rata-rata Nilai"]}</b></td><td>${badge(r)}</td></tr>`).join("")}</tbody>
+  </table></div></div>`;
+}
+
 function setColWidths(ws, rows){
   if (!rows.length) return;
   const keys = Object.keys(rows[0]);
@@ -3445,14 +3465,8 @@ function setColWidths(ws, rows){
   }));
 }
 
-function exportRekapGabungan(){
+function exportRecapGabunganExcel(){
   if (!window.XLSX) return notifyError("Library Excel belum tersedia. Pastikan perangkat online sekali, lalu coba lagi.");
-
-  // Pakai filter yang sedang dipilih di layar (otomatis diterapkan jika belum ditekan "Terapkan")
-  if (JSON.stringify(recapDraft) !== JSON.stringify(recapFilters)){
-    recapFilters = Object.assign({}, recapDraft);
-    const box = $("#recap-content"); if (box) box.innerHTML = renderRecapContent();
-  }
 
   const data = buildCombinedRecap();
   if (!data.gabungan.length) return notifyWarning("Tidak ada data absensi maupun nilai pada filter ini.");
@@ -3491,6 +3505,7 @@ function exportFileNameBase(){
 
 function exportRecapToExcel(){
   if (!window.XLSX) return notifyError("Library Excel belum tersedia. Silakan coba kembali.");
+  if (recapFilters.jenis === "gabungan") return exportRecapGabunganExcel();
   const rows = buildExportRows();
   if (!rows.length) return notifyWarning("Tidak ada data untuk diekspor pada filter ini.");
   showLoading("Menyiapkan file Excel...");
