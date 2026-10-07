@@ -3184,6 +3184,7 @@ function renderRecapPage(){
       </div>
       <div class="recap-actions">
         <button class="btn btn-secondary btn-sm" id="btn-export-excel">📊 Export Excel</button>
+        <button class="btn btn-primary btn-sm" id="btn-export-gabungan">${icon("download",15)} Download Absensi + Nilai (1 File)</button>
         <button class="btn btn-secondary btn-sm" id="btn-export-csv">⬇️ Download CSV</button>
         <button class="btn btn-outline btn-sm" id="btn-print-report">🖨️ Cetak Laporan</button>
       </div>
@@ -3291,6 +3292,7 @@ function bindRecapEvents(){
   });
 
   $("#btn-export-excel").addEventListener("click", ()=> exportRecapToExcel());
+  $("#btn-export-gabungan").addEventListener("click", exportRekapGabungan);
   $("#btn-export-csv").addEventListener("click", ()=> exportRecapToCSV());
   $("#btn-print-report").addEventListener("click", printReport);
 }
@@ -3332,6 +3334,155 @@ function buildExportRows(){
   }));
 }
 
+/* =========================================================================
+   EXPORT REKAP GABUNGAN: ABSENSI + NILAI DALAM 1 FILE EXCEL
+   Mengikuti filter di halaman Rekapitulasi (periode, rentang tanggal, kelas).
+   Isi file (4 sheet): Ringkasan | Gabungan | Rekap Absensi | Rekap Nilai
+   ========================================================================= */
+const REKAP_PERIODE_LABEL = {
+  hari_ini: "Hari Ini", minggu_ini: "Minggu Ini", bulan_ini: "Bulan Ini",
+  semester_ini: "Semester Ini", custom: "Rentang Tanggal"
+};
+
+function buildCombinedRecap(){
+  const journals = filterJournalsForRecap();                 // sudah memakai filter periode & kelas
+  const ids = new Set(journals.map(j => j.journalId));
+  const passGrade = Number(appState.settings.passGrade) || 75;
+  const cats = ["Tugas", "Sikap", "Keaktifan", "Ulangan"];
+
+  // satu baris per siswa (kunci: nama + kelas)
+  const map = {};
+  const getRow = (nama, kelas) => {
+    const key = nama + "|" + (kelas || "");
+    return map[key] = map[key] || { kelas: kelas || "-", nama, H:0, I:0, S:0, A:0, total:0,
+      Tugas:[], Sikap:[], Keaktifan:[], Ulangan:[] };
+  };
+
+  appState.attendance.forEach(a => {
+    if (!ids.has(a.journalId)) return;
+    const r = getRow(a.nama, a.kelas);
+    r.total++;
+    if (a.status === "H") r.H++; else if (a.status === "I") r.I++;
+    else if (a.status === "S") r.S++; else if (a.status === "A") r.A++;
+  });
+  appState.scores.forEach(s => {
+    if (!ids.has(s.journalId)) return;
+    const r = getRow(s.nama, s.kelas);
+    if (r[s.kategori] && !isNaN(Number(s.nilai))) r[s.kategori].push(Number(s.nilai));
+  });
+
+  const avg = arr => arr.length ? arr.reduce((x, y) => x + y, 0) / arr.length : null;
+  const r1 = v => v === null ? "-" : Math.round(v * 10) / 10;
+
+  const students = Object.values(map).map(r => {
+    const catAvg = cats.map(c => avg(r[c]));
+    const valid = catAvg.filter(v => v !== null);
+    const overall = valid.length ? valid.reduce((x, y) => x + y, 0) / valid.length : null;
+    const pct = r.total ? Math.round((r.H / r.total) * 100) : null;
+    return { ...r, catAvg, overall, pct,
+      status: overall === null ? "-" : (overall >= passGrade ? "Tuntas" : "Perlu Bimbingan") };
+  }).sort((a, b) => a.kelas.localeCompare(b.kelas, "id") || a.nama.localeCompare(b.nama, "id"));
+
+  // --- Sheet "Gabungan" ---
+  const gabungan = students.map((r, i) => ({
+    "No": i + 1, "Kelas": r.kelas, "Nama Siswa": r.nama,
+    "Hadir": r.H, "Izin": r.I, "Sakit": r.S, "Alpa": r.A,
+    "Jumlah Pertemuan": r.total, "% Kehadiran": r.pct === null ? "-" : r.pct,
+    "Tugas": r1(r.catAvg[0]), "Sikap": r1(r.catAvg[1]), "Keaktifan": r1(r.catAvg[2]), "Ulangan": r1(r.catAvg[3]),
+    "Rata-rata Nilai": r1(r.overall), "Status": r.status
+  }));
+
+  // --- Sheet "Rekap Absensi" ---
+  const absensi = students.filter(r => r.total > 0).map((r, i) => ({
+    "No": i + 1, "Kelas": r.kelas, "Nama Siswa": r.nama,
+    "Hadir": r.H, "Izin": r.I, "Sakit": r.S, "Alpa": r.A,
+    "Jumlah Pertemuan": r.total, "% Kehadiran": r.pct
+  }));
+
+  // --- Sheet "Rekap Nilai" (urut peringkat) ---
+  const nilai = students.filter(r => r.overall !== null)
+    .sort((a, b) => b.overall - a.overall)
+    .map((r, i) => ({
+      "Peringkat": i + 1, "Kelas": r.kelas, "Nama Siswa": r.nama,
+      "Tugas": r1(r.catAvg[0]), "Sikap": r1(r.catAvg[1]), "Keaktifan": r1(r.catAvg[2]), "Ulangan": r1(r.catAvg[3]),
+      "Rata-rata Nilai": r1(r.overall), "Status": r.status
+    }));
+
+  // --- Sheet "Ringkasan" ---
+  const range = getRecapDateRange();
+  const fmt = d => d ? (typeof formatDateShort === "function" ? formatDateShort(d) : d) : "-";
+  const withAtt = students.filter(r => r.pct !== null);
+  const withScore = students.filter(r => r.overall !== null);
+  const meanAtt = withAtt.length ? Math.round(withAtt.reduce((x, r) => x + r.pct, 0) / withAtt.length) : null;
+  const meanScore = withScore.length ? withScore.reduce((x, r) => x + r.overall, 0) / withScore.length : null;
+  const p = appState.profile || {};
+  const ringkasan = [
+    ["REKAP ABSENSI & NILAI SISWA"], [],
+    ["Nama Guru", p.namaGuru || "-"],
+    ["NIP", p.nip || "-"],
+    ["Mata Pelajaran", p.mataPelajaran || "-"],
+    ["Kelas", recapFilters.kelas || "Semua Kelas"],
+    ["Periode", REKAP_PERIODE_LABEL[recapFilters.periode] || recapFilters.periode],
+    ["Rentang Tanggal", fmt(range.dari) + " s.d. " + fmt(range.sampai)],
+    ["Tanggal Unduh", fmt(todayISO())], [],
+    ["Jumlah Pertemuan (Jurnal)", journals.length],
+    ["Jumlah Siswa", students.length],
+    ["Rata-rata Kehadiran", meanAtt === null ? "-" : meanAtt + "%"],
+    ["Rata-rata Nilai", meanScore === null ? "-" : Math.round(meanScore * 10) / 10],
+    ["KKM / Batas Tuntas", passGrade],
+    ["Siswa Tuntas", withScore.filter(r => r.status === "Tuntas").length],
+    ["Siswa Perlu Bimbingan", withScore.filter(r => r.status !== "Tuntas").length]
+  ];
+
+  return { gabungan, absensi, nilai, ringkasan, range, studentCount: students.length };
+}
+
+function setColWidths(ws, rows){
+  if (!rows.length) return;
+  const keys = Object.keys(rows[0]);
+  ws["!cols"] = keys.map(k => ({
+    wch: Math.min(34, Math.max(k.length, ...rows.map(r => String(r[k] ?? "").length)) + 2)
+  }));
+}
+
+function exportRekapGabungan(){
+  if (!window.XLSX) return notifyError("Library Excel belum tersedia. Pastikan perangkat online sekali, lalu coba lagi.");
+
+  // Pakai filter yang sedang dipilih di layar (otomatis diterapkan jika belum ditekan "Terapkan")
+  if (JSON.stringify(recapDraft) !== JSON.stringify(recapFilters)){
+    recapFilters = Object.assign({}, recapDraft);
+    const box = $("#recap-content"); if (box) box.innerHTML = renderRecapContent();
+  }
+
+  const data = buildCombinedRecap();
+  if (!data.gabungan.length) return notifyWarning("Tidak ada data absensi maupun nilai pada filter ini.");
+
+  showLoading("Menyiapkan file Excel...");
+  try {
+    const wb = XLSX.utils.book_new();
+
+    const wsR = XLSX.utils.aoa_to_sheet(data.ringkasan);
+    wsR["!cols"] = [{ wch: 28 }, { wch: 34 }];
+    XLSX.utils.book_append_sheet(wb, wsR, "Ringkasan");
+
+    const sheets = [["Gabungan", data.gabungan], ["Rekap Absensi", data.absensi], ["Rekap Nilai", data.nilai]];
+    sheets.forEach(([name, rows]) => {
+      const ws = rows.length ? XLSX.utils.json_to_sheet(rows) : XLSX.utils.aoa_to_sheet([["Tidak ada data pada filter ini."]]);
+      setColWidths(ws, rows);
+      XLSX.utils.book_append_sheet(wb, ws, name);
+    });
+
+    const slug = s => String(s || "").replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "");
+    const fname = ["Rekap_Absensi_Nilai", slug(recapFilters.kelas) || "Semua_Kelas",
+      data.range.dari || "awal", data.range.sampai || "akhir"].join("_") + ".xlsx";
+    XLSX.writeFile(wb, fname);
+    notifySuccess("File rekap absensi & nilai berhasil diunduh.");
+  } catch (e) {
+    console.error(e);
+    notifyError("Gagal membuat file Excel. Silakan coba lagi.");
+  } finally { hideLoading(); }
+}
+  
 function exportFileNameBase(){
   const nama = (appState.profile?.namaGuru || "Guru").replace(/[^a-zA-Z0-9]+/g,"_");
   const tgl = todayISO().replace(/-/g,"");
