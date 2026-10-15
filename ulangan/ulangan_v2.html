@@ -42,7 +42,7 @@ body.hid #v-x .c{filter:blur(28px);pointer-events:none}
 <p><button onclick="lg()">Masuk</button> <button class="g" onclick="location.reload()">Kembali</button></p><div class="er" id="lm"></div></div></div>
 <!-- GURU -->
 <div id="v-t" hidden>
-<div class="c f"><b id="un"></b><span><button class="g s" onclick="cp()">Ganti Password</button> <button class="g s" onclick="location.reload()">Keluar</button></span></div>
+<div class="c f"><b id="un"></b><span><button class="g s" onclick="cp()">Ganti Password</button> <button class="g s" onclick="out()">Keluar</button></span></div>
 <div class="tabs" id="tb"></div>
 <div id="p0"><div class="c"><h3 id="ft">Buat Ulangan Baru</h3>
 <div class="r4"><div><label>Judul ulangan</label><input id="fj"></div><div><label>Token</label><input id="fk"></div><div><label>Waktu (menit)</label><input id="fd" type="number" value="30"></div><div><label>Jumlah soal tampil</label><input id="fn" type="number" value="10"></div></div>
@@ -64,7 +64,7 @@ const NR=['saveTest','addUser'];
 const api=async(f,a={})=>{const body=JSON.stringify({f,a:f=='start'?{...a,cid:crypto.randomUUID?crypto.randomUUID():Date.now()+''+Math.random()}:a}),n=NR.includes(f)?1:4;let err='';
 for(let i=0;i<n;i++){const ac=new AbortController(),to=setTimeout(()=>ac.abort(),30000);
 try{const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body,signal:ac.signal});clearTimeout(to);
-const r=await res.json();if(r&&r.error)throw{app:r.error};return r}
+const tx=await res.text(),r=tx?JSON.parse(tx):{ok:1};if(r&&r.error)throw{app:r.error};return r}
 catch(e){clearTimeout(to);if(e&&e.app)throw e.app;err=e.name=='AbortError'?'waktu habis':(e.message||'tidak diketahui');if(i<n-1)await new Promise(z=>setTimeout(z,700*(i+1)))}}
 throw 'Gagal terhubung ke server ('+err+'). Coba lagi.'};
 const show=v=>['s','x','d','l','t'].forEach(k=>$('v-'+k).hidden=k!=v);
@@ -113,10 +113,13 @@ onbeforeunload=e=>{if(G){e.preventDefault();return e.returnValue=''}};
 
 /* ===== GURU ===== */
 let U,TK,TL=[],RR=[],UP,iv,ready,EID='';
-async function lg(){try{U=await api('login',{u:$('lu').value.trim(),p:$('lp').value});TK=U.t;
+const sg=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},gg=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+function out(){try{localStorage.removeItem('ses');localStorage.removeItem('tab')}catch(e){}location.reload()}
+async function lg(){try{U=await api('login',{u:$('lu').value.trim(),p:$('lp').value});sg('ses',JSON.stringify(U));ent(0)}catch(e){$('lm').textContent=e}}
+function ent(n){TK=U.t;
 ready=L('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js').then(()=>L('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')).then(()=>L('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'));
-$('un').textContent=U.n+' ('+U.r+')';$('tb').innerHTML=['Ulangan','Hasil & Monitoring'].concat(U.r=='admin'?['Pengguna','Database']:[]).map((t,i)=>`<button onclick="tab(${i})">${t}</button>`).join('');show('t');tab(0)}catch(e){$('lm').textContent=e}}
-function tab(n){[0,1,2,3].forEach(i=>$('p'+i).hidden=i!=n);[...$('tb').children].forEach((b,i)=>b.classList.toggle('on',i==n));clearInterval(iv);
+$('un').textContent=U.n+' ('+U.r+')';$('tb').innerHTML=['Ulangan','Hasil & Monitoring'].concat(U.r=='admin'?['Pengguna','Database']:[]).map((t,i)=>`<button onclick="tab(${i})">${t}</button>`).join('');show('t');tab(n)}
+function tab(n){sg('tab',n);[0,1,2,3].forEach(i=>$('p'+i).hidden=i!=n);[...$('tb').children].forEach((b,i)=>b.classList.toggle('on',i==n));clearInterval(iv);
 if(n==0)ldT();if(n==1){ldT().then(()=>{lr();iv=setInterval(lr,10000)})}if(n==2)ldU()}
 async function ldT(){TL=await api('tests',{t:TK});
 $('tl').innerHTML='<tr><th>Judul</th><th>Token</th><th>Waktu</th><th>Soal tampil/total</th><th>Status</th><th></th></tr>'+TL.map(t=>`<tr><td>${E(t.judul)}${U.r=='admin'?'<br><small>'+E(t.owner)+'</small>':''}</td><td>${E(t.token)}</td><td>${t.durasi} mnt</td><td>${t.jumlah}/${t.n}</td><td>${t.aktif?'Aktif':'Nonaktif'}</td><td><button class="s g" onclick="ed('${t.id}')">Edit</button> <button class="s g" onclick="up('${t.id}')">Upload soal</button> <button class="s r" onclick="dt('${t.id}')">Hapus</button></td></tr>`).join('');
@@ -152,5 +155,9 @@ async function ldU(){const u=await api('users',{t:TK});$('ut').innerHTML='<tr><t
 async function au(){try{await api('addUser',{t:TK,u:$('au1').value.trim(),p:$('au2').value,n:$('au3').value.trim()});$('au1').value=$('au2').value=$('au3').value='';ldU()}catch(e){alert(e)}}
 async function du(u){if(confirm('Hapus akun '+u+'?')){await api('delUser',{t:TK,u});ldU()}}
 async function rst(mode){if(prompt('Ketik HAPUS untuk mengosongkan database ('+mode+'). Tindakan ini tidak bisa dibatalkan.')=='HAPUS'){await api('resetDb',{t:TK,mode});alert('Database dikosongkan.')}}
+(async()=>{let s;try{s=JSON.parse(gg('ses')||'null')}catch(e){}if(!s||!s.t)return;
+U=s;TK=s.t;show('t');$('un').textContent=U.n+' ('+U.r+')';
+try{await api('me',{t:TK});ent(Math.min(+gg('tab')||0,U.r=='admin'?3:1))}
+catch(e){show('l');if(/Sesi/.test(e)){try{localStorage.removeItem('ses')}catch(x){}}$('lm').textContent=/Sesi/.test(e)?'Sesi berakhir, silakan login kembali.':String(e)}})();
 async function cp(){const p=prompt('Password baru (min. 5 karakter):');if(p)try{await api('chPass',{t:TK,p});alert('Password diganti.')}catch(e){alert(e)}}
 </script></body></html>
