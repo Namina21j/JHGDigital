@@ -59,7 +59,8 @@ body.hid #v-x .c{filter:blur(28px);pointer-events:none}
 <div id="pa"></div>
 <script>
 const $=i=>document.getElementById(i),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const api=(f,a={})=>new Promise((ok,no)=>google.script.run.withSuccessHandler(r=>r&&r.error?no(r.error):ok(r)).withFailureHandler(e=>no(e.message)).api(f,a));
+const API_URL='https://script.google.com/macros/s/AKfycbxFRvBuCQouvKHjHRHRZWSFzGqkgf3VBuBk52z8qlq2N1EuIoMrYUNT7xSq6AK9deM/exec'; // <-- TEMPEL URL DEPLOY DI SINI
+const api=async(f,a={})=>{const r=await(await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({f,a})})).json();if(r&&r.error)throw r.error;return r};
 const show=v=>['s','x','d','l','t'].forEach(k=>$('v-'+k).hidden=k!=v);
 const L=u=>new Promise(r=>{const s=document.createElement('script');s.src=u;s.onload=r;document.head.appendChild(s)});
 const opt=a=>a.map(v=>`<option>${v}</option>`).join('');
