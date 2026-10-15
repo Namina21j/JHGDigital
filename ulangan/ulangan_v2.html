@@ -1,0 +1,149 @@
+<!DOCTYPE html><html lang="id"><head><base target="_top"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ulangan Harian</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,sans-serif;background:#f1f5f9;color:#0f172a}
+.w{max-width:960px;margin:auto;padding:14px}.c{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 3px #0002;margin-bottom:12px}
+h2,h3{margin:.2em 0 .6em}label{display:block;font-size:13px;color:#475569;margin:8px 0 2px}
+input,select{width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:#fff}
+input[type=checkbox]{width:auto}
+button{padding:9px 14px;border:0;border-radius:8px;background:#2563eb;color:#fff;font:inherit;cursor:pointer}
+button:disabled{opacity:.5}button.g{background:#e2e8f0;color:#0f172a}button.r{background:#dc2626}button.s{padding:4px 8px;font-size:13px}
+.r2{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.r4{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px}
+.f{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e2e8f0;padding:6px;text-align:left}.sc{overflow-x:auto}
+.op{display:block;width:100%;text-align:left;background:#fff;color:inherit;border:2px solid #e2e8f0;margin:6px 0;padding:10px}.op.on{border-color:#2563eb;background:#eff6ff}
+.nv button{width:38px;margin:2px;padding:6px 0}.nv .d{background:#16a34a;color:#fff}.nv .cur{outline:3px solid #0f172a}
+img.q{max-width:100%;max-height:300px;margin:8px 0;pointer-events:none}
+body.ex{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+body.hid #v-x .c{filter:blur(28px);pointer-events:none}
+#ov{position:fixed;inset:0;background:#000e;color:#fff;display:none;place-items:center;text-align:center;padding:20px;z-index:9}
+.tabs{margin-bottom:10px}.tabs button{background:#e2e8f0;color:#0f172a;margin:0 4px 4px 0}.tabs button.on{background:#2563eb;color:#fff}
+.er{color:#dc2626;font-size:13px;margin-top:6px}#pa{display:none}
+@media print{body>*:not(#pa){display:none!important}#pa{display:block}body.ex>*{display:none!important}}
+@media(max-width:600px){.r2,.r4{grid-template-columns:1fr}}
+</style></head><body>
+<div class="w">
+<!-- SISWA -->
+<div id="v-s"><div class="c"><h2>📝 Ulangan Harian</h2>
+<label>Nama lengkap</label><input id="nm" autocomplete="off">
+<div class="r2"><div><label>Tingkat</label><select id="tg"></select></div><div><label>Kelas</label><select id="kl"></select></div><div><label>No. Absen</label><select id="ab"></select></div></div>
+<label>Pilih ulangan</label><select id="ts"></select>
+<label>Token</label><input id="tk" autocomplete="off">
+<p><button id="gb" onclick="go()">Mulai Ulangan</button></p><div class="er" id="se"></div>
+<small style="color:#64748b">Selama ulangan dilarang membuka tab/aplikasi lain, keluar layar penuh, menyalin, atau tangkap layar. Pelanggaran ke-3 mengumpulkan ulangan otomatis.</small>
+<p><button class="g s" onclick="show('l')">Login Guru</button></p></div></div>
+<!-- UJIAN -->
+<div id="v-x" hidden><div class="c f"><b id="xn"></b><b id="xt">00:00</b></div><div class="c" id="xq"></div><div class="c nv" id="xv"></div>
+<div class="c f"><button class="g" onclick="mv(-1)">← Sebelumnya</button><button onclick="mv(1)">Berikutnya →</button><button class="r" onclick="fin()">Selesai</button></div></div>
+<!-- HASIL SISWA -->
+<div id="v-d" hidden><div class="c" style="text-align:center"><h2>Ulangan Selesai ✅</h2><div id="dr" style="font-size:20px"></div><p>Jawaban Anda telah tersimpan. Silakan tutup halaman ini.</p></div></div>
+<!-- LOGIN GURU -->
+<div id="v-l" hidden><div class="c" style="max-width:380px;margin:auto"><h2>Login Guru / Admin</h2>
+<label>Username</label><input id="lu"><label>Password</label><input id="lp" type="password" onkeydown="event.key=='Enter'&&lg()">
+<p><button onclick="lg()">Masuk</button> <button class="g" onclick="location.reload()">Kembali</button></p><div class="er" id="lm"></div></div></div>
+<!-- GURU -->
+<div id="v-t" hidden>
+<div class="c f"><b id="un"></b><span><button class="g s" onclick="cp()">Ganti Password</button> <button class="g s" onclick="location.reload()">Keluar</button></span></div>
+<div class="tabs" id="tb"></div>
+<div id="p0"><div class="c"><h3 id="ft">Buat Ulangan Baru</h3>
+<div class="r4"><div><label>Judul ulangan</label><input id="fj"></div><div><label>Token</label><input id="fk"></div><div><label>Waktu (menit)</label><input id="fd" type="number" value="30"></div><div><label>Jumlah soal tampil</label><input id="fn" type="number" value="10"></div></div>
+<p><label style="display:inline"><input type="checkbox" id="fa" checked> Aktif (bisa dikerjakan siswa)</label></p>
+<button onclick="st()">Simpan</button> <button class="g" onclick="rf()">Batal</button> <button class="g" onclick="tpl()">⬇ Template Soal (Excel)</button></div>
+<div class="c sc"><table id="tl"></table></div><input type="file" id="fu" accept=".xlsx,.xls" hidden></div>
+<div id="p1" hidden><div class="c"><div class="f"><select id="rs" style="max-width:360px" onchange="lr()"></select><span><button class="s" onclick="xl()">Excel</button> <button class="s" onclick="pd()">PDF</button> <button class="s g" onclick="pr()">Cetak</button></span></div>
+<p id="sa" style="color:#475569"></p><div class="sc"><table id="rt"></table></div><small>Diperbarui otomatis tiap 10 detik.</small></div></div>
+<div id="p2" hidden><div class="c"><h3>Tambah Akun Guru</h3><div class="r4"><input id="au1" placeholder="Username"><input id="au2" placeholder="Password"><input id="au3" placeholder="Nama guru"><button onclick="au()">Tambah</button></div></div><div class="c sc"><table id="ut"></table></div></div>
+<div id="p3" hidden><div class="c"><h3>Kosongkan Database</h3><p>Hapus seluruh rekaman hasil siswa, atau hapus semuanya (ulangan + soal + hasil). Akun guru tetap ada.</p>
+<button class="r" onclick="rst('hasil')">Kosongkan Hasil Siswa</button> <button class="r" onclick="rst('semua')">Kosongkan Semua Data Ulangan</button></div></div>
+</div></div>
+<div id="ov"><div><h2 id="ot"></h2><p id="op"></p><button id="ob" onclick="rs()">Saya mengerti, lanjutkan</button></div></div>
+<div id="pa"></div>
+<script>
+const $=i=>document.getElementById(i),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const api=(f,a={})=>new Promise((ok,no)=>google.script.run.withSuccessHandler(r=>r&&r.error?no(r.error):ok(r)).withFailureHandler(e=>no(e.message)).api(f,a));
+const show=v=>['s','x','d','l','t'].forEach(k=>$('v-'+k).hidden=k!=v);
+const L=u=>new Promise(r=>{const s=document.createElement('script');s.src=u;s.onload=r;document.head.appendChild(s)});
+const opt=a=>a.map(v=>`<option>${v}</option>`).join('');
+$('tg').innerHTML=opt([7,8,9]);$('kl').innerHTML=opt('ABCDEFGHI'.split(''));$('ab').innerHTML=opt(Array.from({length:32},(_,i)=>String(i+1).padStart(2,'0')));
+api('pub').then(r=>$('ts').innerHTML=r.length?r.map(t=>`<option value="${t.id}">${E(t.judul)} (${E(t.guru)})</option>`).join(''):'<option value="">(Belum ada ulangan aktif)</option>').catch(e=>$('se').textContent=e);
+
+/* ===== SISWA ===== */
+let X,G=0,tm,iv2,sd,lv=0;const MAX=3;
+const fs=()=>{try{document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}};
+const gi=u=>{const m=/drive\.google\.com.*?(?:\/d\/|[?&]id=)([\w-]+)/.exec(u);return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w1000`:u};
+async function go(){const nama=$('nm').value.trim();if(!nama||!$('ts').value||!$('tk').value)return $('se').textContent='Lengkapi semua isian.';
+$('gb').disabled=true;$('se').textContent='Memuat soal...';fs();
+try{begin(await api('start',{testId:$('ts').value,token:$('tk').value,nama,tingkat:$('tg').value,kelas:$('kl').value,absen:$('ab').value}))}
+catch(e){$('se').textContent=e;$('gb').disabled=false;try{document.exitFullscreen()}catch(x){}}}
+function begin(r){X={...r,a:{},i:0,v:0,end:Date.now()+r.durasi*6e4};$('xn').textContent=r.judul;document.body.classList.add('ex');show('x');G=1;rn();tm=setInterval(tk,1000);tk();iv2=setInterval(sv,20000)}
+function tk(){const s=Math.max(0,Math.round((X.end-Date.now())/1000));$('xt').textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(!s)fin(1)}
+function rn(){const q=X.q[X.i];
+$('xq').innerHTML=`<small>Soal ${X.i+1} dari ${X.q.length}</small><p style="font-size:17px;white-space:pre-wrap">${E(q.soal)}</p>${q.gambar?`<img class="q" src="${E(gi(q.gambar))}" referrerpolicy="no-referrer" draggable="false">`:''}`+
+'ABCDE'.split('').filter(k=>q[k]!=='').map(k=>`<button class="op${X.a[q.no]==k?' on':''}" onclick="pk('${k}')"><b>${k}.</b> ${E(q[k])}</button>`).join('');
+$('xv').innerHTML=X.q.map((q,i)=>`<button class="${X.a[q.no]?'d':'g'}${i==X.i?' cur':''}" onclick="X.i=${i};rn()">${i+1}</button>`).join('')}
+const mv=d=>{X.i=Math.min(X.q.length-1,Math.max(0,X.i+d));rn()};
+function pk(k){X.a[X.q[X.i].no]=k;rn();clearTimeout(sd);sd=setTimeout(sv,2500)}
+const sv=()=>api('save',{rid:X.rid,row:X.row,j:X.a,p:X.v,n:Object.keys(X.a).length}).catch(()=>{});
+async function fin(force){if(X.f)return;const n=Object.keys(X.a).length;G=0;
+if(!force&&!confirm(`Terjawab ${n} dari ${X.q.length} soal. Kumpulkan sekarang?`)){G=1;return}
+X.f=1;clearInterval(tm);clearInterval(iv2);clearTimeout(sd);
+try{const r=await api('finish',{rid:X.rid,row:X.row,j:X.a,p:X.v});document.body.classList.remove('ex','hid');try{document.exitFullscreen()}catch(e){}
+$('dr').innerHTML=`Nilai: <b>${r.skor}</b><br><small>Benar ${r.benar} dari ${r.total} soal</small>`;show('d')}
+catch(e){alert('Gagal menyimpan, mencoba lagi: '+e);X.f=0;G=1;tm=setInterval(tk,1000)}}
+/* anti-curang */
+function vi(m){if(!G||Date.now()-lv<1500)return;lv=Date.now();X.v++;sv();document.body.classList.add('hid');const last=X.v>=MAX;
+$('ot').textContent=(last?'Pelanggaran ':'Peringatan ')+X.v+'/'+MAX;
+$('op').textContent=last?'Ulangan dikumpulkan otomatis.':m+' Pelanggaran ke-'+MAX+' akan mengumpulkan ulangan otomatis.';
+$('ob').hidden=last;$('ov').style.display='grid';if(last)setTimeout(()=>{$('ov').style.display='none';fin(1)},2500)}
+function rs(){$('ov').style.display='none';document.body.classList.remove('hid');fs()}
+document.addEventListener('visibilitychange',()=>document.hidden&&vi('Anda meninggalkan halaman ulangan.'));
+addEventListener('blur',()=>{if(G){document.body.classList.add('hid');vi('Jendela ulangan kehilangan fokus.')}});
+addEventListener('focus',()=>{if(G&&$('ov').style.display!='grid')document.body.classList.remove('hid')});
+document.addEventListener('fullscreenchange',()=>G&&!document.fullscreenElement&&vi('Anda keluar dari layar penuh.'));
+['contextmenu','copy','cut','paste','dragstart','selectstart'].forEach(v=>document.addEventListener(v,e=>{if(!/INPUT|TEXTAREA/.test(e.target.tagName||''))e.preventDefault()}));
+document.addEventListener('keydown',e=>{if(!G)return;const k=e.key.toLowerCase();if(k=='f12'||k=='printscreen'||((e.ctrlKey||e.metaKey)&&k.length==1&&'cxvaspuij'.includes(k)))e.preventDefault()});
+document.addEventListener('keyup',e=>{if(G&&e.key=='PrintScreen'){try{navigator.clipboard.writeText('')}catch(x){}vi('Terdeteksi upaya tangkap layar.')}});
+onbeforeunload=e=>{if(G){e.preventDefault();return e.returnValue=''}};
+
+/* ===== GURU ===== */
+let U,TK,TL=[],RR=[],UP,iv,ready,EID='';
+async function lg(){try{U=await api('login',{u:$('lu').value.trim(),p:$('lp').value});TK=U.t;
+ready=L('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js').then(()=>L('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')).then(()=>L('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'));
+$('un').textContent=U.n+' ('+U.r+')';$('tb').innerHTML=['Ulangan','Hasil & Monitoring'].concat(U.r=='admin'?['Pengguna','Database']:[]).map((t,i)=>`<button onclick="tab(${i})">${t}</button>`).join('');show('t');tab(0)}catch(e){$('lm').textContent=e}}
+function tab(n){[0,1,2,3].forEach(i=>$('p'+i).hidden=i!=n);[...$('tb').children].forEach((b,i)=>b.classList.toggle('on',i==n));clearInterval(iv);
+if(n==0)ldT();if(n==1){ldT().then(()=>{lr();iv=setInterval(lr,10000)})}if(n==2)ldU()}
+async function ldT(){TL=await api('tests',{t:TK});
+$('tl').innerHTML='<tr><th>Judul</th><th>Token</th><th>Waktu</th><th>Soal tampil/total</th><th>Status</th><th></th></tr>'+TL.map(t=>`<tr><td>${E(t.judul)}${U.r=='admin'?'<br><small>'+E(t.owner)+'</small>':''}</td><td>${E(t.token)}</td><td>${t.durasi} mnt</td><td>${t.jumlah}/${t.n}</td><td>${t.aktif?'Aktif':'Nonaktif'}</td><td><button class="s g" onclick="ed('${t.id}')">Edit</button> <button class="s g" onclick="up('${t.id}')">Upload soal</button> <button class="s r" onclick="dt('${t.id}')">Hapus</button></td></tr>`).join('');
+const v=$('rs').value;$('rs').innerHTML=TL.map(t=>`<option value="${t.id}">${E(t.judul)}</option>`).join('');if(v)$('rs').value=v}
+function ed(id){const t=TL.find(x=>x.id==id);EID=id;$('ft').textContent='Edit Ulangan';$('fj').value=t.judul;$('fk').value=t.token;$('fd').value=t.durasi;$('fn').value=t.jumlah;$('fa').checked=t.aktif;scrollTo(0,0)}
+function rf(){EID='';$('ft').textContent='Buat Ulangan Baru';$('fj').value=$('fk').value='';$('fd').value=30;$('fn').value=10;$('fa').checked=true}
+async function st(){try{await api('saveTest',{t:TK,d:{id:EID,judul:$('fj').value.trim(),token:$('fk').value.trim(),durasi:$('fd').value,jumlah:$('fn').value,aktif:$('fa').checked}});rf();ldT()}catch(e){alert(e)}}
+async function dt(id){if(confirm('Hapus ulangan beserta soalnya? (hasil siswa tetap tersimpan)')){await api('delTest',{t:TK,id});ldT()}}
+function up(id){UP=id;$('fu').click()}
+$('fu').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await ready;const wb=XLSX.read(await f.arrayBuffer()),
+r=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''}).slice(1).filter(x=>String(x[1]).trim());
+alert(await api('uploadQ',{t:TK,id:UP,rows:r})+' soal berhasil diimpor.');ldT()}catch(x){alert(x)}e.target.value=''};
+async function tpl(){await ready;const w=XLSX.utils.aoa_to_sheet([['no','soal','A','B','C','D','E','kunci','gambar_url'],
+[1,'Ibu kota Indonesia adalah ...','Bandung','Jakarta','Surabaya','Medan','','B',''],
+[2,'Perhatikan gambar. Hewan apakah ini?','Kucing','Anjing','Kuda','Sapi','','A','https://contoh.com/gambar.jpg']]);
+w['!cols']=[{wch:5},{wch:50},{wch:16},{wch:16},{wch:16},{wch:16},{wch:16},{wch:7},{wch:40}];
+const b=XLSX.utils.book_new();XLSX.utils.book_append_sheet(b,w,'Soal');XLSX.writeFile(b,'template_soal.xlsx')}
+/* hasil */
+const H=['No','Nama','Kelas','Absen','Status','Terjawab','Benar','Nilai','Pelanggaran','Mulai','Selesai'];
+const rows=()=>RR.map((r,i)=>[i+1,r.nama,r.tingkat+r.kelas,r.absen,r.status,r.terjawab+'/'+r.total,r.benar,r.skor,r.pel,r.mulai,r.selesai]);
+const jd=()=>($('rs').selectedOptions[0]||{}).text||'Hasil';
+async function lr(){const id=$('rs').value;if(!id){RR=[];$('rt').innerHTML='';return}
+try{RR=(await api('results',{t:TK,id})).sort((a,b)=>(a.tingkat+a.kelas+a.absen).localeCompare(b.tingkat+b.kelas+b.absen))}catch(e){return}
+const s=RR.filter(r=>r.status=='Selesai'),av=s.length?(s.reduce((a,r)=>a+Number(r.skor),0)/s.length).toFixed(1):'-';
+$('sa').textContent=`Peserta: ${RR.length} | Selesai: ${s.length} | Sedang mengerjakan: ${RR.length-s.length} | Rata-rata: ${av}`;
+$('rt').innerHTML='<tr>'+H.map(h=>`<th>${h}</th>`).join('')+'<th></th></tr>'+rows().map((r,i)=>'<tr'+(RR[i].pel>0?' style="background:#fef2f2"':'')+'>'+r.map(c=>`<td>${E(c)}</td>`).join('')+`<td><button class="s g" title="Reset (siswa bisa mengulang)" onclick="dr('${RR[i].id}')">🗑</button></td></tr>`).join('')}
+async function dr(id){if(confirm('Hapus rekaman ini? Siswa dapat mengerjakan ulang.')){await api('delResult',{t:TK,id});lr()}}
+async function xl(){await ready;const w=XLSX.utils.aoa_to_sheet([[jd()],H,...rows()]);const b=XLSX.utils.book_new();XLSX.utils.book_append_sheet(b,w,'Hasil');XLSX.writeFile(b,'hasil_'+jd()+'.xlsx')}
+async function pd(){await ready;const d=new jspdf.jsPDF('l');d.text('Hasil Ulangan: '+jd(),14,12);d.autoTable({head:[H],body:rows(),startY:18,styles:{fontSize:8}});d.save('hasil_'+jd()+'.pdf')}
+function pr(){$('pa').innerHTML=`<h3>Hasil Ulangan: ${E(jd())}</h3><table><tr>${H.map(h=>'<th>'+h+'</th>').join('')}</tr>${rows().map(r=>'<tr>'+r.map(c=>'<td>'+E(c)+'</td>').join('')+'</tr>').join('')}</table>`;print()}
+/* admin */
+async function ldU(){const u=await api('users',{t:TK});$('ut').innerHTML='<tr><th>Username</th><th>Nama</th><th>Peran</th><th></th></tr>'+u.map(x=>`<tr><td>${E(x.u)}</td><td>${E(x.n)}</td><td>${x.r}</td><td>${x.u=='admin'?'':`<button class="s r" onclick="du('${E(x.u)}')">Hapus</button>`}</td></tr>`).join('')}
+async function au(){try{await api('addUser',{t:TK,u:$('au1').value.trim(),p:$('au2').value,n:$('au3').value.trim()});$('au1').value=$('au2').value=$('au3').value='';ldU()}catch(e){alert(e)}}
+async function du(u){if(confirm('Hapus akun '+u+'?')){await api('delUser',{t:TK,u});ldU()}}
+async function rst(mode){if(prompt('Ketik HAPUS untuk mengosongkan database ('+mode+'). Tindakan ini tidak bisa dibatalkan.')=='HAPUS'){await api('resetDb',{t:TK,mode});alert('Database dikosongkan.')}}
+async function cp(){const p=prompt('Password baru (min. 5 karakter):');if(p)try{await api('chPass',{t:TK,p});alert('Password diganti.')}catch(e){alert(e)}}
+</script></body></html>
