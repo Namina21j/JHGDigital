@@ -60,8 +60,13 @@ body.hid #v-x .c{filter:blur(28px);pointer-events:none}
 <script>
 const $=i=>document.getElementById(i),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const API_URL='https://script.google.com/macros/s/AKfycbxFRvBuCQouvKHjHRHRZWSFzGqkgf3VBuBk52z8qlq2N1EuIoMrYUNT7xSq6AK9deM/exec'; // URL deploy Google Apps Script
-const api=async(f,a={})=>{let r;try{r=await(await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({f,a})})).json()}catch(e){throw 'Gagal terhubung ke server. Periksa koneksi internet.'}
-if(r&&r.error)throw r.error;return r};
+const NR=['saveTest','addUser'];
+const api=async(f,a={})=>{const body=JSON.stringify({f,a:f=='start'?{...a,cid:crypto.randomUUID?crypto.randomUUID():Date.now()+''+Math.random()}:a}),n=NR.includes(f)?1:4;let err='';
+for(let i=0;i<n;i++){const ac=new AbortController(),to=setTimeout(()=>ac.abort(),30000);
+try{const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body,signal:ac.signal});clearTimeout(to);
+const r=await res.json();if(r&&r.error)throw{app:r.error};return r}
+catch(e){clearTimeout(to);if(e&&e.app)throw e.app;err=e.name=='AbortError'?'waktu habis':(e.message||'tidak diketahui');if(i<n-1)await new Promise(z=>setTimeout(z,700*(i+1)))}}
+throw 'Gagal terhubung ke server ('+err+'). Coba lagi.'};
 const show=v=>['s','x','d','l','t'].forEach(k=>$('v-'+k).hidden=k!=v);
 const L=u=>new Promise(r=>{const s=document.createElement('script');s.src=u;s.onload=r;document.head.appendChild(s)});
 const opt=a=>a.map(v=>`<option>${v}</option>`).join('');
