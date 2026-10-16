@@ -543,7 +543,7 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.7rem 0}
    (berakhiran /exec). Lihat PANDUAN.md.
    ===================================================================== */
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbz6wJPBx2vbaMsOl519I8RZ3BpuGQR0HA-eSF6rOI_In-t9w86O24jnTsA0jdkjfTLFZw/exec'
+  API_URL: 'https://script.google.com/macros/s/AKfycbzXid81zxqGGWUFryhZ7eNsVWJ1LJUAplhoYfsDCB3DqookSX8T4ZaIYg41Kz2Y-F8/exec'
 };
 
 const URL_XLSX = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
@@ -735,7 +735,17 @@ async function mulaiSesi(d, errEl, btn) {
   S.fsRequired = fsAda && !isIOS;
   if (S.fsRequired) { try { await fsMasuk(); } catch (e) { S.fsRequired = false; } }   // harus dari klik pengguna, sebelum menunggu server
   try {
-    const r = await api('mulai', d);
+    // 300 siswa menekan "Mulai" bersamaan: jeda acak singkat + ulangi otomatis (backoff) bila server sedang ramai
+    await sleep(Math.random() * 1500);
+    let r = null;
+    for (let i = 0; i < 8; i++) {
+      try { r = await api('mulai', d); } catch (e) { r = { ok: false, error: 'SERVER_SIBUK' }; }
+      if (r.ok || !(r.error === 'SERVER_SIBUK' || String(r.error).startsWith('SERVER'))) break;
+      errEl.style.color = 'var(--ink-2)'; errEl.textContent = `Server sedang ramai, mencoba lagi… (${i + 1}/8)`;
+      await sleep(1500 * (i + 1) * (0.7 + Math.random() * 0.6));
+    }
+    errEl.style.color = '';
+    if (r.error === 'SERVER_SIBUK' || String(r.error || '').startsWith('SERVER')) throw new Error('SIBUK');
     if (!r.ok) {
       fsKeluar(); errEl.textContent = pesanGalat(r.error);
       if (r.error === 'SUDAH_SELESAI') localStorage.removeItem('ulangan_sesi');
@@ -744,7 +754,7 @@ async function mulaiSesi(d, errEl, btn) {
     localStorage.setItem('ulangan_sesi', JSON.stringify(d));
     masukUjian(r, d);
   } catch (e) {
-    fsKeluar(); errEl.textContent = 'Tidak dapat terhubung ke server. Periksa internet, lalu coba lagi.';
+    fsKeluar(); errEl.textContent = e.message === 'SIBUK' ? 'Server masih sangat ramai. Tunggu sebentar lalu tekan tombol lagi.' : 'Tidak dapat terhubung ke server. Periksa internet, lalu coba lagi.';
     btn.disabled = false; cekForm();
   }
 }
@@ -755,7 +765,7 @@ function masukUjian(r, d) {
   Object.assign(S, {
     active: true, submitting: false, token: r.token, kode: d.kode, nama: d.nama, kelas: d.kelas, absen: pad2(d.absen), soal: r.soal,
     jawaban: Object.assign({}, r.jawaban, lokal), idx: 0, mulai: r.mulai, durMs: r.durasi * 60000, offset: r.serverNow - Date.now(),
-    pel: r.pelanggaran || 0, maxPel: r.maks, log: [], lastViol: 0, syncing: false, again: false, rev: 1, synced: 0
+    pel: r.pelanggaran || 0, maxPel: r.maks, log: [], lastViol: 0, syncing: false, again: false, rev: 1, synced: 0, habisT: null
   });
   const belum = S.soal.findIndex(q => !S.jawaban[q.no]); S.idx = belum < 0 ? 0 : belum;
   document.body.classList.add('exam-mode');
@@ -764,10 +774,10 @@ function masukUjian(r, d) {
   bangunPorts(); renderSoal(); renderHeader();
   history.pushState({ ujian: 1 }, '', location.href);
   clearInterval(S.timer); S.timer = setInterval(tick, 500); tick();
-  clearInterval(S.hb); S.hb = setInterval(syncNow, 15000);   // denyut + simpan massal tiap 15 dtk
+  clearTimeout(S.hb); const denyut = () => { S.hb = setTimeout(() => { syncNow(); denyut(); }, 50000 * (0.8 + Math.random() * 0.4)); }; denyut();   // denyut + simpan massal ±50 dtk (acak agar tidak serempak)
   if (r.lanjut) { S.log.push(jam(Date.now()) + ' Melanjutkan sesi'); S.rev++; }
   setTimeout(() => S.soal.forEach(q => { const s = urlGambar(q.gambar); if (s) new Image().src = s; }), 600);   // pra-muat gambar
-  jadwalSync(1500);
+  jadwalSync(2000 + Math.random() * 10000);
   if (S.pel >= S.maxPel) kumpulkan('PELANGGARAN (batas tercapai)');
 }
 
@@ -776,7 +786,10 @@ function tick() {
   if (!S.active) return;
   const s = sisaMs(), el = $('x-timer');
   el.textContent = mmss(s); el.classList.toggle('low', s <= 5 * 60000);
-  if (s <= 0 && !S.submitting) kumpulkan('WAKTU HABIS');
+  if (s <= 0 && !S.submitting && !S.habisT) {
+    $('x-simpan').textContent = 'Waktu habis. Jawabanmu segera dikirim…';
+    S.habisT = setTimeout(() => kumpulkan('WAKTU HABIS'), Math.random() * 8000);   // sebar agar 300 pengiriman tidak serempak
+  }
 }
 function renderHeader() {
   $('x-terjawab').textContent = `${Object.keys(S.jawaban).length}/${S.soal.length}`;
@@ -817,14 +830,14 @@ $('btn-next').addEventListener('click', () => ke(S.idx + 1));
 $('x-opsi').addEventListener('click', e => { const b = e.target.closest('button[data-h]'); if (b) pilih(b.dataset.h); });
 
 function pilih(h) {
-  if (!S.active || S.submitting) return;
+  if (!S.active || S.submitting || sisaMs() <= 0) return;
   const q = S.soal[S.idx];
   S.jawaban[q.no] = h; S.rev++;
   try { localStorage.setItem('ulangan_jawaban_' + S.token, JSON.stringify(S.jawaban)); } catch (e) {}
   // render ringan: hanya ubah tampilan pilihan, tanpa membangun ulang soal
   document.querySelectorAll('#x-opsi button').forEach(b => b.setAttribute('aria-checked', b.dataset.h === h));
   $('x-pilih').textContent = `Jawabanmu: ${h}`;
-  updatePorts(); renderHeader(); jadwalSync(3000);
+  updatePorts(); renderHeader(); jadwalSync(8000);
 }
 
 /* ---------- penyimpanan otomatis: satu panggilan membawa seluruh jawaban ---------- */
@@ -871,13 +884,13 @@ async function kumpulkan(alasan) {
   document.body.appendChild(box);
   const coba = async () => {
     $('kirim-aksi').hidden = true; $('kirim-teks').textContent = 'Jangan tutup halaman ini.';
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 10; i++) {
       try {
         const r = await api('selesai', { token: S.token, jawaban: strJ(S.jawaban), alasan, pelanggaran: S.pel });
         if (r.ok) { box.remove(); selesaiUI(r, alasan); return; }
         if (r.error === 'SESI_TIDAK_ADA') { box.remove(); sesiHilang(); return; }
       } catch (e) {}
-      await sleep(2000);
+      await sleep(1500 + Math.random() * 3500);
     }
     $('kirim-teks').textContent = 'Koneksi bermasalah, jawabanmu belum terkirim. Pastikan internet menyala, lalu coba lagi.';
     $('kirim-aksi').hidden = false;
@@ -885,7 +898,7 @@ async function kumpulkan(alasan) {
   $('kirim-ulang').onclick = coba; coba();
 }
 function tutupSesi() {
-  S.active = false; clearInterval(S.timer); clearInterval(S.hb); clearTimeout(S.syncT);
+  S.active = false; clearInterval(S.timer); clearTimeout(S.hb); clearTimeout(S.syncT); clearTimeout(S.habisT); S.habisT = null;
   document.body.classList.remove('exam-mode', 'blocked'); $('watermark').hidden = true; fsKeluar();
 }
 function selesaiUI(r, alasan) {
@@ -1071,7 +1084,7 @@ async function muatPantau() {
 $('p-refresh').addEventListener('click', muatPantau);
 function statusPeserta(p, now) {
   if (p.status === 'SELESAI') return { k: 'selesai', label: 'Selesai', cls: 'ok' };
-  if ((now - p.aktif) / 1000 > 90) return { k: 'masalah', label: 'Tidak aktif', cls: 'warn' };
+  if ((now - p.aktif) / 1000 > 150) return { k: 'masalah', label: 'Tidak aktif', cls: 'warn' };
   return { k: 'jalan', label: 'Mengerjakan', cls: 'run' };
 }
 function renderPantau() {
