@@ -4,17 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Ulangan Harian · Jaringan Komputer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>Ulangan Online</title>
 <style>
 :root{
   --ink:#12263A; --ink-2:#4A5D70; --paper:#EEF2F5; --surface:#FFFFFF; --line:#D3DBE3;
   --accent:#0B6E99; --accent-ink:#06425E; --accent-soft:#DDEFF7;
   --ok:#1E8E4E; --ok-soft:#DDF3E5; --warn:#B45309; --warn-soft:#FDEFD6; --bad:#B3261E; --bad-soft:#FBE3E1;
   --radius:10px;
-  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
@@ -177,6 +174,52 @@ details.analisis{margin-top:1.2rem;background:#fff;border:1px solid var(--line);
 details.analisis summary{cursor:pointer;font-weight:700;padding:.7rem 0}
 .jawab-ok{color:#14663A;font-weight:700}.jawab-no{color:var(--bad);font-weight:700}
 
+
+/* gambar pada soal */
+.gambar{margin:0 0 1.1rem}
+.gambar img{display:block;max-width:100%;max-height:340px;border-radius:8px;border:1px solid var(--line);background:#fff;-webkit-user-drag:none;pointer-events:none}
+.gagal-gambar{color:var(--bad);margin:0}
+/* kode ulangan */
+.kode-in{text-transform:uppercase;letter-spacing:.18em;font-size:1.3rem!important;text-align:center;font-weight:700}
+.ganti-kode{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;margin-bottom:1rem;flex-wrap:wrap}
+.ganti-kode b{letter-spacing:.12em}
+/* dasbor guru */
+.sec-h{display:flex;justify-content:space-between;align-items:center;gap:.8rem;margin:0 0 .9rem;flex-wrap:wrap}
+.sec-h h2{font-size:1.25rem}
+.ul-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:.9rem}
+.ul-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.5rem}
+.ul-card h3{font-size:1.05rem;line-height:1.3}
+.ul-card .kode{font-weight:700;font-size:1.35rem;letter-spacing:.14em}
+.ul-card .meta{color:var(--ink-2);font-size:.9rem}
+.ul-card .aksi{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:auto;padding-top:.4rem}
+.kembali{margin-bottom:.8rem}
+.ul-head{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1.1rem;margin-bottom:1rem;display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center}
+.ul-head h2{font-size:1.2rem;flex:1;min-width:220px}
+.ul-head .tautan{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.ul-head .tautan input{border:1.5px solid #9AA9B8;border-radius:8px;padding:.35em .6em;min-height:38px;width:min(360px,70vw);background:#F7F9FB}
+.subtabs{display:flex;gap:.3rem;border-bottom:2px solid var(--line);margin-bottom:1rem;overflow-x:auto}
+.subtabs button{background:transparent;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:.6rem 1rem;font-weight:700;color:var(--ink-2);white-space:nowrap}
+.subtabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.upload{border:2px dashed #9AA9B8;border-radius:10px;padding:1.1rem;background:#fff;display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
+.upload input[type=file]{flex:1;min-width:200px}
+.petunjuk{color:var(--ink-2);font-size:.95rem;margin:.2rem 0 1rem;max-width:80ch}
+.petunjuk code{background:#E7EDF2;padding:.05em .4em;border-radius:4px}
+.galat{background:var(--bad-soft);border:1px solid #E9B1AC;border-radius:8px;padding:.7rem 1rem;color:#7d1a14;margin:.8rem 0;font-size:.95rem}
+.galat ul{margin:.3rem 0 0;padding-left:1.2rem}
+.sukses{background:var(--ok-soft);border:1px solid #A8D9B9;border-radius:8px;padding:.7rem 1rem;color:#14663A;margin:.8rem 0}
+.zona-bahaya{border:1.5px solid var(--bad);background:#FFF8F7;border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1.4rem}
+.zona-bahaya h3{color:var(--bad);margin-bottom:.3rem;font-size:1.05rem}
+.zona-bahaya p{margin:.2rem 0 .8rem;color:var(--ink-2);font-size:.95rem}
+.zona-bahaya .baris{display:flex;gap:.6rem;flex-wrap:wrap}
+.form-inline{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.7rem;align-items:end;margin-bottom:1rem}
+.form-inline label{font-size:.85rem;color:var(--ink-2);display:block}
+.form-inline input,.form-inline select{width:100%;border:1.5px solid #9AA9B8;border-radius:8px;padding:.45em .6em;min-height:42px;background:#fff}
+.modal input[type=text],.modal input[type=password]{width:100%;border:1.5px solid #9AA9B8;border-radius:8px;padding:.55em .7em;min-height:44px;margin-top:.5rem}
+.modal label.cb{display:flex;gap:.5rem;align-items:center;margin-top:.7rem}
+.muat{display:inline-block;width:14px;height:14px;border:2px solid #9AA9B8;border-top-color:var(--accent);border-radius:50%;animation:putar .8s linear infinite;vertical-align:-2px;margin-right:.4rem}
+@keyframes putar{to{transform:rotate(360deg)}}
+.chip{display:inline-block;background:rgba(255,255,255,.14);padding:.1em .6em;border-radius:99px;font-size:.85rem}
+
 /* cetak */
 #printArea{display:none}
 @media print{
@@ -205,30 +248,33 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.7rem 0}
 </head>
 <body>
 <noscript><p style="padding:2rem">Aplikasi ini membutuhkan JavaScript. Aktifkan JavaScript di browser Anda.</p></noscript>
-<div id="demo-banner" class="demo-banner" hidden></div>
 
-<!-- ===================== SISWA: PENDAFTARAN ===================== -->
+<div id="banner" class="demo-banner" hidden></div>
+
+<!-- ===================== SISWA ===================== -->
 <section id="view-daftar" hidden>
   <div class="kabel" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   <div class="page">
     <div class="hero">
       <div>
-        <h1 id="judul-ujian">Ulangan Harian Informatika — Jaringan Komputer</h1>
-        <p class="sub" id="sub-ujian">Kelas IX · Pilihan ganda</p>
-        <ul class="facts">
-          <li><b id="f-soal" class="num">20</b><span>butir soal</span></li>
-          <li><b id="f-durasi" class="num">30</b><span>menit</span></li>
-        </ul>
-        <div class="aturan">
-          <h2>Aturan selama ulangan</h2>
-          <ul>
-            <li>Ulangan berjalan di layar penuh. Jangan keluar dari layar penuh.</li>
-            <li>Jangan membuka tab atau aplikasi lain, dan jangan meminimalkan jendela.</li>
-            <li>Teks tidak bisa diblok atau disalin, dan layar tidak boleh difoto atau di-screenshot.</li>
-            <li>Setiap pelanggaran dicatat dan dilihat guru. Pada pelanggaran ke-<span id="a-maks">3</span>, jawabanmu otomatis dikumpulkan.</li>
-            <li>Soal diambil acak dari bank soal, jadi soal dan urutanmu bisa berbeda dengan temanmu.</li>
-            <li>Jawaban tersimpan otomatis setiap kali kamu memilih.</li>
+        <h1 id="judul-ujian">Ulangan Online</h1>
+        <p class="sub" id="sub-ujian">Masukkan kode ulangan dari gurumu.</p>
+        <div id="info-ujian" hidden>
+          <ul class="facts">
+            <li><b id="f-soal" class="num">0</b><span>butir soal</span></li>
+            <li><b id="f-durasi" class="num">0</b><span>menit</span></li>
           </ul>
+          <div class="aturan">
+            <h2>Aturan selama ulangan</h2>
+            <ul>
+              <li>Ulangan berjalan di layar penuh. Jangan keluar dari layar penuh.</li>
+              <li>Jangan membuka tab atau aplikasi lain, dan jangan meminimalkan jendela.</li>
+              <li>Teks tidak bisa diblok atau disalin, dan layar tidak boleh difoto atau di-screenshot.</li>
+              <li>Setiap pelanggaran dicatat dan dilihat guru. Pada pelanggaran ke-<span id="a-maks">3</span>, jawabanmu otomatis dikumpulkan.</li>
+              <li>Soal diambil acak dari bank soal, jadi soal dan urutanmu bisa berbeda dengan temanmu.</li>
+              <li>Jawaban tersimpan otomatis.</li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -237,19 +283,22 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.7rem 0}
           <p><b>Ulanganmu masih berlangsung.</b><br><span id="lanjut-info"></span></p>
           <button class="btn accent" id="btn-lanjut" type="button">Lanjutkan ulangan</button>
         </div>
-        <div id="tutup-box" class="notice" hidden>Ulangan belum dibuka oleh guru.</div>
-        <form class="form" id="form-daftar" autocomplete="off" novalidate>
+
+        <form class="form" id="form-kode" autocomplete="off" novalidate>
+          <label for="in-kode">Kode ulangan</label>
+          <input type="text" id="in-kode" class="kode-in" maxlength="10" placeholder="ABC123" autocapitalize="characters" spellcheck="false">
+          <button class="btn primary" id="btn-kode" type="submit">Lanjut</button>
+          <p class="err" id="err-kode" role="alert"></p>
+        </form>
+
+        <form class="form" id="form-daftar" autocomplete="off" novalidate hidden>
+          <div class="ganti-kode"><span>Kode <b id="t-kode"></b></span><button class="link" id="btn-ganti-kode" type="button">Ganti kode</button></div>
+          <div id="tutup-box" class="notice" hidden>Ulangan belum dibuka oleh guru.</div>
           <label for="in-nama">Nama lengkap</label>
           <input type="text" id="in-nama" maxlength="60" placeholder="Tulis nama lengkapmu" autocapitalize="words" spellcheck="false">
           <div class="row">
-            <div>
-              <label for="in-kelas">Kelas</label>
-              <select id="in-kelas"><option value="">Pilih kelas</option></select>
-            </div>
-            <div>
-              <label for="in-absen">No. absen</label>
-              <select id="in-absen"><option value="">Pilih no.</option></select>
-            </div>
+            <div><label for="in-kelas">Kelas</label><select id="in-kelas"><option value="">Pilih kelas</option></select></div>
+            <div><label for="in-absen">No. absen</label><select id="in-absen"><option value="">Pilih no.</option></select></div>
           </div>
           <label class="cek" for="in-setuju"><input type="checkbox" id="in-setuju"><span>Saya sudah membaca aturan dan akan mengerjakan sendiri dengan jujur.</span></label>
           <button class="btn primary" id="btn-mulai" type="submit" disabled>Mulai ulangan</button>
@@ -257,17 +306,16 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.7rem 0}
         </form>
       </div>
     </div>
-    <div class="foot"><span>Pastikan nama, kelas, dan nomor absen benar. Data ini dipakai untuk menilai.</span><a href="#admin" class="link">Halaman guru</a></div>
+    <div class="foot"><span>Pastikan nama, kelas, dan nomor absen benar. Data ini dipakai untuk menilai.</span><a href="#guru" class="link">Halaman guru</a></div>
   </div>
 </section>
 
-<!-- ===================== SISWA: UJIAN ===================== -->
 <section id="view-ujian" hidden>
   <header class="exam-bar">
     <div class="in">
       <div class="siswa"><b id="x-nama">—</b><small id="x-kelas">—</small></div>
       <div class="stat">
-        <div><small>Terjawab</small><b class="num" id="x-terjawab">0/30</b></div>
+        <div><small>Terjawab</small><b class="num" id="x-terjawab">0/0</b></div>
         <div class="pel"><small>Pelanggaran</small><b class="num" id="x-pel">0/3</b></div>
         <div><small>Sisa waktu</small><b class="num timer" id="x-timer">--:--</b></div>
       </div>
@@ -276,7 +324,8 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.7rem 0}
   </header>
   <main class="exam-wrap">
     <section class="soal-card" aria-live="polite">
-      <div class="soal-head"><span id="x-no">Soal 1 dari 30</span><span id="x-pilih">Belum dijawab</span></div>
+      <div class="soal-head"><span id="x-no">Soal 1</span><span id="x-pilih">Belum dijawab</span></div>
+      <div class="gambar" id="x-gambar" hidden></div>
       <p class="soal-teks" id="x-soal"></p>
       <div class="opsi" id="x-opsi" role="radiogroup" aria-label="Pilihan jawaban"></div>
       <div class="nav-soal">
@@ -307,12 +356,11 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.7rem 0}
   </div>
 </div>
 
-<!-- ===================== SISWA: SELESAI ===================== -->
 <section id="view-selesai" hidden>
   <div class="kabel" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   <div class="page"><div class="selesai card">
     <h1 id="s-judul">Jawaban terkirim</h1>
-    <p id="s-teks">Terima kasih, <b id="s-nama"></b>. Jawabanmu sudah tersimpan.</p>
+    <p id="s-teks"></p>
     <div id="s-nilai-box" hidden>
       <div class="nilai num" id="s-nilai">0</div>
       <div class="rinci"><span>Benar <b class="num" id="s-benar">0</b></span><span>Salah <b class="num" id="s-salah">0</b></span><span>Kosong <b class="num" id="s-kosong">0</b></span></div>
@@ -321,84 +369,167 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.7rem 0}
   </div></div>
 </section>
 
-<!-- ===================== ADMIN ===================== -->
-<section id="view-admin-login" hidden>
+<!-- ===================== GURU / ADMIN ===================== -->
+<section id="view-login" hidden>
   <div class="kabel" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   <div class="page" style="max-width:460px;padding-top:4rem">
     <div class="card">
-      <h1 style="font-size:1.5rem;margin-bottom:.3rem">Masuk halaman guru</h1>
-      <p style="color:var(--ink-2);margin:0 0 1rem">Pantau pengerjaan dan unduh hasil ulangan.</p>
-      <form class="form" id="form-admin" autocomplete="off">
-        <label for="in-pass">Kata sandi guru</label>
-        <input type="password" id="in-pass" style="width:100%;border:1.5px solid #9AA9B8;border-radius:8px;padding:.6em .7em;min-height:46px">
-        <button class="btn primary" type="submit">Masuk</button>
-        <p class="err" id="err-admin" role="alert"></p>
+      <h1 style="font-size:1.5rem;margin-bottom:.3rem">Masuk guru / admin</h1>
+      <p style="color:var(--ink-2);margin:0 0 1rem">Kelola ulangan, soal, dan hasil.</p>
+      <form class="form" id="form-login" autocomplete="on">
+        <label for="in-user">Username</label>
+        <input type="text" id="in-user" autocomplete="username" autocapitalize="none" spellcheck="false">
+        <label for="in-pass">Kata sandi</label>
+        <input type="password" id="in-pass" autocomplete="current-password" style="width:100%;border:1.5px solid #9AA9B8;border-radius:8px;padding:.6em .7em;min-height:46px">
+        <button class="btn primary" type="submit" id="btn-login">Masuk</button>
+        <p class="err" id="err-login" role="alert"></p>
       </form>
       <a href="#" class="link" style="font-size:.9rem">Kembali ke halaman siswa</a>
     </div>
   </div>
 </section>
 
-<section id="view-admin" hidden>
+<section id="view-app" hidden>
   <header class="admin-head">
     <div class="in">
-      <h1 id="a-judul">Halaman guru</h1>
-      <nav class="tabs" role="tablist">
-        <button role="tab" id="tab-pantau" aria-selected="true" data-tab="pantau">Pantauan</button>
-        <button role="tab" id="tab-hasil" aria-selected="false" data-tab="hasil">Hasil</button>
-        <button role="tab" id="tab-atur" aria-selected="false" data-tab="atur">Pengaturan</button>
+      <h1>Ulangan Online</h1>
+      <nav class="tabs" role="tablist" id="main-tabs">
+        <button role="tab" aria-selected="true" data-main="ulangan">Ulangan</button>
+        <button role="tab" aria-selected="false" data-main="akun">Akun</button>
+        <button role="tab" aria-selected="false" data-main="admin" id="tab-admin" hidden>Admin</button>
       </nav>
+      <span class="chip" id="a-user"></span>
       <button class="btn small" id="btn-keluar" type="button">Keluar</button>
     </div>
     <div class="kabel" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   </header>
 
   <div class="admin-body">
-    <!-- Pantauan -->
-    <div id="pane-pantau">
-      <div class="cards" id="p-cards"></div>
-      <div class="toolbar">
-        <div><label for="p-kelas">Kelas</label><select id="p-kelas"></select></div>
-        <div><label for="p-cari">Cari nama</label><input type="text" id="p-cari" placeholder="Nama siswa"></div>
-        <div><label for="p-status">Status</label>
-          <select id="p-status"><option value="">Semua</option><option value="jalan">Sedang mengerjakan</option><option value="selesai">Selesai</option><option value="masalah">Tidak aktif / melanggar</option></select></div>
-        <span class="sp"></span>
-        <span id="p-update" style="color:var(--ink-2);font-size:.88rem"></span>
-        <button class="btn small" id="p-refresh" type="button">Segarkan</button>
+    <!-- ULANGAN -->
+    <div id="m-ulangan">
+      <div id="ul-daftar">
+        <div class="sec-h"><h2 id="ul-judul-daftar">Ulangan saya</h2><button class="btn accent" id="btn-buat" type="button">+ Buat ulangan baru</button></div>
+        <div id="ul-grid" class="ul-grid"></div>
       </div>
-      <div class="tabel-wrap"><table class="t" id="p-tabel"></table></div>
+
+      <div id="ul-detail" hidden>
+        <button class="btn small kembali" id="btn-kembali-list" type="button">← Semua ulangan</button>
+        <div class="ul-head">
+          <h2 id="d-judul"></h2>
+          <div class="tautan"><span>Kode <b id="d-kode" style="letter-spacing:.14em;font-size:1.2rem"></b></span>
+            <input type="text" id="d-link" readonly aria-label="Tautan untuk siswa"><button class="btn small" id="btn-salin" type="button">Salin tautan</button></div>
+        </div>
+        <div class="subtabs" role="tablist" id="sub-tabs">
+          <button role="tab" aria-selected="true" data-sub="pantau">Pantauan</button>
+          <button role="tab" aria-selected="false" data-sub="hasil">Hasil</button>
+          <button role="tab" aria-selected="false" data-sub="soal">Soal</button>
+          <button role="tab" aria-selected="false" data-sub="atur">Pengaturan</button>
+        </div>
+
+        <div id="pane-pantau">
+          <div class="cards" id="p-cards"></div>
+          <div class="toolbar">
+            <div><label for="p-kelas">Kelas</label><select id="p-kelas"></select></div>
+            <div><label for="p-cari">Cari nama</label><input type="text" id="p-cari" placeholder="Nama siswa"></div>
+            <div><label for="p-status">Status</label>
+              <select id="p-status"><option value="">Semua</option><option value="jalan">Sedang mengerjakan</option><option value="selesai">Selesai</option><option value="masalah">Tidak aktif / melanggar</option></select></div>
+            <span class="sp"></span>
+            <span id="p-update" style="color:var(--ink-2);font-size:.88rem"></span>
+            <button class="btn small" id="p-refresh" type="button">Segarkan</button>
+          </div>
+          <div class="tabel-wrap"><table class="t" id="p-tabel"></table></div>
+        </div>
+
+        <div id="pane-hasil" hidden>
+          <div class="toolbar">
+            <div><label for="h-kelas">Kelas</label><select id="h-kelas"></select></div>
+            <div><label for="h-cari">Cari nama</label><input type="text" id="h-cari" placeholder="Nama siswa"></div>
+            <span class="sp"></span>
+            <button class="btn small" id="h-segar" type="button">Segarkan</button>
+            <button class="btn small" id="h-cetak" type="button">Cetak</button>
+            <button class="btn small accent" id="h-pdf" type="button">Unduh PDF</button>
+            <button class="btn small accent" id="h-xlsx" type="button">Unduh Excel</button>
+          </div>
+          <div class="cards" id="h-cards"></div>
+          <div class="tabel-wrap"><table class="t" id="h-tabel"></table></div>
+          <details class="analisis" id="h-analisis"><summary>Analisis butir soal (sesuai filter kelas)</summary><div class="tabel-wrap" style="margin-bottom:1rem"><table class="t" id="h-analisis-tabel"></table></div></details>
+        </div>
+
+        <div id="pane-soal" hidden>
+          <p class="petunjuk">Soal diinput lewat file Excel. Unduh template, isi di Excel, lalu unggah. Kolom: <code>Soal</code>, <code>A</code>–<code>D</code>, <code>Kunci</code> (A/B/C/D), <code>Level</code> (opsional), dan <code>URL Gambar</code> (opsional, untuk soal bergambar: isi alamat gambar berawalan https://; tautan berbagi Google Drive dan Dropbox otomatis dikonversi).</p>
+          <div class="upload">
+            <button class="btn" id="s-template" type="button">Unduh template Excel</button>
+            <button class="btn" id="s-ekspor" type="button" hidden>Unduh soal saat ini</button>
+            <input type="file" id="s-file" accept=".xlsx,.xls,.csv" aria-label="Pilih file Excel soal">
+          </div>
+          <div id="s-preview"></div>
+          <h3 style="margin:1.4rem 0 .6rem;font-size:1.05rem" id="s-judul-tabel">Soal saat ini</h3>
+          <div class="tabel-wrap"><table class="t" id="s-tabel"></table></div>
+        </div>
+
+        <div id="pane-atur" hidden>
+          <div class="card form-set">
+            <div class="f"><label for="s-judul-in">Judul ulangan</label><input type="text" id="s-judul-in" maxlength="120"></div>
+            <div class="f"><label for="s-durasi">Durasi (menit)</label><input type="number" id="s-durasi" min="5" max="300"></div>
+            <div class="f"><label for="s-jumlah">Jumlah soal per siswa (dipilih acak)</label><input type="number" id="s-jumlah" min="0" max="500"><small>Isi 0 untuk menampilkan semua soal. Contoh: bank 30 soal, isi 20 → tiap siswa mendapat 20 soal acak.</small></div>
+            <div class="f"><label class="tog"><input type="checkbox" id="s-acaklevel"> Acak berimbang per level</label><small>Tiap siswa mendapat jatah soal per level (C1, C2, …) yang proporsional dengan bank soal, sehingga tingkat kesulitan setara. Soal di dalam tiap level tetap dipilih acak. Butuh kolom <b>Level</b> terisi pada soal.</small></div>
+            <div class="f"><label class="tog"><input type="checkbox" id="s-urutlevel"> Urutkan dari mudah ke sulit</label><small>Soal diurutkan dari level terendah (C1) ke tertinggi; urutan di dalam level tetap acak. Jika tidak dicentang, urutan soal diacak penuh.</small></div>
+            <p id="s-komposisi" class="petunjuk" style="margin:.2rem 0 1rem"></p>
+            <div class="f"><label for="s-maks">Batas pelanggaran sebelum jawaban otomatis dikumpulkan</label><input type="number" id="s-maks" min="1" max="20"></div>
+            <div class="f"><label for="s-kkm">KKM</label><input type="number" id="s-kkm" min="0" max="100"></div>
+            <div class="f"><label for="s-kelas">Daftar kelas (pisahkan dengan koma)</label><input type="text" id="s-kelas"><small>Muncul sebagai pilihan dropdown kelas untuk siswa. Contoh: 9A, 9B, 9C</small></div>
+            <div class="f"><label for="s-absen">Nomor absen terbesar</label><input type="number" id="s-absen" min="1" max="99"></div>
+            <div class="f"><label class="tog"><input type="checkbox" id="s-aktif"> Ulangan dibuka untuk siswa</label><small>Siswa yang sudah mulai tetap bisa melanjutkan.</small></div>
+            <div class="f"><label class="tog"><input type="checkbox" id="s-tampil"> Tampilkan nilai kepada siswa setelah selesai</label></div>
+            <button class="btn primary" id="s-simpan" type="button">Simpan pengaturan</button>
+            <p id="s-msg" style="margin:.8rem 0 0;font-weight:700"></p>
+          </div>
+          <div class="zona-bahaya">
+            <h3>Zona berbahaya</h3>
+            <p>Tindakan ini tidak bisa dibatalkan.</p>
+            <div class="baris">
+              <button class="btn danger" id="btn-kosong-ul" type="button">Kosongkan hasil ulangan ini</button>
+              <button class="btn danger" id="btn-hapus-ul" type="button">Hapus ulangan ini</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Hasil -->
-    <div id="pane-hasil" hidden>
-      <div class="toolbar">
-        <div><label for="h-kelas">Kelas</label><select id="h-kelas"></select></div>
-        <div><label for="h-cari">Cari nama</label><input type="text" id="h-cari" placeholder="Nama siswa"></div>
-        <span class="sp"></span>
-        <button class="btn small" id="h-segar" type="button">Segarkan</button>
-        <button class="btn small" id="h-cetak" type="button">Cetak</button>
-        <button class="btn small accent" id="h-pdf" type="button">Unduh PDF</button>
-        <button class="btn small accent" id="h-xlsx" type="button">Unduh Excel</button>
-      </div>
-      <div class="cards" id="h-cards"></div>
-      <div class="tabel-wrap"><table class="t" id="h-tabel"></table></div>
-      <details class="analisis" id="h-analisis"><summary>Analisis butir soal (sesuai filter kelas)</summary><div class="tabel-wrap" style="margin-bottom:1rem"><table class="t" id="h-analisis-tabel"></table></div></details>
-    </div>
-
-    <!-- Pengaturan -->
-    <div id="pane-atur" hidden>
+    <!-- AKUN -->
+    <div id="m-akun" hidden>
       <div class="card form-set">
-        <div class="f"><label for="s-judul-in">Judul ulangan</label><input type="text" id="s-judul-in"></div>
-        <div class="f"><label for="s-tingkat">Keterangan kelas</label><input type="text" id="s-tingkat"></div>
-        <div class="f"><label for="s-durasi">Durasi (menit)</label><input type="number" id="s-durasi" min="5" max="240"></div>
-        <div class="f"><label for="s-jumlah">Jumlah soal per siswa (dipilih acak)</label><input type="number" id="s-jumlah" min="1" max="100"><small>Diambil acak dari semua soal di sheet Soal. Isi sama dengan jumlah bank soal untuk menampilkan semuanya.</small></div>
-        <div class="f"><label for="s-maks">Batas pelanggaran sebelum jawaban otomatis dikumpulkan</label><input type="number" id="s-maks" min="1" max="20"></div>
-        <div class="f"><label for="s-kkm">KKM</label><input type="number" id="s-kkm" min="0" max="100"></div>
-        <div class="f"><label class="tog"><input type="checkbox" id="s-aktif"> Ulangan dibuka untuk siswa baru</label><small>Siswa yang sudah mulai tetap bisa melanjutkan.</small></div>
-        <div class="f"><label class="tog"><input type="checkbox" id="s-tampil"> Tampilkan nilai kepada siswa setelah selesai</label></div>
-        <button class="btn primary" id="s-simpan" type="button">Simpan pengaturan</button>
-        <p id="s-msg" style="margin:.8rem 0 0;font-weight:700"></p>
-        <p style="color:var(--ink-2);font-size:.92rem;margin-top:1rem">Untuk mengubah soal atau kunci jawaban, edit langsung sheet <b>Soal</b> di Google Spreadsheet.</p>
+        <h2 style="font-size:1.2rem;margin-bottom:.8rem">Ganti kata sandi</h2>
+        <div class="f"><label for="pw-lama">Kata sandi lama</label><input type="password" id="pw-lama" autocomplete="current-password" style="width:100%;border:1.5px solid #9AA9B8;border-radius:8px;padding:.5em .7em;min-height:44px"></div>
+        <div class="f"><label for="pw-baru">Kata sandi baru (minimal 6 karakter)</label><input type="password" id="pw-baru" autocomplete="new-password" style="width:100%;border:1.5px solid #9AA9B8;border-radius:8px;padding:.5em .7em;min-height:44px"></div>
+        <button class="btn primary" id="pw-simpan" type="button">Simpan kata sandi</button>
+        <p id="pw-msg" style="margin:.8rem 0 0;font-weight:700"></p>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="m-admin" hidden>
+      <div class="cards" id="ad-ringkasan"></div>
+      <div class="sec-h"><h2>Akun guru</h2></div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="form-inline">
+          <div><label for="ak-user">Username</label><input type="text" id="ak-user" autocapitalize="none" placeholder="mis. bu.sari"></div>
+          <div><label for="ak-nama">Nama</label><input type="text" id="ak-nama" placeholder="Nama guru"></div>
+          <div><label for="ak-pass">Kata sandi awal</label><input type="text" id="ak-pass" placeholder="min. 6 karakter"></div>
+          <div><label for="ak-peran">Peran</label><select id="ak-peran"><option value="guru">Guru</option><option value="admin">Admin</option></select></div>
+          <div><button class="btn accent" id="ak-tambah" type="button" style="width:100%">Tambah akun</button></div>
+        </div>
+        <p id="ak-msg" style="margin:0;font-weight:700"></p>
+      </div>
+      <div class="tabel-wrap"><table class="t" id="ak-tabel"></table></div>
+      <div class="zona-bahaya">
+        <h3>Kosongkan database</h3>
+        <p><b>Data siswa &amp; hasil</b>: menghapus semua peserta dan nilai milik semua guru. Ulangan, soal, dan akun tetap ada.<br>
+           <b>Semua isi</b>: juga menghapus semua ulangan dan soal. Akun guru tetap ada.</p>
+        <div class="baris">
+          <button class="btn danger" id="btn-kosong-siswa" type="button">Kosongkan data siswa &amp; hasil</button>
+          <button class="btn danger" id="btn-kosong-semua" type="button">Kosongkan semua ulangan &amp; soal</button>
+        </div>
       </div>
     </div>
   </div>
@@ -406,314 +537,280 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.7rem 0}
 
 <div id="modal-host"></div>
 <div id="printArea"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
 <script>
 /* =====================================================================
-   PENGATURAN — isi API_URL dengan URL Aplikasi Web Google Apps Script.
-   Dikosongkan = MODE DEMO (data hanya di browser ini, untuk uji coba).
+   PENGATURAN — isi API_URL dengan URL Aplikasi Web Google Apps Script
+   (berakhiran /exec). Lihat PANDUAN.md.
    ===================================================================== */
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbz6wJPBx2vbaMsOl519I8RZ3BpuGQR0HA-eSF6rOI_In-t9w86O24jnTsA0jdkjfTLFZw/exec',
-  DEMO_ADMIN_PASSWORD: 'admin123'
+  API_URL: 'https://script.google.com/macros/s/AKfycbz6wJPBx2vbaMsOl519I8RZ3BpuGQR0HA-eSF6rOI_In-t9w86O24jnTsA0jdkjfTLFZw/exec'
 };
 
-const SOAL_DEMO = [{"no": 1, "soal": "Dua perangkat atau lebih yang saling terhubung sehingga dapat berbagi data dan sumber daya disebut ...", "pilihan": ["Sistem operasi", "Jaringan komputer", "Basis data", "Perangkat lunak aplikasi"], "kunci": "B", "level": "C1"}, {"no": 2, "soal": "Kepanjangan dari LAN adalah ...", "pilihan": ["Large Area Network", "Local Access Network", "Local Area Network", "Long Area Network"], "kunci": "C", "level": "C1"}, {"no": 3, "soal": "Kepanjangan dari UTP pada kabel jaringan adalah ...", "pilihan": ["Unified Twisted Pair", "Universal Transmission Port", "Unshielded Transfer Pair", "Unshielded Twisted Pair"], "kunci": "D", "level": "C1"}, {"no": 4, "soal": "Alat yang digunakan untuk memasang konektor RJ-45 pada ujung kabel UTP adalah ...", "pilihan": ["Crimping tool", "Kabel tester", "Obeng", "Solder"], "kunci": "A", "level": "C1"}, {"no": 5, "soal": "Oktet pertama IP Address Kelas B berada pada rentang ...", "pilihan": ["1 – 126", "128 – 191", "192 – 223", "224 – 239"], "kunci": "B", "level": "C1"}, {"no": 6, "soal": "Topologi jaringan yang semua perangkatnya terhubung ke satu titik pusat, biasanya Switch, disebut topologi ...", "pilihan": ["Bus", "Ring", "Star", "Mesh"], "kunci": "C", "level": "C1"}, {"no": 7, "soal": "Konektor kecil yang dipasang pada ujung kabel UTP sebelum dicolokkan ke port PC atau Switch disebut ...", "pilihan": ["RJ-11", "RJ-45", "HDMI", "USB-C"], "kunci": "B", "level": "C1"}, {"no": 8, "soal": "Alamat IP 127.0.0.1 dikenal sebagai alamat ...", "pilihan": ["Broadcast", "Gateway", "Multicast", "Loopback (localhost)"], "kunci": "D", "level": "C1"}, {"no": 9, "soal": "Perbedaan yang tepat antara kabel Straight dan kabel Crossover adalah ...", "pilihan": ["Straight dipakai untuk menghubungkan dua perangkat berbeda jenis dengan urutan warna sama di kedua ujung, sedangkan Crossover dipakai untuk perangkat sejenis dengan urutan warna berbeda", "Straight dipakai untuk menghubungkan perangkat sejenis, sedangkan Crossover dipakai untuk perangkat berbeda jenis", "Keduanya memiliki urutan warna yang sama dan hanya berbeda panjangnya", "Keduanya khusus dipakai untuk jaringan nirkabel (Wi-Fi)"], "kunci": "A", "level": "C2"}, {"no": 10, "soal": "Fungsi utama Router dalam sebuah jaringan adalah ...", "pilihan": ["Menguatkan arus listrik yang masuk ke komputer", "Menyimpan seluruh file milik siswa", "Menghubungkan dua jaringan berbeda, misalnya LAN sekolah dengan internet, serta mengatur jalur data", "Memasang konektor RJ-45 pada kabel"], "kunci": "C", "level": "C2"}, {"no": 11, "soal": "Koneksi Bluetooth antara ponsel dan earphone nirkabel termasuk jenis jaringan berdasarkan jangkauan ...", "pilihan": ["PAN", "LAN", "MAN", "WAN"], "kunci": "A", "level": "C2"}, {"no": 12, "soal": "Setiap perangkat dalam jaringan harus memiliki IP Address yang berbeda karena IP Address berfungsi seperti ...", "pilihan": ["Nama pengguna agar dapat masuk ke komputer", "Kata sandi agar jaringan aman", "Ukuran penyimpanan data perangkat", "Alamat rumah yang memastikan data sampai ke perangkat tujuan yang benar"], "kunci": "D", "level": "C2"}, {"no": 13, "soal": "Berikut ini yang merupakan contoh manfaat jaringan komputer di ruang guru adalah ...", "pilihan": ["Prosesor laptop bekerja lebih cepat", "Satu printer dapat dipakai bersama oleh beberapa laptop guru", "Kapasitas RAM bertambah secara otomatis", "Pemakaian listrik menjadi lebih hemat"], "kunci": "B", "level": "C2"}, {"no": 14, "soal": "Pernyataan yang tepat tentang jaringan Client-Server adalah ...", "pilihan": ["Semua komputer berkedudukan setara dan tidak ada komputer pusat", "Hanya cocok dipakai untuk 2–3 komputer di rumah", "Ada komputer server yang menyediakan data atau layanan dan komputer client yang memintanya, sehingga lebih terorganisir dan aman", "Server hanya bertugas meminta layanan dari client"], "kunci": "C", "level": "C2"}, {"no": 15, "soal": "IP Address Kelas C paling umum dipakai pada jaringan rumah dan sekolah karena ...", "pilihan": ["Menampung 254 host sehingga cukup untuk jaringan berukuran kecil", "Menampung sekitar 16 juta host", "Dikhususkan untuk pengiriman multicast", "Dikhususkan untuk keperluan riset dan eksperimen"], "kunci": "A", "level": "C2"}, {"no": 16, "soal": "Salah satu kelebihan topologi Star adalah ...", "pilihan": ["Memakai kabel paling sedikit dibandingkan topologi lain", "Tidak membutuhkan perangkat pusat", "Data selalu mengalir satu arah mengelilingi lingkaran", "Jika satu kabel atau perangkat bermasalah, perangkat lain tetap dapat terhubung"], "kunci": "D", "level": "C2"}, {"no": 17, "soal": "Pernyataan yang benar tentang Switch adalah ...", "pilihan": ["Switch menghubungkan jaringan sekolah ke internet melalui port WAN", "Switch menghubungkan banyak perangkat dalam satu jaringan lokal dan meneruskan data hanya ke perangkat tujuan", "Switch hanya dipakai untuk mencetak dokumen", "Switch mengubah sinyal Wi-Fi menjadi listrik PLN"], "kunci": "B", "level": "C2"}, {"no": 18, "soal": "Kekurangan utama topologi Bus adalah ...", "pilihan": ["Membutuhkan kabel dan port yang sangat banyak sehingga mahal", "Instalasinya sangat rumit", "Jika kabel utama putus, seluruh jaringan ikut terganggu", "Tidak dapat dipasang pada jaringan kecil"], "kunci": "C", "level": "C2"}, {"no": 19, "soal": "Sebuah komputer diberi IP Address 150.20.1.1. IP Address tersebut termasuk ...", "pilihan": ["Kelas A", "Kelas B", "Kelas C", "Kelas D"], "kunci": "B", "level": "C3"}, {"no": 20, "soal": "Dua Switch di Lab TIK akan dihubungkan langsung dengan kabel UTP. Jenis kabel dan urutan warna yang sesuai adalah ...", "pilihan": ["Crossover, urutan warna kedua ujung berbeda", "Straight, urutan warna kedua ujung sama", "Crossover, urutan warna kedua ujung sama", "Straight, urutan warna kedua ujung berbeda"], "kunci": "A", "level": "C3"}, {"no": 21, "soal": "PC-1 memakai IP Address 192.168.1.10 dengan Subnet Mask 255.255.255.0. IP Address yang tepat untuk PC-2 agar berada satu jaringan dengan PC-1 adalah ...", "pilihan": ["192.168.2.10", "192.169.1.10", "192.168.1.11", "10.168.1.10"], "kunci": "C", "level": "C3"}, {"no": 22, "soal": "Rina akan membangun jaringan topologi Star sederhana yang terdiri dari 3 PC. Langkah yang paling tepat adalah ...", "pilihan": ["Menghubungkan ketiga PC secara berantai memakai satu kabel panjang", "Memberi ketiga PC IP Address yang sama agar mudah diingat", "Menghubungkan tiap PC langsung ke Router tanpa Switch dan memberi IP dari jaringan berbeda", "Menghubungkan tiap PC ke satu Switch memakai kabel UTP, memberi IP berbeda dalam satu jaringan, lalu menguji dengan ping"], "kunci": "D", "level": "C3"}, {"no": 23, "soal": "Perpustakaan sekolah ingin menyediakan Wi-Fi bagi laptop siswa dari jaringan kabel yang sudah ada. Perangkat yang harus dipasang dan dihubungkan ke Switch adalah ...", "pilihan": ["Access Point", "Crimping tool", "Printer", "Kabel tester"], "kunci": "A", "level": "C3"}, {"no": 24, "soal": "Sebuah gedung sekolah tiga lantai memasang satu Switch di tiap lantai, lalu ketiga Switch itu dihubungkan ke satu Switch pusat. Susunan jaringan seperti ini termasuk topologi ...", "pilihan": ["Bus", "Ring", "Mesh", "Tree"], "kunci": "D", "level": "C3"}, {"no": 25, "soal": "Sebuah sekolah memakai alamat 192.168.1.1 sampai 192.168.1.254 dengan Subnet Mask 255.255.255.0 untuk jaringan lab. Jika ada 200 perangkat yang akan disambungkan, kesimpulan yang tepat adalah ...", "pilihan": ["Tidak cukup, karena Kelas C hanya menampung sekitar 100 host", "Tidak cukup, karena harus memakai Kelas D", "Cukup, karena Kelas C dapat menampung 254 host", "Cukup, karena Kelas C dapat menampung sekitar 16 juta host"], "kunci": "C", "level": "C3"}, {"no": 26, "soal": "Dua PC di Lab TIK sama-sama memakai IP Address 192.168.1.20 sehingga muncul tanda peringatan pada keduanya, padahal kabel UTP dan Switch berfungsi baik. Penyebab yang paling tepat adalah ...", "pilihan": ["Urutan warna kabel UTP salah", "Switch terlalu lama menyala", "Dua perangkat memakai IP yang sama (konflik IP) sehingga penerima data tidak dapat dibedakan", "Kedua PC memakai sistem operasi yang berbeda"], "kunci": "C", "level": "C4"}, {"no": 27, "soal": "Pada jaringan topologi Star di Lab TIK, seluruh PC mendadak tidak dapat saling berkomunikasi, padahal kabel UTP setiap PC sudah dicek dan terpasang baik. Bagian yang paling perlu diperiksa pertama kali adalah ...", "pilihan": ["IP Address salah satu PC", "Konektor RJ-45 salah satu PC", "Kabel tester", "Switch pusat"], "kunci": "D", "level": "C4"}, {"no": 28, "soal": "Tiga topologi memiliki ciri berikut.\nTopologi X: hemat kabel karena memakai satu jalur utama, tetapi jika jalur itu putus, seluruh jaringan terganggu.\nTopologi Y: setiap perangkat terhubung ke satu titik pusat sehingga kerusakan satu kabel tidak mengganggu perangkat lain.\nTopologi Z: banyak jalur silang antarperangkat sehingga sangat andal, tetapi mahal dan rumit.\nTopologi X, Y, dan Z berturut-turut adalah ...", "pilihan": ["Star, Bus, Mesh", "Bus, Star, Mesh", "Mesh, Star, Ring", "Bus, Ring, Tree"], "kunci": "B", "level": "C4"}, {"no": 29, "soal": "Seorang siswa menguji jaringan Lab TIK dan mendapat data berikut (semua PC memakai Subnet Mask 255.255.255.0).\nPC-1: IP 192.168.1.10, kabel tersambung ke Switch.\nPC-2: IP 192.168.1.10, kabel tersambung ke Switch.\nPC-3: IP 192.168.7.12, kabel tersambung ke Switch.\nPC-4: IP 192.168.1.14, kabel belum tersambung ke Switch.\nHasil analisis yang paling tepat adalah ...", "pilihan": ["PC-1 dan PC-2 mengalami konflik IP, PC-3 berada pada jaringan berbeda, dan PC-4 belum terhubung secara fisik", "Hanya PC-4 yang bermasalah karena PC lainnya sudah tersambung ke Switch", "PC-3 bermasalah hanya karena nomor IP-nya terlalu besar", "Tidak ada kesalahan karena semua IP diawali 192.168"], "kunci": "A", "level": "C4"}, {"no": 30, "soal": "Sebuah bank menghubungkan seluruh kantor cabangnya di satu kota menjadi satu jaringan. Setelah itu, bank menghubungkan kantor pusat dengan kantor-kantor di berbagai provinsi dan pulau. Jenis jaringan berdasarkan jangkauan untuk kedua tahap tersebut berturut-turut adalah ...", "pilihan": ["LAN dan MAN", "MAN dan WAN", "PAN dan LAN", "WAN dan PAN"], "kunci": "B", "level": "C4"}];
+const URL_XLSX = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+const URL_JSPDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+const URL_AUTOTABLE = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
 
 /* ---------------------------- util ---------------------------- */
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const pad2 = n => String(n).padStart(2, '0');
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const KELAS = 'ABCDEFGHI'.split('').map(c => '9' + c);
 const fmtNilai = n => String(Math.round(Number(n) * 100) / 100).replace('.', ',');
 const mmss = ms => { const s = Math.max(0, Math.ceil(ms / 1000)); return pad2(Math.floor(s / 60)) + ':' + pad2(s % 60); };
 const jam = d => new Date(d).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 const tglPanjang = () => new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 const tglBerkas = () => new Date().toISOString().slice(0, 10);
+const strJ = o => Object.keys(o).map(n => n + ':' + o[n]).join(';');
+
+/* Tautan gambar: Google Drive / Dropbox otomatis dikonversi agar bisa tampil langsung. */
+function urlGambar(u) {
+  u = String(u || '').trim();
+  if (!/^https?:\/\//i.test(u)) return '';
+  let m = u.match(/drive\.google\.com\/file\/d\/([\w-]+)/) || u.match(/drive\.google\.com\/(?:open|uc|thumbnail)\?(?:[^#]*&)?id=([\w-]+)/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+  m = u.match(/^(https?:\/\/(?:www\.)?dropbox\.com\/[^?#]+)/i);
+  if (m) return m[1] + '?raw=1';
+  return u;
+}
+
+/* Pustaka berat (Excel/PDF) dimuat hanya saat dibutuhkan agar halaman awal tetap ringan. */
+const LIB = {};
+function muat(url) {
+  return LIB[url] || (LIB[url] = new Promise((ok, no) => {
+    const s = document.createElement('script'); s.src = url; s.onload = ok;
+    s.onerror = () => { delete LIB[url]; no(new Error('LIB')); };
+    document.head.appendChild(s);
+  }));
+}
+const muatXlsx = () => muat(URL_XLSX).then(() => window.XLSX);
+const muatPdf = () => muat(URL_JSPDF).then(() => muat(URL_AUTOTABLE)).then(() => window.jspdf);
 
 /* ---------------------------- API ---------------------------- */
 async function api(action, data) {
-  const body = Object.assign({ action }, data || {});
-  if (!CONFIG.API_URL) return Local.handle(action, body);
+  if (!CONFIG.API_URL) throw new Error('API_URL_KOSONG');
   const ctl = new AbortController();
   const to = setTimeout(() => ctl.abort(), 25000);
   try {
     const res = await fetch(CONFIG.API_URL, {
       method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(body), signal: ctl.signal, redirect: 'follow'
+      body: JSON.stringify(Object.assign({ action }, data || {})), signal: ctl.signal, redirect: 'follow'
     });
     return await res.json();
   } finally { clearTimeout(to); }
 }
-async function apiConfig() {
-  if (!CONFIG.API_URL) return Local.handle('config', {});
-  const res = await fetch(CONFIG.API_URL + '?action=config', { redirect: 'follow' });
-  return await res.json();
+
+const PESAN = {
+  NAMA_TIDAK_VALID: 'Nama tidak valid. Gunakan huruf, angka, spasi, titik, atau tanda hubung (3–60 karakter).',
+  KELAS_TIDAK_VALID: 'Pilih kelas dari daftar.',
+  ABSEN_TIDAK_VALID: 'Pilih nomor absen dari daftar.',
+  KODE_TIDAK_ADA: 'Kode ulangan tidak ditemukan. Periksa kembali kodenya.',
+  UJIAN_DITUTUP: 'Ulangan belum dibuka atau sudah ditutup oleh guru.',
+  TIDAK_ADA_SOAL: 'Ulangan ini belum memiliki soal.',
+  SUDAH_SELESAI: 'Kamu sudah menyelesaikan ulangan ini. Hubungi guru jika perlu mengulang.',
+  ABSEN_DIPAKAI: 'Nomor absen ini sudah dipakai atas nama lain. Periksa kelas dan nomor absenmu, atau hubungi guru.',
+  SERVER_SIBUK: 'Server sedang sibuk. Coba lagi sebentar lagi.',
+  LOGIN_SALAH: 'Username atau kata sandi salah.',
+  TERKUNCI: 'Terlalu banyak percobaan gagal. Coba lagi dalam 5 menit.',
+  SESI_HABIS: 'Sesi berakhir. Masuk kembali.',
+  TIDAK_BERHAK: 'Kamu tidak memiliki akses ke ulangan ini.',
+  BUKAN_ADMIN: 'Hanya admin yang boleh melakukan ini.',
+  SOAL_KOSONG: 'File tidak berisi soal.',
+  SOAL_TERLALU_BANYAK: 'Maksimal 200 soal per ulangan.',
+  SOAL_KOSONG_BARIS: 'Teks soal kosong pada baris',
+  PILIHAN_TIDAK_VALID: 'Pilihan jawaban tidak valid pada soal no.',
+  KUNCI_TIDAK_VALID: 'Kunci tidak valid pada soal no.',
+  GAMBAR_TIDAK_VALID: 'URL gambar harus diawali https:// pada soal no.',
+  SUDAH_ADA_SISWA: 'Sudah ada siswa yang mengerjakan ulangan ini. Kosongkan hasil terlebih dahulu atau buat ulangan baru.',
+  JUDUL_TIDAK_VALID: 'Judul minimal 3 karakter dan tidak boleh diawali tanda = + - @.',
+  KELAS_LIST_TIDAK_VALID: 'Daftar kelas tidak valid (maks. 12 karakter per kelas, huruf/angka).',
+  USERNAME_TIDAK_VALID: 'Username 3–30 karakter: huruf kecil, angka, titik, garis bawah, atau tanda hubung.',
+  USERNAME_ADA: 'Username sudah dipakai.',
+  PASSWORD_PENDEK: 'Kata sandi minimal 6 karakter.',
+  PASSWORD_LAMA_SALAH: 'Kata sandi lama salah.',
+  KONFIRMASI_SALAH: 'Ketik KOSONGKAN dengan huruf besar untuk konfirmasi.',
+  TIDAK_BOLEH_DIRI_SENDIRI: 'Tidak bisa dilakukan pada akunmu sendiri.',
+  TIDAK_DITEMUKAN: 'Data tidak ditemukan.',
+  API_URL_KOSONG: 'Aplikasi belum dihubungkan ke database. Isi API_URL di file ini (lihat PANDUAN.md).'
+};
+function pesanGalat(code) {
+  code = String(code || ''); const i = code.indexOf(':'), k = i < 0 ? code : code.slice(0, i), x = i < 0 ? '' : code.slice(i + 1);
+  if (k === 'ABSEN_DIPAKAI') return PESAN[k] + (x ? ' (terdaftar: ' + x + ')' : '');
+  if (PESAN[k]) return PESAN[k] + (x && /^\d+$/.test(x) ? ' ' + x : '');
+  return 'Gagal: ' + code;
 }
 
-/* ------------------- BACKEND DEMO (localStorage) ------------------- */
-const Local = (() => {
-  const K = 'ulangan_demo_db_v2';
-  const fresh = () => ({ peserta: [], hasil: [], jawaban: [], setting: {
-    judul: 'Ulangan Harian Informatika — Jaringan Komputer', kelas_tingkat: 'Kelas IX', durasi_menit: 30, jumlah_soal: 20,
-    maks_pelanggaran: 3, ujian_aktif: true, tampil_nilai: true, kkm: 75 } });
-  const load = () => { try { return JSON.parse(localStorage.getItem(K)) || fresh(); } catch (e) { return fresh(); } };
-  const save = db => localStorage.setItem(K, JSON.stringify(db));
-  const subset = ids => (ids && ids.length) ? ids.map(n => SOAL_DEMO.find(q => q.no === n)).filter(Boolean) : SOAL_DEMO;
-  const acak = n => { const a = SOAL_DEMO.map(q => q.no); for (let i = a.length - 1; i > 0; i--) { const k = Math.floor(Math.random() * (i + 1)); [a[i], a[k]] = [a[k], a[i]]; } return a.slice(0, n); };
-  const soalPublik = ids => subset(ids).map(q => ({ no: q.no, soal: q.soal, pilihan: q.pilihan }));
-  const hitung = (j, ids) => {
-    let benar = 0, salah = 0, kosong = 0; const ss = subset(ids);
-    ss.forEach(q => { const x = j[q.no]; if (!x) kosong++; else if (x === q.kunci) benar++; else salah++; });
-    return { benar, salah, kosong, nilai: Math.round(benar / ss.length * 10000) / 100 };
-  };
-  const selesaikan = (db, p, j, alasan) => {
-    const h = hitung(j, p.soalIds), now = Date.now();
-    db.hasil.push({ waktu: now, id: p.id, nama: p.nama, kelas: p.kelas, absen: p.absen, benar: h.benar, salah: h.salah,
-      kosong: h.kosong, nilai: h.nilai, durasi: Math.round((now - p.mulai) / 600) / 100, pelanggaran: p.pelanggaran, alasan, jawaban: j, soal: p.soalIds });
-    p.status = 'SELESAI'; p.terjawab = subset(p.soalIds).length - h.kosong; return h;
-  };
-  const kadaluarsa = db => {
-    const batas = db.setting.durasi_menit * 60000 + 120000;
-    db.peserta.forEach(p => {
-      if (p.status === 'BERLANGSUNG' && Date.now() - p.mulai > batas) {
-        const j = {}; db.jawaban.filter(x => x.id === p.id && x.jawaban).forEach(x => j[x.no] = x.jawaban);
-        selesaikan(db, p, j, 'WAKTU HABIS (otomatis)');
-      }
-    });
-  };
-  const upd = (p, r) => { p.aktif = Date.now(); p.terjawab = Number(r.terjawab) || 0; p.no = Number(r.posisi) || Number(r.no) || 1; p.pelanggaran = Number(r.pelanggaran) || 0; p.log = String(r.log || ''); };
-  const H = {
-    config: db => ({ ok: true, judul: db.setting.judul, kelas_tingkat: db.setting.kelas_tingkat, durasi_menit: db.setting.durasi_menit,
-      maks_pelanggaran: db.setting.maks_pelanggaran, ujian_aktif: db.setting.ujian_aktif, jumlah_soal: Math.min(db.setting.jumlah_soal, SOAL_DEMO.length), serverNow: Date.now() }),
-    mulai: (db, r) => {
-      const nama = String(r.nama || '').trim().replace(/\s+/g, ' '), kelas = String(r.kelas || '').toUpperCase(), absen = pad2(r.absen);
-      if (nama.length < 3) return { ok: false, error: 'NAMA_KOSONG' };
-      const s = db.setting, ada = db.peserta.find(p => p.kelas === kelas && p.absen === absen);
-      const dasar = { durasi_menit: s.durasi_menit, maks_pelanggaran: s.maks_pelanggaran, judul: s.judul, serverNow: Date.now() };
-      if (ada) {
-        if (ada.status === 'SELESAI') return { ok: false, error: 'SUDAH_SELESAI' };
-        if (ada.nama.toLowerCase().trim() !== nama.toLowerCase()) return { ok: false, error: 'ABSEN_DIPAKAI', nama: ada.nama };
-        const j = {}; db.jawaban.filter(x => x.id === ada.id && x.jawaban).forEach(x => j[x.no] = x.jawaban);
-        return Object.assign({ ok: true, lanjut: true, id: ada.id, soal: soalPublik(ada.soalIds), jawaban: j, mulai: ada.mulai, pelanggaran: ada.pelanggaran }, dasar);
-      }
-      if (!s.ujian_aktif) return { ok: false, error: 'UJIAN_DITUTUP' };
-      const p = { id: 'demo-' + Math.random().toString(36).slice(2, 10), nama, kelas, absen, status: 'BERLANGSUNG', mulai: Date.now(), aktif: Date.now(), terjawab: 0, no: 1, pelanggaran: 0, log: '', soalIds: acak(Math.min(s.jumlah_soal, SOAL_DEMO.length)) };
-      db.peserta.push(p);
-      return Object.assign({ ok: true, lanjut: false, id: p.id, soal: soalPublik(p.soalIds), jawaban: {}, mulai: p.mulai, pelanggaran: 0 }, dasar);
-    },
-    simpan: (db, r) => {
-      const p = db.peserta.find(x => x.id === r.id); if (!p) return { ok: false, error: 'SESI_TIDAK_ADA' };
-      if (p.status === 'SELESAI') return { ok: false, error: 'SUDAH_SELESAI' };
-      db.jawaban.push({ waktu: Date.now(), id: p.id, no: Number(r.no), jawaban: /^[A-D]$/.test(r.jawaban) ? r.jawaban : '' });
-      upd(p, r); return { ok: true, serverNow: Date.now() };
-    },
-    ping: (db, r) => {
-      const p = db.peserta.find(x => x.id === r.id); if (!p) return { ok: false, error: 'SESI_TIDAK_ADA' };
-      if (p.status === 'SELESAI') return { ok: false, error: 'SUDAH_SELESAI' };
-      upd(p, r); return { ok: true, serverNow: Date.now() };
-    },
-    selesai: (db, r) => {
-      const p = db.peserta.find(x => x.id === r.id); if (!p) return { ok: false, error: 'SESI_TIDAK_ADA' };
-      if (p.status === 'SELESAI') return { ok: true, sudah: true, tampil_nilai: db.setting.tampil_nilai };
-      const log = {}; db.jawaban.filter(x => x.id === p.id && x.jawaban).forEach(x => log[x.no] = x.jawaban);
-      const j = {}; subset(p.soalIds).forEach(q => { const v = String((r.jawaban || {})[q.no] || log[q.no] || '').toUpperCase(); if (/^[A-D]$/.test(v)) j[q.no] = v; });
-      p.pelanggaran = Math.max(p.pelanggaran, Number(r.pelanggaran) || 0);
-      const h = selesaikan(db, p, j, String(r.alasan || 'SELESAI'));
-      const out = { ok: true, tampil_nilai: db.setting.tampil_nilai };
-      if (db.setting.tampil_nilai) Object.assign(out, h);
-      return out;
-    },
-    admin_login: () => ({ ok: true }),
-    admin_monitor: db => {
-      kadaluarsa(db); const now = Date.now();
-      return { ok: true, serverNow: now, durasi_menit: db.setting.durasi_menit, jumlah_soal: SOAL_DEMO.length, peserta: db.peserta.map(p => ({
-        id: p.id, nama: p.nama, kelas: p.kelas, absen: p.absen, status: p.status, mulai: p.mulai, aktif: p.aktif, terjawab: p.terjawab,
-        no: p.no, pelanggaran: p.pelanggaran, log: p.log, total: subset(p.soalIds).length, sisa: p.status === 'BERLANGSUNG' ? Math.max(0, db.setting.durasi_menit * 60000 - (now - p.mulai)) : 0 })) };
-    },
-    admin_hasil: db => { kadaluarsa(db); return { ok: true, setting: db.setting, soal: SOAL_DEMO, hasil: db.hasil }; },
-    admin_reset: (db, r) => {
-      db.peserta = db.peserta.filter(p => p.id !== r.id); db.hasil = db.hasil.filter(h => h.id !== r.id); return { ok: true };
-    },
-    admin_get_setting: db => ({ ok: true, setting: db.setting }),
-    admin_set_setting: (db, r) => {
-      const s = r.setting || {};
-      ['judul', 'kelas_tingkat'].forEach(k => { if (s[k]) db.setting[k] = s[k]; });
-      ['durasi_menit', 'jumlah_soal', 'maks_pelanggaran', 'kkm'].forEach(k => { if (Number(s[k])) db.setting[k] = Number(s[k]); });
-      db.setting.ujian_aktif = !!s.ujian_aktif; db.setting.tampil_nilai = !!s.tampil_nilai;
-      return { ok: true, setting: db.setting };
-    }
-  };
-  return {
-    async handle(action, req) {
-      await sleep(60);
-      const fn = H[action]; if (!fn) return { ok: false, error: 'AKSI_TIDAK_DIKENAL' };
-      if (action.indexOf('admin_') === 0 && req.password !== CONFIG.DEMO_ADMIN_PASSWORD) return { ok: false, error: 'PASSWORD_SALAH' };
-      const db = load(); const r = fn(db, req); save(db); return r;
-    }
-  };
-})();
-
-/* ---------------------------- routing ---------------------------- */
-const VIEWS = ['view-daftar', 'view-ujian', 'view-selesai', 'view-admin-login', 'view-admin'];
+/* ---------------------------- tampilan & routing ---------------------------- */
+const VIEWS = ['view-daftar', 'view-ujian', 'view-selesai', 'view-login', 'view-app'];
 function show(id) { VIEWS.forEach(v => $(v).hidden = (v !== id)); window.scrollTo(0, 0); }
 function route() {
-  if (S.active) return;                       // jangan pindah halaman saat ulangan
-  if (location.hash === '#admin') {
-    stopAdminTimers();
-    if (sessionStorage.getItem('adm_pass')) masukAdmin(); else show('view-admin-login');
-  } else { stopAdminTimers(); show('view-daftar'); initDaftar(); }
+  if (S.active) return;
+  stopAdminTimers();
+  if (/^#(admin|guru)/.test(location.hash)) {
+    if (A.t) showApp(); else { const s = sessionStorage.getItem('adm'); if (s) { try { Object.assign(A, JSON.parse(s)); showApp(); return; } catch (e) {} } show('view-login'); }
+  } else { show('view-daftar'); initDaftar(); }
 }
+
+/* modal sederhana (tanpa alert/confirm agar fokus jendela tidak hilang saat ulangan) */
+function modal(html, onAksi) {
+  tutupModal();
+  const w = document.createElement('div'); w.className = 'modal-back'; w.id = 'modal-aktif';
+  w.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+  w.addEventListener('click', e => {
+    const b = e.target.closest('[data-x]');
+    if (b) {
+      const x = b.dataset.x, vals = {};
+      w.querySelectorAll('[name]').forEach(el => { vals[el.name] = el.type === 'checkbox' ? el.checked : el.value; });
+      if (x === 'batal' || !onAksi) tutupModal(); else { tutupModal(); onAksi(x, vals); }
+    } else if (e.target === w) tutupModal();
+  });
+  $('modal-host').appendChild(w);
+  const f = w.querySelector('input,button'); if (f) f.focus();
+}
+function tutupModal() { const m = $('modal-aktif'); if (m) m.remove(); }
+function info(judul, teks) { modal(`<h2>${esc(judul)}</h2><p>${esc(teks)}</p><div class="aksi"><button class="btn primary" data-x="batal">Tutup</button></div>`); }
 
 /* =====================================================================
    SISWA
    ===================================================================== */
 const S = {
-  active: false, submitting: false, id: null, nama: '', kelas: '', absen: '',
-  soal: [], jawaban: {}, idx: 0, mulai: 0, durMs: 0, offset: 0,
-  pel: 0, maxPel: 3, log: [], fsRequired: false, lastViol: 0,
-  saveQ: [], saving: false, timer: null, ping: null, cfg: null
+  active: false, submitting: false, token: null, kode: '', nama: '', kelas: '', absen: '',
+  soal: [], jawaban: {}, idx: 0, mulai: 0, durMs: 0, offset: 0, pel: 0, maxPel: 3, log: [],
+  fsRequired: false, lastViol: 0, timer: null, hb: null, syncT: null, syncing: false, again: false, rev: 0, synced: 0, cfg: null
 };
 const fsAda = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
 const fsMasuk = () => { const e = document.documentElement; const f = e.requestFullscreen || e.webkitRequestFullscreen; return f ? Promise.resolve(f.call(e)) : Promise.reject(); };
 const fsKeluar = () => { const f = document.exitFullscreen || document.webkitExitFullscreen; if (fsEl() && f) try { f.call(document); } catch (e) {} };
+const tersimpan = () => { try { return JSON.parse(localStorage.getItem('ulangan_sesi')); } catch (e) { return null; } };
+const NAMA_RE = /^[\p{L}\p{N}][\p{L}\p{M}\p{N}.' -]{2,59}$/u;
 
-/* ---------- pendaftaran ---------- */
-(function isiDropdown() {
-  $('in-kelas').innerHTML += KELAS.map(k => `<option value="${k}">${k}</option>`).join('');
-  $('in-absen').innerHTML += Array.from({ length: 32 }, (_, i) => `<option value="${pad2(i + 1)}">${pad2(i + 1)}</option>`).join('');
-  ['in-nama', 'in-kelas', 'in-absen', 'in-setuju'].forEach(id => $(id).addEventListener('input', cekForm));
-  $('form-daftar').addEventListener('submit', e => { e.preventDefault(); mulaiBaru(); });
-  $('btn-lanjut').addEventListener('click', lanjutkanSesi);
-})();
+/* ---------- kode & pendaftaran ---------- */
+$('form-kode').addEventListener('submit', e => { e.preventDefault(); const k = $('in-kode').value.trim().toUpperCase(); if (k) muatKode(k); });
+$('btn-ganti-kode').addEventListener('click', () => { S.cfg = null; localStorage.removeItem('ulangan_kode'); history.replaceState(null, '', location.pathname + location.hash); tampilKode(''); });
+['in-nama', 'in-kelas', 'in-absen', 'in-setuju'].forEach(id => $(id).addEventListener('input', cekForm));
+$('form-daftar').addEventListener('submit', e => { e.preventDefault(); mulaiBaru(); });
+$('btn-lanjut').addEventListener('click', lanjutkanSesi);
 
 function cekForm() {
-  const ok = $('in-nama').value.trim().length >= 3 && $('in-kelas').value && $('in-absen').value && $('in-setuju').checked && S.cfg && S.cfg.ujian_aktif;
-  $('btn-mulai').disabled = !ok;
+  $('btn-mulai').disabled = !(NAMA_RE.test($('in-nama').value.trim()) && $('in-kelas').value && $('in-absen').value && $('in-setuju').checked && S.cfg && S.cfg.aktif);
 }
-
-async function initDaftar() {
-  $('err-daftar').textContent = '';
+function tampilKode(err) {
+  $('form-kode').hidden = false; $('form-daftar').hidden = true; $('info-ujian').hidden = true;
+  $('judul-ujian').textContent = 'Ulangan Online'; $('sub-ujian').textContent = 'Masukkan kode ulangan dari gurumu.';
+  document.title = 'Ulangan Online'; $('err-kode').textContent = err || ''; $('btn-kode').disabled = false;
+}
+async function muatKode(kode) {
+  $('err-kode').textContent = ''; $('btn-kode').disabled = true; $('btn-kode').textContent = 'Memuat…';
   try {
-    const c = await apiConfig();
-    S.cfg = c;
-    $('judul-ujian').textContent = c.judul;
-    document.title = c.judul;
-    $('sub-ujian').textContent = (c.kelas_tingkat || '') + ' · Pilihan ganda';
-    $('f-durasi').textContent = c.durasi_menit;
-    $('f-soal').textContent = c.jumlah_soal || 30;
-    $('a-maks').textContent = c.maks_pelanggaran;
-    $('tutup-box').hidden = !!c.ujian_aktif;
-  } catch (e) {
-    S.cfg = null;
-    $('err-daftar').textContent = 'Tidak dapat terhubung ke server. Periksa internet, lalu muat ulang halaman.';
-  }
+    const c = await api('config', { kode });
+    if (!c.ok) { tampilKode(pesanGalat(c.error)); localStorage.removeItem('ulangan_kode'); return; }
+    S.cfg = c; localStorage.setItem('ulangan_kode', c.kode);
+    if (new URLSearchParams(location.search).get('u') !== c.kode) history.replaceState(null, '', '?u=' + c.kode + location.hash);
+    $('judul-ujian').textContent = c.judul; document.title = c.judul; $('sub-ujian').textContent = 'Pilihan ganda';
+    $('f-soal').textContent = c.jumlah; $('f-durasi').textContent = c.durasi; $('a-maks').textContent = c.maks; $('t-kode').textContent = c.kode;
+    $('in-kelas').innerHTML = '<option value="">Pilih kelas</option>' + c.kelas.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join('');
+    $('in-absen').innerHTML = '<option value="">Pilih no.</option>' + Array.from({ length: c.maxAbsen }, (_, i) => `<option value="${pad2(i + 1)}">${pad2(i + 1)}</option>`).join('');
+    $('tutup-box').hidden = !!c.aktif; $('info-ujian').hidden = false;
+    $('form-kode').hidden = true; $('form-daftar').hidden = false; $('err-daftar').textContent = '';
+    cekForm();
+  } catch (e) { tampilKode(e.message === 'API_URL_KOSONG' ? PESAN.API_URL_KOSONG : 'Tidak dapat terhubung ke server. Periksa internet, lalu coba lagi.'); }
+  finally { $('btn-kode').textContent = 'Lanjut'; $('btn-kode').disabled = false; }
+}
+function initDaftar() {
   const t = tersimpan();
   $('lanjut-box').hidden = !t;
   if (t) $('lanjut-info').textContent = `${t.nama} · Kelas ${t.kelas} · No. ${t.absen}`;
-  cekForm();
+  const kode = (new URLSearchParams(location.search).get('u') || localStorage.getItem('ulangan_kode') || '').trim().toUpperCase();
+  if (kode) { $('in-kode').value = kode; if (!S.cfg || S.cfg.kode !== kode) muatKode(kode); } else tampilKode('');
 }
-const tersimpan = () => { try { return JSON.parse(localStorage.getItem('ulangan_sesi')); } catch (e) { return null; } };
-
-const PESAN = {
-  NAMA_KOSONG: 'Tulis nama lengkap minimal 3 huruf.',
-  KELAS_TIDAK_VALID: 'Pilih kelas dari daftar.',
-  ABSEN_TIDAK_VALID: 'Pilih nomor absen dari daftar.',
-  UJIAN_DITUTUP: 'Ulangan belum dibuka atau sudah ditutup oleh guru.',
-  SUDAH_SELESAI: 'Kamu sudah menyelesaikan ulangan ini. Hubungi guru jika perlu mengulang.',
-  ABSEN_DIPAKAI: 'Nomor absen ini sudah dipakai atas nama lain. Periksa kelas dan nomor absenmu, atau hubungi guru.',
-  PASSWORD_SALAH: 'Kata sandi salah.'
-};
 
 async function mulaiBaru() {
-  const d = { nama: $('in-nama').value.trim().replace(/\s+/g, ' '), kelas: $('in-kelas').value, absen: $('in-absen').value };
-  await mulaiSesi(d, $('err-daftar'), $('btn-mulai'));
+  await mulaiSesi({ kode: S.cfg.kode, nama: $('in-nama').value.trim().replace(/\s+/g, ' '), kelas: $('in-kelas').value, absen: $('in-absen').value }, $('err-daftar'), $('btn-mulai'));
 }
-async function lanjutkanSesi() {
-  const t = tersimpan(); if (!t) return;
-  await mulaiSesi(t, $('err-daftar'), $('btn-lanjut'));
-}
+async function lanjutkanSesi() { const t = tersimpan(); if (t) await mulaiSesi(t, $('err-daftar'), $('btn-lanjut')); }
 
 async function mulaiSesi(d, errEl, btn) {
-  errEl.textContent = '';
-  btn.disabled = true;
+  errEl.textContent = ''; btn.disabled = true;
   S.fsRequired = fsAda && !isIOS;
-  // layar penuh harus diminta langsung dari klik pengguna, sebelum menunggu server
-  if (S.fsRequired) { try { await fsMasuk(); } catch (e) { S.fsRequired = false; } }
+  if (S.fsRequired) { try { await fsMasuk(); } catch (e) { S.fsRequired = false; } }   // harus dari klik pengguna, sebelum menunggu server
   try {
     const r = await api('mulai', d);
     if (!r.ok) {
-      fsKeluar();
-      errEl.textContent = (PESAN[r.error] || 'Gagal memulai: ' + r.error) + (r.error === 'ABSEN_DIPAKAI' && r.nama ? ` (terdaftar: ${r.nama})` : '');
+      fsKeluar(); errEl.textContent = pesanGalat(r.error);
       if (r.error === 'SUDAH_SELESAI') localStorage.removeItem('ulangan_sesi');
       btn.disabled = false; cekForm(); return;
     }
     localStorage.setItem('ulangan_sesi', JSON.stringify(d));
     masukUjian(r, d);
   } catch (e) {
-    fsKeluar();
-    errEl.textContent = 'Tidak dapat terhubung ke server. Periksa internet, lalu coba lagi.';
+    fsKeluar(); errEl.textContent = 'Tidak dapat terhubung ke server. Periksa internet, lalu coba lagi.';
     btn.disabled = false; cekForm();
   }
 }
 
 /* ---------- layar ujian ---------- */
 function masukUjian(r, d) {
+  let lokal = {}; try { lokal = JSON.parse(localStorage.getItem('ulangan_jawaban_' + r.token)) || {}; } catch (e) {}
   Object.assign(S, {
-    active: true, submitting: false, id: r.id, nama: d.nama, kelas: d.kelas, absen: pad2(d.absen), soal: r.soal,
-    jawaban: Object.assign({}, r.jawaban), idx: 0, mulai: r.mulai, durMs: r.durasi_menit * 60000,
-    offset: r.serverNow - Date.now(), pel: r.pelanggaran || 0, maxPel: r.maks_pelanggaran, log: [], saveQ: [], saving: false, lastViol: 0
+    active: true, submitting: false, token: r.token, kode: d.kode, nama: d.nama, kelas: d.kelas, absen: pad2(d.absen), soal: r.soal,
+    jawaban: Object.assign({}, r.jawaban, lokal), idx: 0, mulai: r.mulai, durMs: r.durasi * 60000, offset: r.serverNow - Date.now(),
+    pel: r.pelanggaran || 0, maxPel: r.maks, log: [], lastViol: 0, syncing: false, again: false, rev: 1, synced: 0
   });
-  // lanjut ke soal pertama yang belum dijawab
   const belum = S.soal.findIndex(q => !S.jawaban[q.no]); S.idx = belum < 0 ? 0 : belum;
   document.body.classList.add('exam-mode');
-  $('x-nama').textContent = S.nama;
-  $('x-kelas').textContent = `Kelas ${S.kelas} · No. absen ${S.absen}`;
-  bangunWatermark();
-  show('view-ujian');
-  renderPorts(); renderSoal(); renderHeader();
+  $('x-nama').textContent = S.nama; $('x-kelas').textContent = `Kelas ${S.kelas} · No. absen ${S.absen}`;
+  bangunWatermark(); show('view-ujian');
+  bangunPorts(); renderSoal(); renderHeader();
   history.pushState({ ujian: 1 }, '', location.href);
   clearInterval(S.timer); S.timer = setInterval(tick, 500); tick();
-  clearInterval(S.ping); S.ping = setInterval(kirimPing, 30000);
-  if (S.pel >= S.maxPel) { kumpulkan('PELANGGARAN (batas tercapai)'); return; }
-  if (r.lanjut) { S.log.push(jam(Date.now()) + ' Melanjutkan sesi'); }
+  clearInterval(S.hb); S.hb = setInterval(syncNow, 15000);   // denyut + simpan massal tiap 15 dtk
+  if (r.lanjut) { S.log.push(jam(Date.now()) + ' Melanjutkan sesi'); S.rev++; }
+  setTimeout(() => S.soal.forEach(q => { const s = urlGambar(q.gambar); if (s) new Image().src = s; }), 600);   // pra-muat gambar
+  jadwalSync(1500);
+  if (S.pel >= S.maxPel) kumpulkan('PELANGGARAN (batas tercapai)');
 }
 
-function sisaMs() { return S.mulai + S.durMs - (Date.now() + S.offset); }
+const sisaMs = () => S.mulai + S.durMs - (Date.now() + S.offset);
 function tick() {
   if (!S.active) return;
   const s = sisaMs(), el = $('x-timer');
-  el.textContent = mmss(s);
-  el.classList.toggle('low', s <= 5 * 60000);
+  el.textContent = mmss(s); el.classList.toggle('low', s <= 5 * 60000);
   if (s <= 0 && !S.submitting) kumpulkan('WAKTU HABIS');
 }
 function renderHeader() {
-  const n = Object.keys(S.jawaban).length;
-  $('x-terjawab').textContent = `${n}/${S.soal.length}`;
+  $('x-terjawab').textContent = `${Object.keys(S.jawaban).length}/${S.soal.length}`;
   const p = $('x-pel'); p.textContent = `${S.pel}/${S.maxPel}`; p.classList.toggle('has', S.pel > 0);
 }
-function renderPorts() {
-  $('x-ports').innerHTML = S.soal.map((q, i) =>
-    `<button type="button" class="port num ${S.jawaban[q.no] ? 'done' : ''} ${i === S.idx ? 'now' : ''}" data-i="${i}" aria-label="Soal ${i + 1}${S.jawaban[q.no] ? ', terjawab' : ', belum dijawab'}">${i + 1}</button>`).join('');
+function bangunPorts() {
+  $('x-ports').innerHTML = S.soal.map((q, i) => `<button type="button" class="port num" data-i="${i}" aria-label="Soal ${i + 1}">${i + 1}</button>`).join('');
+  updatePorts();
+}
+function updatePorts() {
+  const el = $('x-ports').children;
+  for (let i = 0; i < el.length; i++) { el[i].classList.toggle('done', !!S.jawaban[S.soal[i].no]); el[i].classList.toggle('now', i === S.idx); }
 }
 function renderSoal() {
   const q = S.soal[S.idx];
   $('x-no').textContent = `Soal ${S.idx + 1} dari ${S.soal.length}`;
   $('x-pilih').textContent = S.jawaban[q.no] ? `Jawabanmu: ${S.jawaban[q.no]}` : 'Belum dijawab';
   $('x-soal').textContent = q.soal;
+  const g = $('x-gambar'), src = urlGambar(q.gambar);
+  if (src) {
+    g.hidden = false; g.innerHTML = '<img alt="Gambar soal" draggable="false" decoding="async" referrerpolicy="no-referrer">';
+    const im = g.firstChild; im.onerror = () => { g.innerHTML = '<p class="gagal-gambar">Gambar tidak dapat dimuat. <button class="link" type="button" id="btn-muat-gambar">Coba lagi</button></p>'; };
+    im.src = src;
+  } else { g.hidden = true; g.innerHTML = ''; }
   $('x-opsi').innerHTML = q.pilihan.map((t, i) => {
     const h = 'ABCD'[i];
     return `<button type="button" role="radio" aria-checked="${S.jawaban[q.no] === h}" data-h="${h}"><span class="huruf">${h}</span><span>${esc(t)}</span></button>`;
   }).join('');
-  $('btn-prev').disabled = S.idx === 0;
-  $('btn-next').disabled = S.idx === S.soal.length - 1;
+  $('btn-prev').disabled = S.idx === 0; $('btn-next').disabled = S.idx === S.soal.length - 1;
+  updatePorts();
+  const nx = S.soal[S.idx + 1]; if (nx && nx.gambar) { const s = urlGambar(nx.gambar); if (s) new Image().src = s; }
 }
-function ke(i) { if (i < 0 || i >= S.soal.length) return; S.idx = i; renderSoal(); renderPorts(); }
+function ke(i) { if (i < 0 || i >= S.soal.length) return; S.idx = i; renderSoal(); S.rev++; }
+$('x-gambar').addEventListener('click', e => { if (e.target.id === 'btn-muat-gambar') renderSoal(); });
 $('x-ports').addEventListener('click', e => { const b = e.target.closest('.port'); if (b) ke(+b.dataset.i); });
 $('btn-prev').addEventListener('click', () => ke(S.idx - 1));
 $('btn-next').addEventListener('click', () => ke(S.idx + 1));
@@ -722,45 +819,39 @@ $('x-opsi').addEventListener('click', e => { const b = e.target.closest('button[
 function pilih(h) {
   if (!S.active || S.submitting) return;
   const q = S.soal[S.idx];
-  S.jawaban[q.no] = h;
-  S.saveQ.push({ no: q.no, huruf: h });
-  localStorage.setItem('ulangan_jawaban_' + S.id, JSON.stringify(S.jawaban));
-  renderSoal(); renderPorts(); renderHeader(); flushQ();
+  S.jawaban[q.no] = h; S.rev++;
+  try { localStorage.setItem('ulangan_jawaban_' + S.token, JSON.stringify(S.jawaban)); } catch (e) {}
+  // render ringan: hanya ubah tampilan pilihan, tanpa membangun ulang soal
+  document.querySelectorAll('#x-opsi button').forEach(b => b.setAttribute('aria-checked', b.dataset.h === h));
+  $('x-pilih').textContent = `Jawabanmu: ${h}`;
+  updatePorts(); renderHeader(); jadwalSync(3000);
 }
 
-/* ---------- penyimpanan otomatis ---------- */
-const meta = () => ({ id: S.id, no: S.idx + 1, posisi: S.idx + 1, terjawab: Object.keys(S.jawaban).length, pelanggaran: S.pel, log: S.log.join('; ') });
+/* ---------- penyimpanan otomatis: satu panggilan membawa seluruh jawaban ---------- */
 function setSimpan(st) {
   const el = $('x-simpan'); el.classList.toggle('off', st === 'off');
-  el.textContent = st === 'ok' ? 'Tersimpan otomatis' : st === 'jalan' ? 'Menyimpan…' : 'Koneksi terputus. Jawaban dikirim ulang otomatis; jangan tutup halaman.';
+  el.textContent = st === 'ok' ? 'Tersimpan otomatis' : st === 'jalan' ? 'Menyimpan…' : st === 'tunda' ? 'Perubahan akan disimpan…' : 'Koneksi terputus. Jawaban aman di perangkat dan dikirim ulang otomatis; jangan tutup halaman.';
 }
-async function flushQ() {
-  if (S.saving) return; S.saving = true; setSimpan('jalan');
-  while (S.saveQ.length && S.active && !S.submitting) {
-    const it = S.saveQ[0];
-    try {
-      const r = await api('simpan', Object.assign(meta(), { no: it.no, jawaban: it.huruf }));
-      if (r.ok || r.error === 'SUDAH_SELESAI') { S.saveQ.shift(); setSimpan('ok'); }
-      else if (r.error === 'SESI_TIDAK_ADA') { sesiHilang(); break; }
-      else throw new Error(r.error);
-    } catch (e) { setSimpan('off'); await sleep(4000); }
-  }
-  S.saving = false;
-}
-async function kirimPing() {
+function jadwalSync(ms) { clearTimeout(S.syncT); S.syncT = setTimeout(syncNow, ms); if (ms >= 1500 && S.synced !== S.rev) setSimpan('tunda'); }
+async function syncNow() {
   if (!S.active || S.submitting) return;
+  if (S.syncing) { S.again = true; return; }
+  clearTimeout(S.syncT); S.syncing = true; const rev = S.rev; let ok = false;
+  if (S.synced !== rev) setSimpan('jalan');
   try {
-    const r = await api('ping', meta());
-    if (r.error === 'SESI_TIDAK_ADA') sesiHilang();
-    else if (r.error === 'SUDAH_SELESAI') selesaiUI({ ok: true, tampil_nilai: false }, 'SUDAH_SELESAI');
+    const r = await api('sync', { token: S.token, jawaban: strJ(S.jawaban), posisi: S.idx + 1, pelanggaran: S.pel, log: S.log.join('; ') });
+    if (r.ok) ok = true;
+    else if (r.error === 'SESI_TIDAK_ADA') { S.syncing = false; return sesiHilang(); }
+    else if (r.error === 'SUDAH_SELESAI') { S.syncing = false; return selesaiUI({ ok: true, tampil_nilai: false }, 'SUDAH_SELESAI'); }
   } catch (e) {}
+  S.syncing = false;
+  if (ok) { S.synced = rev; setSimpan(S.rev === rev ? 'ok' : 'tunda'); } else setSimpan('off');
+  if (S.active && !S.submitting) { if (!ok) jadwalSync(5000); else if (S.again || S.rev !== S.synced) { S.again = false; jadwalSync(1500); } }
 }
 function sesiHilang() {
-  tutupSesi();
-  localStorage.removeItem('ulangan_sesi');
-  show('view-selesai');
+  tutupSesi(); localStorage.removeItem('ulangan_sesi'); show('view-selesai');
   $('s-judul').textContent = 'Sesi dihentikan';
-  $('s-teks').innerHTML = 'Sesi ulanganmu dihapus oleh guru. Hubungi guru untuk mengulang.';
+  $('s-teks').textContent = 'Sesi ulanganmu dihapus oleh guru. Hubungi guru untuk mengulang.';
   $('s-nilai-box').hidden = true;
 }
 
@@ -772,19 +863,17 @@ $('btn-kumpul').addEventListener('click', () => {
     <div class="aksi"><button class="btn" data-x="batal">Periksa lagi</button><button class="btn primary" data-x="ya">Kumpulkan sekarang</button></div>`,
     x => { if (x === 'ya') kumpulkan('SELESAI'); });
 });
-
 async function kumpulkan(alasan) {
-  if (S.submitting) return; S.submitting = true;
-  tutupModal();
-  document.body.classList.remove('blocked');
+  if (S.submitting) return; S.submitting = true; clearTimeout(S.syncT);
+  tutupModal(); document.body.classList.remove('blocked');
   const box = document.createElement('div'); box.className = 'modal-back'; box.id = 'kirim-box';
-  box.innerHTML = '<div class="modal"><h2>Mengirim jawaban…</h2><p id="kirim-teks">Jangan tutup halaman ini.</p><div class="aksi" id="kirim-aksi" hidden><button class="btn primary" id="kirim-ulang">Coba kirim lagi</button></div></div>';
+  box.innerHTML = '<div class="modal"><h2><span class="muat"></span>Mengirim jawaban…</h2><p id="kirim-teks">Jangan tutup halaman ini.</p><div class="aksi" id="kirim-aksi" hidden><button class="btn primary" id="kirim-ulang">Coba kirim lagi</button></div></div>';
   document.body.appendChild(box);
   const coba = async () => {
     $('kirim-aksi').hidden = true; $('kirim-teks').textContent = 'Jangan tutup halaman ini.';
     for (let i = 0; i < 6; i++) {
       try {
-        const r = await api('selesai', { id: S.id, jawaban: S.jawaban, alasan, pelanggaran: S.pel });
+        const r = await api('selesai', { token: S.token, jawaban: strJ(S.jawaban), alasan, pelanggaran: S.pel });
         if (r.ok) { box.remove(); selesaiUI(r, alasan); return; }
         if (r.error === 'SESI_TIDAK_ADA') { box.remove(); sesiHilang(); return; }
       } catch (e) {}
@@ -793,45 +882,23 @@ async function kumpulkan(alasan) {
     $('kirim-teks').textContent = 'Koneksi bermasalah, jawabanmu belum terkirim. Pastikan internet menyala, lalu coba lagi.';
     $('kirim-aksi').hidden = false;
   };
-  $('kirim-ulang').onclick = coba;
-  coba();
+  $('kirim-ulang').onclick = coba; coba();
 }
-
 function tutupSesi() {
-  S.active = false; clearInterval(S.timer); clearInterval(S.ping);
-  document.body.classList.remove('exam-mode', 'blocked');
-  $('watermark').hidden = true;
-  fsKeluar();
+  S.active = false; clearInterval(S.timer); clearInterval(S.hb); clearTimeout(S.syncT);
+  document.body.classList.remove('exam-mode', 'blocked'); $('watermark').hidden = true; fsKeluar();
 }
 function selesaiUI(r, alasan) {
-  tutupSesi();
-  localStorage.removeItem('ulangan_sesi'); localStorage.removeItem('ulangan_jawaban_' + S.id);
+  tutupSesi(); localStorage.removeItem('ulangan_sesi'); localStorage.removeItem('ulangan_jawaban_' + S.token);
   show('view-selesai');
   $('s-judul').textContent = 'Jawaban terkirim';
   $('s-teks').innerHTML = `Terima kasih, <b>${esc(S.nama)}</b>. Jawabanmu sudah tersimpan.`;
   if (/PELANGGARAN/.test(alasan)) $('s-teks').innerHTML += '<br>Ulangan dikumpulkan otomatis karena batas pelanggaran tercapai.';
   else if (/WAKTU/.test(alasan)) $('s-teks').innerHTML += '<br>Waktu ulangan telah habis.';
   const box = $('s-nilai-box');
-  if (r.tampil_nilai && r.nilai !== undefined) {
-    box.hidden = false; $('s-nilai').textContent = fmtNilai(r.nilai);
-    $('s-benar').textContent = r.benar; $('s-salah').textContent = r.salah; $('s-kosong').textContent = r.kosong;
-  } else box.hidden = true;
+  if (r.tampil_nilai && r.nilai !== undefined) { box.hidden = false; $('s-nilai').textContent = fmtNilai(r.nilai); $('s-benar').textContent = r.benar; $('s-salah').textContent = r.salah; $('s-kosong').textContent = r.kosong; }
+  else box.hidden = true;
 }
-
-/* ---------- modal sederhana (tanpa alert/confirm agar fokus tidak hilang) ---------- */
-function modal(html, onAksi) {
-  tutupModal();
-  const w = document.createElement('div'); w.className = 'modal-back'; w.id = 'modal-aktif';
-  w.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
-  w.addEventListener('click', e => {
-    const b = e.target.closest('[data-x]');
-    if (b) { const x = b.dataset.x; if (x === 'batal' || !onAksi) tutupModal(); else { tutupModal(); onAksi(x); } }
-    else if (e.target === w) tutupModal();
-  });
-  $('modal-host').appendChild(w);
-  const f = w.querySelector('button'); if (f) f.focus();
-}
-function tutupModal() { const m = $('modal-aktif'); if (m) m.remove(); }
 
 /* =====================================================================
    PENGAMANAN SELAMA ULANGAN
@@ -843,16 +910,12 @@ function bangunWatermark() {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="360" height="200"><text x="20" y="110" font-family="sans-serif" font-size="20" font-weight="700" fill="#12263A" transform="rotate(-24 180 100)">${esc(t)}</text></svg>`;
   const w = $('watermark'); w.style.backgroundImage = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`; w.hidden = false;
 }
-
 function catat(jenis) {
   if (!S.active || S.submitting) return;
-  const now = Date.now();
-  blokir(jenis);
+  const now = Date.now(); blokir(jenis);
   if (now - S.lastViol < 1500) return;      // satu kejadian = satu pelanggaran
-  S.lastViol = now; S.pel++;
-  S.log.push(jam(now) + ' ' + jenis);
-  renderHeader();
-  kirimPing();
+  S.lastViol = now; S.pel++; S.rev++; S.log.push(jam(now) + ' ' + jenis);
+  renderHeader(); jadwalSync(200);
   if (S.pel >= S.maxPel) kumpulkan(`PELANGGARAN (${S.pel}x)`);
 }
 function blokir(jenis) {
@@ -867,22 +930,14 @@ $('btn-kembali').addEventListener('click', async () => {
   if (S.fsRequired && !fsEl()) { $('cover-teks').textContent = 'Layar penuh belum aktif. Tekan tombol lagi untuk melanjutkan.'; return; }
   document.body.classList.remove('blocked');
 });
-
 const aktifUjian = () => S.active && !S.submitting;
 document.addEventListener('visibilitychange', () => { if (aktifUjian() && document.hidden) catat('Berpindah tab atau meminimalkan jendela'); });
-window.addEventListener('blur', () => {
-  if (!aktifUjian()) return;
-  setTimeout(() => { if (aktifUjian() && !document.hasFocus()) catat('Meninggalkan jendela ulangan'); }, 120);
-});
-['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => {
-  if (aktifUjian() && S.fsRequired && !fsEl()) catat('Keluar dari layar penuh');
-}));
+window.addEventListener('blur', () => { if (!aktifUjian()) return; setTimeout(() => { if (aktifUjian() && !document.hasFocus()) catat('Meninggalkan jendela ulangan'); }, 120); });
+['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => { if (aktifUjian() && S.fsRequired && !fsEl()) catat('Keluar dari layar penuh'); }));
 window.addEventListener('beforeprint', () => { if (aktifUjian()) catat('Mencoba mencetak halaman'); });
 window.addEventListener('beforeunload', e => { if (S.active && !S.submitting) { e.preventDefault(); e.returnValue = ''; } });
 window.addEventListener('popstate', () => { if (S.active) history.pushState({ ujian: 1 }, '', location.href); else route(); });
-['contextmenu', 'selectstart', 'dragstart', 'copy', 'cut', 'paste'].forEach(ev =>
-  document.addEventListener(ev, e => { if (S.active) e.preventDefault(); }, true));
-
+['contextmenu', 'selectstart', 'dragstart', 'copy', 'cut', 'paste'].forEach(ev => document.addEventListener(ev, e => { if (S.active) e.preventDefault(); }, true));
 function bersihkanClipboard() { try { navigator.clipboard && navigator.clipboard.writeText(' ').catch(() => {}); } catch (e) {} }
 document.addEventListener('keyup', e => { if (S.active && (e.key === 'PrintScreen' || e.code === 'PrintScreen')) { bersihkanClipboard(); catat('Menekan tombol Print Screen'); } }, true);
 document.addEventListener('keydown', e => {
@@ -894,177 +949,210 @@ document.addEventListener('keydown', e => {
   if (ctrl && ['a', 'c', 'x', 'v', 'f', 'g', 'o'].includes(k)) { e.preventDefault(); return; }
   if (e.key === 'F5' || (ctrl && k === 'r') || (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight'))) { e.preventDefault(); return; }
   if (S.submitting || document.body.classList.contains('blocked') || $('modal-aktif')) return;
-  if (['a', 'b', 'c', 'd'].includes(k) && !ctrl && !e.altKey) pilih(k.toUpperCase());
+  if (['a', 'b', 'c', 'd'].includes(k) && !ctrl && !e.altKey) { if ('ABCD'.indexOf(k.toUpperCase()) < S.soal[S.idx].pilihan.length) pilih(k.toUpperCase()); }
   else if (e.key === 'ArrowRight') ke(S.idx + 1);
   else if (e.key === 'ArrowLeft') ke(S.idx - 1);
 }, true);
 
 /* =====================================================================
-   ADMIN / GURU
+   GURU / ADMIN
    ===================================================================== */
-const A = { pass: '', mon: null, monAt: 0, hasil: null, timerMon: null, tab: 'pantau', setting: null };
-function stopAdminTimers() { clearInterval(A.timerMon); A.timerMon = null; }
+const A = { t: '', user: null, kode: '', ul: null, soal: [], sub: 'pantau', main: 'ulangan', mon: null, monAt: 0, hasil: null, draft: null, timer: null };
+function stopAdminTimers() { clearInterval(A.timer); A.timer = null; }
+const urut = (a, b) => a.kelas.localeCompare(b.kelas) || a.absen.localeCompare(b.absen);
+const linkSiswa = kode => location.href.split('#')[0].split('?')[0] + '?u=' + kode;
+const isAdmin = () => A.user && A.user.peran === 'admin';
 
-$('form-admin').addEventListener('submit', async e => {
-  e.preventDefault();
-  const pw = $('in-pass').value; $('err-admin').textContent = '';
+async function adm(action, data) {
+  const r = await api(action, Object.assign({ t: A.t }, data || {}));
+  if (r && r.error === 'SESI_HABIS') { keluarLokal('Sesi berakhir. Masuk kembali.'); }
+  return r;
+}
+function keluarLokal(pesan) {
+  stopAdminTimers(); A.t = ''; A.user = null; A.kode = ''; A.main = 'ulangan'; A.sub = 'pantau'; sessionStorage.removeItem('adm');
+  show('view-login'); $('err-login').textContent = pesan || '';
+}
+
+/* ---------- login ---------- */
+$('form-login').addEventListener('submit', async e => {
+  e.preventDefault(); const b = $('btn-login'); $('err-login').textContent = ''; b.disabled = true; b.textContent = 'Masuk…';
   try {
-    const r = await api('admin_login', { password: pw });
-    if (!r.ok) { $('err-admin').textContent = PESAN[r.error] || 'Gagal masuk: ' + r.error; return; }
-    sessionStorage.setItem('adm_pass', pw); $('in-pass').value = ''; masukAdmin();
-  } catch (err) { $('err-admin').textContent = 'Tidak dapat terhubung ke server.'; }
+    const r = await api('login', { username: $('in-user').value, password: $('in-pass').value });
+    if (!r.ok) { $('err-login').textContent = pesanGalat(r.error); return; }
+    A.t = r.t; A.user = r.user; sessionStorage.setItem('adm', JSON.stringify({ t: r.t, user: r.user })); $('in-pass').value = ''; showApp();
+  } catch (err) { $('err-login').textContent = err.message === 'API_URL_KOSONG' ? PESAN.API_URL_KOSONG : 'Tidak dapat terhubung ke server.'; }
+  finally { b.disabled = false; b.textContent = 'Masuk'; }
 });
-$('btn-keluar').addEventListener('click', () => { sessionStorage.removeItem('adm_pass'); stopAdminTimers(); location.hash = ''; show('view-daftar'); initDaftar(); });
+$('btn-keluar').addEventListener('click', async () => { try { await api('logout', { t: A.t }); } catch (e) {} keluarLokal(''); location.hash = '#guru'; });
 
-const adm = (action, data) => api(action, Object.assign({ password: sessionStorage.getItem('adm_pass') }, data || {}));
-function gagalAdmin(r) {
-  if (r && r.error === 'PASSWORD_SALAH') { sessionStorage.removeItem('adm_pass'); stopAdminTimers(); show('view-admin-login'); $('err-admin').textContent = 'Sesi berakhir. Masuk kembali.'; return true; }
-  return false;
+function showApp() {
+  show('view-app');
+  $('a-user').textContent = A.user.nama + (isAdmin() ? ' · Admin' : '');
+  $('tab-admin').hidden = !isAdmin();
+  if (A.main === 'admin' && !isAdmin()) A.main = 'ulangan';
+  gantiMain(A.main);
+}
+$('main-tabs').addEventListener('click', e => { const b = e.target.closest('[data-main]'); if (b) gantiMain(b.dataset.main); });
+function gantiMain(m) {
+  A.main = m; stopAdminTimers();
+  document.querySelectorAll('#main-tabs [data-main]').forEach(b => b.setAttribute('aria-selected', b.dataset.main === m));
+  $('m-ulangan').hidden = m !== 'ulangan'; $('m-akun').hidden = m !== 'akun'; $('m-admin').hidden = m !== 'admin';
+  if (m === 'ulangan') { if (A.kode) gantiSub(A.sub); else muatList(); }
+  if (m === 'admin') muatAdmin();
 }
 
-async function masukAdmin() {
-  show('view-admin');
-  const opt = '<option value="">Semua kelas</option>' + KELAS.map(k => `<option value="${k}">${k}</option>`).join('');
-  ['p-kelas', 'h-kelas'].forEach(id => { if (!$(id).options.length) $(id).innerHTML = opt; });
-  try { const c = await apiConfig(); $('a-judul').textContent = 'Guru · ' + c.judul; } catch (e) {}
-  gantiTab(A.tab);
+/* ---------- daftar ulangan ---------- */
+async function muatList() {
+  $('ul-daftar').hidden = false; $('ul-detail').hidden = true; A.kode = '';
+  $('ul-judul-daftar').textContent = isAdmin() ? 'Semua ulangan' : 'Ulangan saya';
+  $('ul-grid').innerHTML = '<p class="kosong"><span class="muat"></span>Memuat…</p>';
+  try {
+    const r = await adm('ul_list'); if (!r.ok) { $('ul-grid').innerHTML = `<p class="kosong">${esc(pesanGalat(r.error))}</p>`; return; }
+    if (!r.ulangan.length) { $('ul-grid').innerHTML = '<p class="kosong">Belum ada ulangan. Klik “Buat ulangan baru” untuk memulai.</p>'; return; }
+    $('ul-grid').innerHTML = r.ulangan.map(u => `<div class="ul-card">
+      <div style="display:flex;justify-content:space-between;gap:.5rem;align-items:start"><span class="kode">${esc(u.kode)}</span><span class="badge ${u.aktif ? 'ok' : 'mute'}">${u.aktif ? 'Dibuka' : 'Ditutup'}</span></div>
+      <h3>${esc(u.judul)}</h3>
+      <div class="meta num">${u.soal} soal bank · ${u.jumlah ? u.jumlah + ' soal/siswa' : 'semua soal'} · ${u.durasi} menit<br>${u.jalan} mengerjakan · ${u.selesai} selesai${isAdmin() ? '<br>Pemilik: ' + esc(u.pemilik) : ''}</div>
+      <div class="aksi"><button class="btn small primary" data-buka="${esc(u.kode)}">Buka</button><button class="btn small" data-salin="${esc(u.kode)}">Salin tautan</button></div></div>`).join('');
+  } catch (e) { $('ul-grid').innerHTML = '<p class="kosong">Tidak dapat terhubung ke server.</p>'; }
 }
-document.querySelector('.tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) gantiTab(b.dataset.tab); });
-function gantiTab(t) {
-  A.tab = t;
-  ['pantau', 'hasil', 'atur'].forEach(n => { $('pane-' + n).hidden = n !== t; $('tab-' + n).setAttribute('aria-selected', n === t); });
-  stopAdminTimers();
-  if (t === 'pantau') { muatPantau(); A.timerMon = setInterval(muatPantau, 8000); }
+$('ul-grid').addEventListener('click', e => {
+  const b = e.target.closest('[data-buka]'), s = e.target.closest('[data-salin]');
+  if (b) bukaUlangan(b.dataset.buka);
+  if (s) salin(linkSiswa(s.dataset.salin), s);
+});
+async function salin(teks, btn) {
+  try { await navigator.clipboard.writeText(teks); } catch (e) { const i = $('d-link'); if (i && !$('ul-detail').hidden) { i.select(); } else { modal(`<h2>Salin tautan</h2><input type="text" value="${esc(teks)}" readonly><div class="aksi"><button class="btn primary" data-x="batal">Tutup</button></div>`); return; } }
+  if (btn) { const t = btn.textContent; btn.textContent = 'Tersalin ✓'; setTimeout(() => btn.textContent = t, 1500); }
+}
+$('btn-buat').addEventListener('click', () => {
+  modal(`<h2>Buat ulangan baru</h2><label for="m-judul">Judul ulangan</label><input type="text" id="m-judul" name="judul" maxlength="120" placeholder="mis. Ulangan Harian Informatika Bab 3">
+    <div class="aksi"><button class="btn" data-x="batal">Batal</button><button class="btn primary" data-x="ya">Buat</button></div>`,
+    async (x, v) => {
+      const r = await adm('ul_buat', { judul: v.judul });
+      if (!r.ok) return info('Gagal membuat ulangan', pesanGalat(r.error));
+      bukaUlangan(r.kode, 'soal');
+    });
+});
+
+/* ---------- detail ulangan ---------- */
+async function bukaUlangan(kode, sub) {
+  A.kode = kode; A.sub = sub || 'pantau'; A.mon = null; A.hasil = null; A.draft = null; $('s-preview').innerHTML = ''; $('s-file').value = '';
+  $('ul-daftar').hidden = true; $('ul-detail').hidden = false;
+  $('d-judul').textContent = 'Memuat…'; $('d-kode').textContent = kode; $('d-link').value = linkSiswa(kode);
+  const r = await adm('ul_get', { kode });
+  if (!r.ok) { info('Gagal membuka ulangan', pesanGalat(r.error)); return muatList(); }
+  A.ul = r.ul; A.soal = r.soal; $('d-judul').textContent = r.ul.judul;
+  const opt = '<option value="">Semua kelas</option>' + r.ul.kelas.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join('');
+  ['p-kelas', 'h-kelas'].forEach(id => $(id).innerHTML = opt);
+  isiPengaturan();
+  gantiSub(!r.soal.length ? 'soal' : A.sub);
+}
+$('btn-kembali-list').addEventListener('click', () => { stopAdminTimers(); muatList(); });
+$('btn-salin').addEventListener('click', e => salin($('d-link').value, e.target));
+$('sub-tabs').addEventListener('click', e => { const b = e.target.closest('[data-sub]'); if (b) gantiSub(b.dataset.sub); });
+function gantiSub(t) {
+  A.sub = t; stopAdminTimers();
+  ['pantau', 'hasil', 'soal', 'atur'].forEach(n => { $('pane-' + n).hidden = n !== t; });
+  document.querySelectorAll('#sub-tabs [data-sub]').forEach(b => b.setAttribute('aria-selected', b.dataset.sub === t));
+  if (t === 'pantau') { muatPantau(); A.timer = setInterval(() => { if (!document.hidden) muatPantau(); }, 10000); }
   if (t === 'hasil') muatHasil();
-  if (t === 'atur') muatSetting();
+  if (t === 'soal') renderSoalTab();
 }
 
-/* ---------- Pantauan ---------- */
+/* ---------- pantauan ---------- */
 async function muatPantau() {
   try {
-    const r = await adm('admin_monitor');
-    if (gagalAdmin(r)) return;
-    if (!r.ok) return;
-    A.mon = r; A.monAt = Date.now();
-    renderPantau();
-    $('p-update').textContent = 'Diperbarui ' + jam(Date.now());
+    const r = await adm('ul_monitor', { kode: A.kode }); if (!r.ok) return;
+    A.mon = r; A.monAt = Date.now(); renderPantau(); $('p-update').textContent = 'Diperbarui ' + jam(Date.now());
   } catch (e) { $('p-update').textContent = 'Gagal memperbarui. Mencoba lagi…'; }
 }
 ['p-kelas', 'p-cari', 'p-status'].forEach(id => $(id).addEventListener('input', () => A.mon && renderPantau()));
 $('p-refresh').addEventListener('click', muatPantau);
-
 function statusPeserta(p, now) {
-  const lalu = (now - p.aktif) / 1000;
   if (p.status === 'SELESAI') return { k: 'selesai', label: 'Selesai', cls: 'ok' };
-  if (lalu > 90) return { k: 'masalah', label: 'Tidak aktif', cls: 'warn' };
+  if ((now - p.aktif) / 1000 > 90) return { k: 'masalah', label: 'Tidak aktif', cls: 'warn' };
   return { k: 'jalan', label: 'Mengerjakan', cls: 'run' };
 }
-const urut = (a, b) => a.kelas.localeCompare(b.kelas) || a.absen.localeCompare(b.absen);
 function renderPantau() {
   const m = A.mon, now = m.serverNow;
-  let rows = m.peserta.slice().sort(urut);
-  const all = rows.map(p => ({ p, st: statusPeserta(p, now) }));
+  const all = m.peserta.slice().sort(urut).map(p => ({ p, st: statusPeserta(p, now) }));
   const kls = $('p-kelas').value, q = $('p-cari').value.trim().toLowerCase(), sf = $('p-status').value;
-  let list = all.filter(x => (!kls || x.p.kelas === kls) && (!q || x.p.nama.toLowerCase().includes(q)) &&
-    (!sf || (sf === 'masalah' ? (x.st.k === 'masalah' || x.p.pelanggaran > 0) : x.st.k === sf)));
+  const list = all.filter(x => (!kls || x.p.kelas === kls) && (!q || x.p.nama.toLowerCase().includes(q)) && (!sf || (sf === 'masalah' ? (x.st.k === 'masalah' || x.p.pelanggaran > 0) : x.st.k === sf)));
   const hit = f => all.filter(f).length;
-  $('p-cards').innerHTML = [
-    ['Sedang mengerjakan', hit(x => x.st.k === 'jalan')],
-    ['Selesai', hit(x => x.st.k === 'selesai')],
-    ['Tidak aktif', hit(x => x.st.k === 'masalah')],
-    ['Siswa melanggar', hit(x => x.p.pelanggaran > 0)],
-    ['Total peserta', all.length]
-  ].map(c => `<div class="c"><b class="num">${c[1]}</b><span>${c[0]}</span></div>`).join('');
+  $('p-cards').innerHTML = [['Sedang mengerjakan', hit(x => x.st.k === 'jalan')], ['Selesai', hit(x => x.st.k === 'selesai')], ['Tidak aktif', hit(x => x.st.k === 'masalah')], ['Siswa melanggar', hit(x => x.p.pelanggaran > 0)], ['Total peserta', all.length]]
+    .map(c => `<div class="c"><b class="num">${c[1]}</b><span>${c[0]}</span></div>`).join('');
   if (!list.length) { $('p-tabel').innerHTML = `<tbody><tr><td class="kosong">${all.length ? 'Tidak ada siswa yang cocok dengan filter.' : 'Belum ada siswa yang memulai ulangan.'}</td></tr></tbody>`; return; }
   $('p-tabel').innerHTML = '<thead><tr><th>Kelas</th><th>Absen</th><th>Nama</th><th>Status</th><th>Progres</th><th>Soal ke</th><th>Sisa waktu</th><th>Pelanggaran</th><th>Aktivitas</th><th></th></tr></thead><tbody>' +
     list.map(({ p, st }) => {
-      const lalu = Math.max(0, Math.round((now - p.aktif) / 1000));
-      const akt = lalu < 60 ? lalu + ' dtk lalu' : Math.round(lalu / 60) + ' mnt lalu';
-      const total = p.total || m.jumlah_soal;
-      const pct = Math.min(100, Math.round(p.terjawab / total * 100));
-      return `<tr>
-        <td>${esc(p.kelas)}</td><td class="num">${esc(p.absen)}</td><td>${esc(p.nama)}</td>
-        <td><span class="badge ${st.cls}">${st.label}</span></td>
-        <td class="num"><span class="bar"><i style="width:${pct}%"></i></span>${p.terjawab}/${total}</td>
-        <td class="num">${p.status === 'SELESAI' ? '–' : p.no}</td>
+      const lalu = Math.max(0, Math.round((now - p.aktif) / 1000)), akt = lalu < 60 ? lalu + ' dtk lalu' : Math.round(lalu / 60) + ' mnt lalu';
+      const pct = Math.min(100, Math.round(p.terjawab / p.total * 100));
+      return `<tr><td>${esc(p.kelas)}</td><td class="num">${esc(p.absen)}</td><td>${esc(p.nama)}</td><td><span class="badge ${st.cls}">${st.label}</span></td>
+        <td class="num"><span class="bar"><i style="width:${pct}%"></i></span>${p.terjawab}/${p.total}</td><td class="num">${p.status === 'SELESAI' ? '–' : p.no}</td>
         <td class="num">${p.status === 'SELESAI' ? '–' : mmss(Math.max(0, p.sisa - (Date.now() - A.monAt)))}</td>
         <td>${p.pelanggaran ? `<span class="badge bad" title="${esc(p.log)}">${p.pelanggaran}x</span>` : '<span class="badge mute">0</span>'}</td>
         <td>${p.status === 'SELESAI' ? '–' : akt}</td>
-        <td><button class="btn small danger" data-reset="${esc(p.id)}" data-nama="${esc(p.nama)}">Reset</button></td></tr>`;
+        <td><button class="btn small danger" data-reset="1" data-kelas="${esc(p.kelas)}" data-absen="${esc(p.absen)}" data-nama="${esc(p.nama)}">Reset</button></td></tr>`;
     }).join('') + '</tbody>';
 }
-$('p-tabel').addEventListener('click', e => {
-  const b = e.target.closest('[data-reset]'); if (!b) return;
-  resetSiswa(b.dataset.reset, b.dataset.nama, muatPantau);
-});
-function resetSiswa(id, nama, sesudah) {
-  modal(`<h2>Reset ${esc(nama)}?</h2><p>Sesi dan hasil siswa ini dihapus, sehingga ia dapat mengerjakan ulang dari awal. Rekaman jawaban lama tetap ada di sheet Jawaban.</p>
+$('p-tabel').addEventListener('click', e => { const b = e.target.closest('[data-reset]'); if (b) resetSiswa(b.dataset, muatPantau); });
+function resetSiswa(d, sesudah) {
+  modal(`<h2>Reset ${esc(d.nama)}?</h2><p>Sesi dan hasil siswa ini dihapus, sehingga ia dapat mengerjakan ulang dari awal.</p>
     <div class="aksi"><button class="btn" data-x="batal">Batal</button><button class="btn danger" data-x="ya">Reset siswa</button></div>`,
-    async x => { if (x === 'ya') { const r = await adm('admin_reset', { id }); if (!gagalAdmin(r)) sesudah(); } });
+    async x => { if (x === 'ya') { const r = await adm('ul_reset_siswa', { kode: A.kode, kelas: d.kelas, absen: d.absen }); if (r.ok) sesudah(); else info('Gagal', pesanGalat(r.error)); } });
 }
 
-/* ---------- Hasil ---------- */
+/* ---------- hasil ---------- */
 async function muatHasil() {
-  $('h-tabel').innerHTML = '<tbody><tr><td class="kosong">Memuat hasil…</td></tr></tbody>';
+  $('h-tabel').innerHTML = '<tbody><tr><td class="kosong"><span class="muat"></span>Memuat hasil…</td></tr></tbody>';
   try {
-    const r = await adm('admin_hasil');
-    if (gagalAdmin(r)) return;
-    if (!r.ok) { $('h-tabel').innerHTML = `<tbody><tr><td class="kosong">Gagal memuat: ${esc(r.error)}</td></tr></tbody>`; return; }
+    const r = await adm('ul_hasil', { kode: A.kode });
+    if (!r.ok) { $('h-tabel').innerHTML = `<tbody><tr><td class="kosong">${esc(pesanGalat(r.error))}</td></tr></tbody>`; return; }
     A.hasil = r; renderHasil();
   } catch (e) { $('h-tabel').innerHTML = '<tbody><tr><td class="kosong">Tidak dapat terhubung ke server.</td></tr></tbody>'; }
 }
 ['h-kelas', 'h-cari'].forEach(id => $(id).addEventListener('input', () => A.hasil && renderHasil()));
 $('h-segar').addEventListener('click', muatHasil);
-
 function hasilTersaring() {
   const kls = $('h-kelas').value, q = $('h-cari').value.trim().toLowerCase();
   return A.hasil.hasil.filter(h => (!kls || h.kelas === kls) && (!q || h.nama.toLowerCase().includes(q))).slice().sort(urut);
 }
 function ringkasan(rows) {
-  const kkm = A.hasil.setting.kkm, n = rows.length, nil = rows.map(r => r.nilai);
-  return { n, kkm, rata: n ? nil.reduce((a, b) => a + b, 0) / n : 0, maks: n ? Math.max(...nil) : 0, min: n ? Math.min(...nil) : 0,
-           tuntas: rows.filter(r => r.nilai >= kkm).length };
+  const kkm = A.hasil.ul.kkm, n = rows.length, nil = rows.map(r => r.nilai);
+  return { n, kkm, rata: n ? nil.reduce((a, b) => a + b, 0) / n : 0, maks: n ? Math.max(...nil) : 0, min: n ? Math.min(...nil) : 0, tuntas: rows.filter(r => r.nilai >= kkm).length };
 }
 function renderHasil() {
-  const rows = hasilTersaring(), s = ringkasan(rows), total = A.hasil.soal.length;
-  $('h-cards').innerHTML = [
-    ['Peserta selesai', s.n], ['Rata-rata', fmtNilai(s.rata)], ['Tertinggi', fmtNilai(s.maks)], ['Terendah', fmtNilai(s.min)],
-    [`Tuntas (KKM ${s.kkm})`, s.n ? `${s.tuntas} (${Math.round(s.tuntas / s.n * 100)}%)` : '0']
-  ].map(c => `<div class="c"><b class="num">${c[1]}</b><span>${c[0]}</span></div>`).join('');
+  const rows = hasilTersaring(), s = ringkasan(rows);
+  $('h-cards').innerHTML = [['Peserta selesai', s.n], ['Rata-rata', fmtNilai(s.rata)], ['Tertinggi', fmtNilai(s.maks)], ['Terendah', fmtNilai(s.min)], [`Tuntas (KKM ${s.kkm})`, s.n ? `${s.tuntas} (${Math.round(s.tuntas / s.n * 100)}%)` : '0']]
+    .map(c => `<div class="c"><b class="num">${c[1]}</b><span>${c[0]}</span></div>`).join('');
   if (!rows.length) { $('h-tabel').innerHTML = '<tbody><tr><td class="kosong">Belum ada hasil yang masuk.</td></tr></tbody>'; $('h-analisis-tabel').innerHTML = ''; return; }
   $('h-tabel').innerHTML = '<thead><tr><th class="r">No</th><th>Kelas</th><th>Absen</th><th>Nama</th><th class="r">Benar</th><th class="r">Salah</th><th class="r">Kosong</th><th class="r">Nilai</th><th class="r">Durasi (mnt)</th><th class="r">Pelanggaran</th><th>Keterangan</th><th></th></tr></thead><tbody>' +
     rows.map((r, i) => `<tr><td class="r num">${i + 1}</td><td>${esc(r.kelas)}</td><td class="num">${esc(r.absen)}</td><td>${esc(r.nama)}</td>
       <td class="r num">${r.benar}</td><td class="r num">${r.salah}</td><td class="r num">${r.kosong}</td><td class="r num"><b>${fmtNilai(r.nilai)}</b></td>
       <td class="r num">${fmtNilai(r.durasi)}</td><td class="r num">${r.pelanggaran ? `<span class="badge bad">${r.pelanggaran}x</span>` : '0'}</td>
       <td><span class="badge ${r.nilai >= s.kkm ? 'ok' : 'warn'}">${r.nilai >= s.kkm ? 'Tuntas' : 'Belum tuntas'}</span>${/WAKTU|PELANGGARAN/.test(r.alasan) ? ` <span class="badge mute">${esc(r.alasan)}</span>` : ''}</td>
-      <td style="white-space:nowrap"><button class="btn small" data-detail="${esc(r.id)}">Detail</button> <button class="btn small danger" data-reset="${esc(r.id)}" data-nama="${esc(r.nama)}">Reset</button></td></tr>`).join('') + '</tbody>';
-  const an = analisis(rows);
+      <td style="white-space:nowrap"><button class="btn small" data-detail="${i}">Detail</button> <button class="btn small danger" data-reset="1" data-kelas="${esc(r.kelas)}" data-absen="${esc(r.absen)}" data-nama="${esc(r.nama)}">Reset</button></td></tr>`).join('') + '</tbody>';
   $('h-analisis-tabel').innerHTML = '<thead><tr><th class="r">No</th><th>Level</th><th class="r">Diterima</th><th>Benar</th><th>Kunci</th><th>Pilihan terbanyak yang salah</th></tr></thead><tbody>' +
-    an.map(a => `<tr><td class="r num">${a.no}</td><td>${esc(a.level)}</td><td class="r num">${a.dapat}</td><td class="num"><span class="bar"><i style="width:${a.pct}%"></i></span>${Math.round(a.pct)}%</td><td>${esc(a.kunci)}</td><td>${a.pengecoh ? esc(a.pengecoh) + ` (${a.nPengecoh} siswa)` : '–'}</td></tr>`).join('') + '</tbody>';
+    analisis(rows).map(a => `<tr><td class="r num">${a.no}</td><td>${esc(a.level)}</td><td class="r num">${a.dapat}</td><td class="num"><span class="bar"><i style="width:${a.pct}%"></i></span>${Math.round(a.pct)}%</td><td>${esc(a.kunci)}</td><td>${a.pengecoh ? esc(a.pengecoh) + ` (${a.nPengecoh} siswa)` : '–'}</td></tr>`).join('') + '</tbody>';
 }
 function analisis(rows) {
   return A.hasil.soal.map(q => {
     let ok = 0, dapat = 0; const hit = { A: 0, B: 0, C: 0, D: 0 };
-    rows.forEach(r => {
-      if (r.soal && r.soal.length && !r.soal.includes(q.no)) return;   // siswa ini tidak mendapat soal tersebut
-      dapat++;
-      const j = (r.jawaban || {})[q.no]; if (j === q.kunci) ok++; else if (j) hit[j]++;
-    });
+    rows.forEach(r => { if (r.soal && r.soal.length && !r.soal.includes(q.no)) return; dapat++; const j = (r.jawaban || {})[q.no]; if (j === q.kunci) ok++; else if (j) hit[j]++; });
     const top = Object.keys(hit).sort((a, b) => hit[b] - hit[a])[0];
     return { no: q.no, level: q.level || '', kunci: q.kunci, dapat, pct: dapat ? ok / dapat * 100 : 0, pengecoh: hit[top] ? top : '', nPengecoh: hit[top] };
   });
 }
 $('h-tabel').addEventListener('click', e => {
   const d = e.target.closest('[data-detail]'), rs = e.target.closest('[data-reset]');
-  if (d) detailSiswa(d.dataset.detail);
-  if (rs) resetSiswa(rs.dataset.reset, rs.dataset.nama, muatHasil);
+  if (d) detailSiswa(hasilTersaring()[+d.dataset.detail]);
+  if (rs) resetSiswa(rs.dataset, muatHasil);
 });
-function detailSiswa(id) {
-  const r = A.hasil.hasil.find(x => x.id === id); if (!r) return;
+function detailSiswa(r) {
+  if (!r) return;
   const daftar = (r.soal && r.soal.length) ? r.soal.map(n => A.hasil.soal.find(q => q.no === n)).filter(Boolean) : A.hasil.soal;
   const baris = daftar.map((q, i) => {
-    const j = (r.jawaban || {})[q.no];
-    const cls = !j ? '' : j === q.kunci ? 'jawab-ok' : 'jawab-no';
+    const j = (r.jawaban || {})[q.no], cls = !j ? '' : j === q.kunci ? 'jawab-ok' : 'jawab-no';
     return `<tr><td class="r num">${i + 1}</td><td class="r num">${q.no}</td><td class="${cls}">${j || '–'}</td><td>${esc(q.kunci)}</td><td>${!j ? 'Kosong' : j === q.kunci ? '✓ Benar' : '✗ Salah'}</td></tr>`;
   }).join('');
   modal(`<h2>${esc(r.nama)}</h2><p>Kelas ${esc(r.kelas)} · No. ${esc(r.absen)} · Nilai <b>${fmtNilai(r.nilai)}</b> (${r.benar} benar, ${r.salah} salah, ${r.kosong} kosong) · Pelanggaran ${r.pelanggaran}x</p>
@@ -1072,111 +1160,238 @@ function detailSiswa(id) {
     <div class="aksi"><button class="btn primary" data-x="batal">Tutup</button></div>`);
 }
 
-/* ---------- Ekspor: cetak, PDF, Excel ---------- */
-const labelKelas = () => $('h-kelas').value ? 'Kelas ' + $('h-kelas').value : 'Semua kelas 9A–9I';
-const kodeKelas = () => $('h-kelas').value || 'Semua';
-const judulLaporan = () => 'Hasil ' + A.hasil.setting.judul;
-function pastikanData() {
-  if (!A.hasil || !hasilTersaring().length) { modal('<h2>Belum ada data</h2><p>Belum ada hasil ulangan untuk diekspor pada filter ini.</p><div class="aksi"><button class="btn primary" data-x="batal">Tutup</button></div>'); return false; }
-  return true;
+/* ---------- ekspor: cetak, PDF, Excel ---------- */
+const labelKelas = () => $('h-kelas').value ? 'Kelas ' + $('h-kelas').value : 'Semua kelas';
+const kodeKelas = () => ($('h-kelas').value || 'Semua').replace(/[^\w-]/g, '_');
+const judulLaporan = () => 'Hasil ' + A.hasil.ul.judul;
+const namaBerkas = ext => `Hasil_${A.kode}_${kodeKelas()}_${tglBerkas()}.${ext}`;
+function adaData() { if (!A.hasil || !hasilTersaring().length) { info('Belum ada data', 'Belum ada hasil ulangan untuk diekspor pada filter ini.'); return false; } return true; }
+async function denganMuat(btn, fn) {
+  const t = btn.textContent; btn.disabled = true; btn.textContent = 'Menyiapkan…';
+  try { await fn(); } catch (e) { info('Gagal', e.message === 'LIB' ? 'Pustaka belum termuat. Periksa koneksi internet lalu coba lagi.' : String(e.message || e)); }
+  finally { btn.disabled = false; btn.textContent = t; }
 }
 $('h-cetak').addEventListener('click', () => {
-  if (!pastikanData()) return;
+  if (!adaData()) return;
   const rows = hasilTersaring(), s = ringkasan(rows);
   $('printArea').innerHTML = `<h1>${esc(judulLaporan())}</h1>
-    <p class="meta">${esc(A.hasil.setting.kelas_tingkat)} · ${esc(labelKelas())} · ${esc(tglPanjang())}<br>
-    Peserta ${s.n} · Rata-rata ${fmtNilai(s.rata)} · Tertinggi ${fmtNilai(s.maks)} · Terendah ${fmtNilai(s.min)} · Tuntas (KKM ${s.kkm}) ${s.tuntas} dari ${s.n}</p>
+    <p class="meta">Kode ${esc(A.kode)} · ${esc(labelKelas())} · ${esc(tglPanjang())}<br>Peserta ${s.n} · Rata-rata ${fmtNilai(s.rata)} · Tertinggi ${fmtNilai(s.maks)} · Terendah ${fmtNilai(s.min)} · Tuntas (KKM ${s.kkm}) ${s.tuntas} dari ${s.n}</p>
     <table><thead><tr><th class="r">No</th><th>Kelas</th><th>Absen</th><th>Nama</th><th class="r">Benar</th><th class="r">Salah</th><th class="r">Kosong</th><th class="r">Nilai</th><th class="r">Durasi (mnt)</th><th class="r">Pelanggaran</th><th>Keterangan</th></tr></thead><tbody>` +
     rows.map((r, i) => `<tr><td class="r">${i + 1}</td><td>${esc(r.kelas)}</td><td>${esc(r.absen)}</td><td>${esc(r.nama)}</td><td class="r">${r.benar}</td><td class="r">${r.salah}</td><td class="r">${r.kosong}</td><td class="r"><b>${fmtNilai(r.nilai)}</b></td><td class="r">${fmtNilai(r.durasi)}</td><td class="r">${r.pelanggaran}</td><td>${r.nilai >= s.kkm ? 'Tuntas' : 'Belum tuntas'}</td></tr>`).join('') + '</tbody></table>';
   document.body.classList.add('printing');
   const selesai = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', selesai); };
-  window.addEventListener('afterprint', selesai);
-  setTimeout(() => window.print(), 50);
+  window.addEventListener('afterprint', selesai); setTimeout(() => window.print(), 50);
 });
-
-$('h-pdf').addEventListener('click', () => {
-  if (!pastikanData()) return;
-  if (!window.jspdf) { modal('<h2>Pustaka PDF belum termuat</h2><p>Periksa koneksi internet lalu muat ulang halaman.</p><div class="aksi"><button class="btn primary" data-x="batal">Tutup</button></div>'); return; }
-  const rows = hasilTersaring(), s = ringkasan(rows);
-  const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.text(judulLaporan(), 14, 15);
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-  doc.text(`${A.hasil.setting.kelas_tingkat}  |  ${labelKelas()}  |  ${tglPanjang()}`, 14, 21);
-  doc.text(`Peserta ${s.n}  |  Rata-rata ${fmtNilai(s.rata)}  |  Tertinggi ${fmtNilai(s.maks)}  |  Terendah ${fmtNilai(s.min)}  |  Tuntas (KKM ${s.kkm}) ${s.tuntas} dari ${s.n}`, 14, 26.5);
-  doc.autoTable({
-    startY: 31,
-    head: [['No', 'Kelas', 'Absen', 'Nama', 'Benar', 'Salah', 'Kosong', 'Nilai', 'Durasi (mnt)', 'Pelanggaran', 'Keterangan']],
-    body: rows.map((r, i) => [i + 1, r.kelas, r.absen, r.nama, r.benar, r.salah, r.kosong, fmtNilai(r.nilai), fmtNilai(r.durasi), r.pelanggaran, r.nilai >= s.kkm ? 'Tuntas' : 'Belum tuntas']),
-    styles: { fontSize: 9, cellPadding: 1.8 },
-    headStyles: { fillColor: [18, 38, 58], textColor: 255 },
-    columnStyles: { 0: { halign: 'right', cellWidth: 11 }, 4: { halign: 'right' }, 5: { halign: 'right' }, 6: { halign: 'right' }, 7: { halign: 'right', fontStyle: 'bold' }, 8: { halign: 'right' }, 9: { halign: 'right' } },
-    margin: { left: 14, right: 14 }
+$('h-pdf').addEventListener('click', e => {
+  if (!adaData()) return;
+  denganMuat(e.currentTarget, async () => {
+    const { jsPDF } = await muatPdf(), rows = hasilTersaring(), s = ringkasan(rows);
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.text(judulLaporan(), 14, 15);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+    doc.text(`Kode ${A.kode}  |  ${labelKelas()}  |  ${tglPanjang()}`, 14, 21);
+    doc.text(`Peserta ${s.n}  |  Rata-rata ${fmtNilai(s.rata)}  |  Tertinggi ${fmtNilai(s.maks)}  |  Terendah ${fmtNilai(s.min)}  |  Tuntas (KKM ${s.kkm}) ${s.tuntas} dari ${s.n}`, 14, 26.5);
+    doc.autoTable({ startY: 31, head: [['No', 'Kelas', 'Absen', 'Nama', 'Benar', 'Salah', 'Kosong', 'Nilai', 'Durasi (mnt)', 'Pelanggaran', 'Keterangan']],
+      body: rows.map((r, i) => [i + 1, r.kelas, r.absen, r.nama, r.benar, r.salah, r.kosong, fmtNilai(r.nilai), fmtNilai(r.durasi), r.pelanggaran, r.nilai >= s.kkm ? 'Tuntas' : 'Belum tuntas']),
+      styles: { fontSize: 9, cellPadding: 1.8 }, headStyles: { fillColor: [18, 38, 58], textColor: 255 },
+      columnStyles: { 0: { halign: 'right', cellWidth: 11 }, 4: { halign: 'right' }, 5: { halign: 'right' }, 6: { halign: 'right' }, 7: { halign: 'right', fontStyle: 'bold' }, 8: { halign: 'right' }, 9: { halign: 'right' } }, margin: { left: 14, right: 14 } });
+    doc.addPage(); doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Lampiran: Analisis Butir Soal', 14, 15);
+    doc.autoTable({ startY: 20, head: [['No', 'Level', 'Diterima (siswa)', 'Benar (%)', 'Kunci', 'Pilihan salah terbanyak']],
+      body: analisis(rows).map(a => [a.no, a.level, a.dapat, Math.round(a.pct) + '%', a.kunci, a.pengecoh ? `${a.pengecoh} (${a.nPengecoh} siswa)` : '-']),
+      styles: { fontSize: 9, cellPadding: 1.6 }, headStyles: { fillColor: [18, 38, 58], textColor: 255 }, margin: { left: 14, right: 14 } });
+    const n = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(110); doc.text(`Halaman ${i} dari ${n}`, 283, 203, { align: 'right' }); }
+    doc.save(namaBerkas('pdf'));
   });
-  const an = analisis(rows);
-  doc.addPage();
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Lampiran: Analisis Butir Soal', 14, 15);
-  doc.autoTable({
-    startY: 20, head: [['No', 'Level', 'Diterima (siswa)', 'Benar (%)', 'Kunci', 'Pilihan salah terbanyak']],
-    body: an.map(a => [a.no, a.level, a.dapat, Math.round(a.pct) + '%', a.kunci, a.pengecoh ? `${a.pengecoh} (${a.nPengecoh} siswa)` : '-']),
-    styles: { fontSize: 9, cellPadding: 1.6 }, headStyles: { fillColor: [18, 38, 58], textColor: 255 }, margin: { left: 14, right: 14 }
+});
+$('h-xlsx').addEventListener('click', e => {
+  if (!adaData()) return;
+  denganMuat(e.currentTarget, async () => {
+    const X = await muatXlsx(), rows = hasilTersaring(), s = ringkasan(rows), soal = A.hasil.soal, wb = X.utils.book_new();
+    const w1 = X.utils.aoa_to_sheet([['No', 'Kelas', 'No. Absen', 'Nama', 'Benar', 'Salah', 'Kosong', 'Nilai', 'Durasi (menit)', 'Pelanggaran', 'Keterangan', 'Waktu Selesai', 'Alasan Selesai']]
+      .concat(rows.map((r, i) => [i + 1, r.kelas, r.absen, r.nama, r.benar, r.salah, r.kosong, Math.round(r.nilai * 100) / 100, r.durasi, r.pelanggaran, r.nilai >= s.kkm ? 'Tuntas' : 'Belum tuntas', new Date(r.waktu).toLocaleString('id-ID'), r.alasan])));
+    w1['!cols'] = [6, 8, 10, 30, 8, 8, 8, 8, 14, 12, 14, 20, 24].map(w => ({ wch: w })); X.utils.book_append_sheet(wb, w1, 'Rekap Nilai');
+    const detail = [['Kelas', 'No. Absen', 'Nama'].concat(soal.map(q => 'S' + q.no)).concat(['Benar', 'Nilai']), ['', '', 'Kunci jawaban'].concat(soal.map(q => q.kunci)).concat(['', ''])];
+    rows.forEach(r => detail.push([r.kelas, r.absen, r.nama].concat(soal.map(q => (r.soal && r.soal.length && !r.soal.includes(q.no)) ? '' : ((r.jawaban || {})[q.no] || '-'))).concat([r.benar, Math.round(r.nilai * 100) / 100])));
+    const w2 = X.utils.aoa_to_sheet(detail); w2['!cols'] = [{ wch: 8 }, { wch: 10 }, { wch: 30 }].concat(soal.map(() => ({ wch: 4 }))).concat([{ wch: 8 }, { wch: 8 }]); X.utils.book_append_sheet(wb, w2, 'Jawaban Siswa');
+    const w3 = X.utils.aoa_to_sheet([['No Soal', 'Level', 'Kunci', 'Diterima (siswa)', 'Benar (%)', 'Pilihan salah terbanyak', 'Jumlah siswa']].concat(analisis(rows).map(a => [a.no, a.level, a.kunci, a.dapat, Math.round(a.pct * 10) / 10, a.pengecoh || '-', a.nPengecoh || 0])));
+    w3['!cols'] = [10, 8, 8, 16, 12, 24, 14].map(w => ({ wch: w })); X.utils.book_append_sheet(wb, w3, 'Analisis Soal');
+    const w4 = X.utils.aoa_to_sheet([['Judul', judulLaporan()], ['Kode ulangan', A.kode], ['Cakupan', labelKelas()], ['Tanggal unduh', tglPanjang()], ['Jumlah peserta', s.n], ['Rata-rata', Math.round(s.rata * 100) / 100], ['Tertinggi', s.maks], ['Terendah', s.min], ['KKM', s.kkm], ['Tuntas', s.tuntas]]);
+    w4['!cols'] = [{ wch: 18 }, { wch: 52 }]; X.utils.book_append_sheet(wb, w4, 'Ringkasan');
+    X.writeFile(wb, namaBerkas('xlsx'));
   });
-  const n = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(110); doc.text(`Halaman ${i} dari ${n}`, 283, 203, { align: 'right' }); }
-  doc.save(`Hasil_Ulangan_Jaringan_Komputer_${kodeKelas()}_${tglBerkas()}.pdf`);
 });
 
-$('h-xlsx').addEventListener('click', () => {
-  if (!pastikanData()) return;
-  if (!window.XLSX) { modal('<h2>Pustaka Excel belum termuat</h2><p>Periksa koneksi internet lalu muat ulang halaman.</p><div class="aksi"><button class="btn primary" data-x="batal">Tutup</button></div>'); return; }
-  const rows = hasilTersaring(), s = ringkasan(rows), X = window.XLSX, soal = A.hasil.soal;
-  const wb = X.utils.book_new();
-  const rekap = [['No', 'Kelas', 'No. Absen', 'Nama', 'Benar', 'Salah', 'Kosong', 'Nilai', 'Durasi (menit)', 'Pelanggaran', 'Keterangan', 'Waktu Selesai', 'Alasan Selesai']]
-    .concat(rows.map((r, i) => [i + 1, r.kelas, r.absen, r.nama, r.benar, r.salah, r.kosong, Math.round(r.nilai * 100) / 100, r.durasi, r.pelanggaran,
-      r.nilai >= s.kkm ? 'Tuntas' : 'Belum tuntas', new Date(r.waktu).toLocaleString('id-ID'), r.alasan]));
-  const w1 = X.utils.aoa_to_sheet(rekap);
-  w1['!cols'] = [6, 8, 10, 30, 8, 8, 8, 8, 14, 12, 14, 20, 24].map(w => ({ wch: w }));
-  X.utils.book_append_sheet(wb, w1, 'Rekap Nilai');
-  const detail = [['Kelas', 'No. Absen', 'Nama'].concat(soal.map(q => 'S' + q.no)).concat(['Benar', 'Nilai'])];
-  detail.push(['', '', 'Kunci jawaban'].concat(soal.map(q => q.kunci)).concat(['', '']));
-  rows.forEach(r => detail.push([r.kelas, r.absen, r.nama].concat(soal.map(q => (r.soal && r.soal.length && !r.soal.includes(q.no)) ? '' : ((r.jawaban || {})[q.no] || '-'))).concat([r.benar, Math.round(r.nilai * 100) / 100])));
-  const w2 = X.utils.aoa_to_sheet(detail); w2['!cols'] = [{ wch: 8 }, { wch: 10 }, { wch: 30 }].concat(soal.map(() => ({ wch: 4 }))).concat([{ wch: 8 }, { wch: 8 }]);
-  X.utils.book_append_sheet(wb, w2, 'Jawaban Siswa');
-  const an = [['No Soal', 'Level', 'Kunci', 'Diterima (siswa)', 'Benar (%)', 'Pilihan salah terbanyak', 'Jumlah siswa']].concat(analisis(rows).map(a => [a.no, a.level, a.kunci, a.dapat, Math.round(a.pct * 10) / 10, a.pengecoh || '-', a.nPengecoh || 0]));
-  const w3 = X.utils.aoa_to_sheet(an); w3['!cols'] = [10, 8, 8, 16, 12, 24, 14].map(w => ({ wch: w })); X.utils.book_append_sheet(wb, w3, 'Analisis Soal');
-  const rg = [['Judul', judulLaporan()], ['Cakupan', labelKelas()], ['Tanggal unduh', tglPanjang()], ['Jumlah peserta', s.n], ['Rata-rata', Math.round(s.rata * 100) / 100],
-    ['Tertinggi', s.maks], ['Terendah', s.min], ['KKM', s.kkm], ['Tuntas', s.tuntas]];
-  const w4 = X.utils.aoa_to_sheet(rg); w4['!cols'] = [{ wch: 18 }, { wch: 52 }]; X.utils.book_append_sheet(wb, w4, 'Ringkasan');
-  X.writeFile(wb, `Hasil_Ulangan_Jaringan_Komputer_${kodeKelas()}_${tglBerkas()}.xlsx`);
-});
-
-/* ---------- Pengaturan ---------- */
-async function muatSetting() {
-  $('s-msg').textContent = '';
-  try {
-    const r = await adm('admin_get_setting'); if (gagalAdmin(r) || !r.ok) return;
-    const s = r.setting; A.setting = s;
-    $('s-judul-in').value = s.judul; $('s-tingkat').value = s.kelas_tingkat; $('s-durasi').value = s.durasi_menit; $('s-jumlah').value = s.jumlah_soal;
-    $('s-maks').value = s.maks_pelanggaran; $('s-kkm').value = s.kkm; $('s-aktif').checked = !!s.ujian_aktif; $('s-tampil').checked = !!s.tampil_nilai;
-  } catch (e) { $('s-msg').textContent = 'Tidak dapat terhubung ke server.'; }
+/* ---------- soal: template, unggah Excel, pratinjau ---------- */
+const KOLOM_SOAL = ['No', 'Soal', 'A', 'B', 'C', 'D', 'Kunci', 'Level', 'URL Gambar'];
+function renderSoalTab() {
+  $('s-ekspor').hidden = !A.soal.length;
+  $('s-judul-tabel').textContent = `Soal saat ini (${A.soal.length})`;
+  if (!A.soal.length) { $('s-tabel').innerHTML = '<tbody><tr><td class="kosong">Belum ada soal. Unduh template, isi, lalu unggah.</td></tr></tbody>'; return; }
+  $('s-tabel').innerHTML = '<thead><tr><th class="r">No</th><th>Soal</th><th>Kunci</th><th>Level</th><th>Gambar</th></tr></thead><tbody>' +
+    A.soal.map(q => `<tr><td class="r num">${q.no}</td><td>${esc(q.soal.length > 110 ? q.soal.slice(0, 110) + '…' : q.soal)}</td><td>${esc(q.kunci)}</td><td>${esc(q.level)}</td><td>${q.gambar ? `<a href="${esc(urlGambar(q.gambar))}" target="_blank" rel="noopener noreferrer">Lihat</a>` : '–'}</td></tr>`).join('') + '</tbody>';
 }
+$('s-template').addEventListener('click', e => denganMuat(e.currentTarget, async () => {
+  const X = await muatXlsx(), wb = X.utils.book_new();
+  const w = X.utils.aoa_to_sheet([KOLOM_SOAL, [1, '[CONTOH — hapus baris ini] Ibu kota Indonesia adalah ...', 'Bandung', 'Jakarta', 'Surabaya', 'Medan', 'B', 'C1', ''],
+    [2, '[CONTOH — hapus baris ini] Perhatikan gambar berikut. Alat apakah ini?', 'Router', 'Kabel UTP', 'Switch', 'Modem', 'C', 'C2', 'https://contoh.com/gambar-switch.png']]);
+  w['!cols'] = [{ wch: 5 }, { wch: 60 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 8 }, { wch: 8 }, { wch: 46 }];
+  X.utils.book_append_sheet(wb, w, 'Soal');
+  const p = X.utils.aoa_to_sheet([['PETUNJUK PENGISIAN'], [''], ['1. Isi sheet "Soal" mulai baris ke-2. Hapus dua baris contoh sebelum mengunggah (atau biarkan: baris berawalan [CONTOH akan diabaikan).'],
+    ['2. Kolom Soal, A, dan B wajib diisi. C dan D boleh kosong (soal 2–3 pilihan). D tidak boleh terisi jika C kosong.'], ['3. Kolom Kunci diisi satu huruf: A, B, C, atau D, dan harus sesuai pilihan yang tersedia.'],
+    ['4. Kolom Level dan No bersifat opsional; nomor soal dibuat otomatis sesuai urutan baris.'], ['5. Soal bergambar: isi kolom URL Gambar dengan alamat gambar berawalan https://. Tautan berbagi Google Drive (pastikan "Siapa saja yang memiliki link") dan Dropbox otomatis dikonversi.'],
+    ['6. Gambar yang ditempel langsung di dalam sel Excel tidak terbaca. Unggah gambar ke Google Drive/hosting lalu tempel tautannya.'], ['7. Untuk baris teks yang panjang, gunakan Alt+Enter di Excel untuk baris baru dalam sel.']]);
+  p['!cols'] = [{ wch: 130 }]; X.utils.book_append_sheet(wb, p, 'Petunjuk');
+  X.writeFile(wb, 'Template_Soal_Ulangan.xlsx');
+}));
+$('s-ekspor').addEventListener('click', e => denganMuat(e.currentTarget, async () => {
+  const X = await muatXlsx(), wb = X.utils.book_new();
+  const w = X.utils.aoa_to_sheet([KOLOM_SOAL].concat(A.soal.map(q => [q.no, q.soal, q.pilihan[0] || '', q.pilihan[1] || '', q.pilihan[2] || '', q.pilihan[3] || '', q.kunci, q.level || '', q.gambar || ''])));
+  w['!cols'] = [{ wch: 5 }, { wch: 60 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 8 }, { wch: 8 }, { wch: 46 }];
+  X.utils.book_append_sheet(wb, w, 'Soal'); X.writeFile(wb, `Soal_${A.kode}_${tglBerkas()}.xlsx`);
+}));
+
+const ALIAS = { no: 'no', nomor: 'no', soal: 'soal', pertanyaan: 'soal', a: 'a', b: 'b', c: 'c', d: 'd', opsia: 'a', opsib: 'b', opsic: 'c', opsid: 'd', pilihana: 'a', pilihanb: 'b', pilihanc: 'c', pilihand: 'd',
+  kunci: 'kunci', kuncijawaban: 'kunci', jawaban: 'kunci', level: 'level', urlgambar: 'gambar', gambar: 'gambar', url: 'gambar', linkgambar: 'gambar' };
+$('s-file').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  $('s-preview').innerHTML = '<p><span class="muat"></span>Membaca file…</p>';
+  try {
+    const X = await muatXlsx(), wb = X.read(await f.arrayBuffer(), { type: 'array' });
+    const ws = wb.Sheets['Soal'] || wb.Sheets[wb.SheetNames[0]];
+    const raw = X.utils.sheet_to_json(ws, { defval: '', raw: false });
+    const galat = [], soal = [];
+    raw.forEach((row, i) => {
+      const q = {}; Object.keys(row).forEach(k => { const a = ALIAS[String(k).toLowerCase().replace(/[^a-z]/g, '')]; if (a) q[a] = String(row[k]).trim(); });
+      const baris = i + 2, kosong = !(q.soal || q.a || q.b || q.c || q.d || q.kunci);
+      if (kosong || /^\[CONTOH/i.test(q.soal || '')) return;
+      const ee = [];
+      if (!q.soal) ee.push('teks soal kosong');
+      if (!q.a || !q.b) ee.push('pilihan A dan B wajib diisi');
+      if (!q.c && q.d) ee.push('pilihan D terisi tetapi C kosong');
+      const n = [q.a, q.b, q.c, q.d].filter(Boolean).length; q.kunci = (q.kunci || '').toUpperCase();
+      if (!/^[A-D]$/.test(q.kunci) || 'ABCD'.indexOf(q.kunci) >= n) ee.push('kunci harus A–D sesuai pilihan yang ada');
+      if (q.gambar && !/^https?:\/\/\S+$/i.test(q.gambar)) ee.push('URL gambar harus diawali https://');
+      if (ee.length) galat.push(`Baris ${baris}: ${ee.join(', ')}`); else soal.push(q);
+    });
+    if (!soal.length && !galat.length) galat.push('Tidak ada baris soal yang terbaca. Pastikan memakai template dan kolom Soal terisi.');
+    A.draft = galat.length ? null : soal;
+    const bergambar = soal.filter(q => q.gambar).length;
+    $('s-preview').innerHTML = (galat.length ? `<div class="galat"><b>${galat.length} masalah ditemukan. Perbaiki file lalu unggah ulang.</b><ul>${galat.slice(0, 15).map(g => `<li>${esc(g)}</li>`).join('')}</ul>${galat.length > 15 ? `<p>…dan ${galat.length - 15} lainnya.</p>` : ''}</div>`
+      : `<div class="sukses"><b>${soal.length} soal valid</b>${bergambar ? `, ${bergambar} di antaranya bergambar` : ''}. Menyimpan akan <b>mengganti seluruh soal</b> ulangan ini.</div>
+         <div class="tabel-wrap"><table class="t"><thead><tr><th class="r">No</th><th>Soal</th><th>A</th><th>B</th><th>C</th><th>D</th><th>Kunci</th><th>Gambar</th></tr></thead><tbody>${soal.slice(0, 8).map((q, i) => `<tr><td class="r num">${i + 1}</td><td>${esc(q.soal.slice(0, 80))}</td><td>${esc(q.a)}</td><td>${esc(q.b)}</td><td>${esc(q.c || '')}</td><td>${esc(q.d || '')}</td><td>${esc(q.kunci)}</td><td>${q.gambar ? 'Ada' : '–'}</td></tr>`).join('')}</tbody></table></div>
+         ${soal.length > 8 ? `<p style="color:var(--ink-2)">Menampilkan 8 dari ${soal.length} soal.</p>` : ''}
+         <button class="btn accent" id="s-simpan-soal" type="button" style="margin-top:.8rem">Simpan ${soal.length} soal</button>`);
+  } catch (err) { $('s-preview').innerHTML = `<div class="galat">${err.message === 'LIB' ? 'Pustaka Excel belum termuat. Periksa koneksi internet lalu coba lagi.' : 'File tidak dapat dibaca. Gunakan file .xlsx dari template.'}</div>`; }
+});
+$('s-preview').addEventListener('click', async e => {
+  if (e.target.id !== 's-simpan-soal' || !A.draft) return;
+  const b = e.target; b.disabled = true; b.textContent = 'Menyimpan…';
+  const r = await adm('ul_soal_simpan', { kode: A.kode, soal: A.draft });
+  if (!r.ok) { b.disabled = false; b.textContent = 'Simpan soal'; return info('Gagal menyimpan soal', pesanGalat(r.error)); }
+  A.draft = null; $('s-file').value = ''; $('s-preview').innerHTML = `<div class="sukses"><b>${r.jumlah} soal tersimpan.</b></div>`;
+  const g = await adm('ul_get', { kode: A.kode }); if (g.ok) { A.soal = g.soal; A.ul = g.ul; renderSoalTab(); renderKomposisi(); }
+});
+
+/* ---------- pengaturan ulangan ---------- */
+function isiPengaturan() {
+  const u = A.ul; $('s-msg').textContent = '';
+  $('s-judul-in').value = u.judul; $('s-durasi').value = u.durasi; $('s-jumlah').value = u.jumlah; $('s-maks').value = u.maks; $('s-kkm').value = u.kkm;
+  $('s-kelas').value = u.kelas.join(', '); $('s-absen').value = u.maxAbsen; $('s-aktif').checked = !!u.aktif; $('s-tampil').checked = !!u.tampil_nilai;
+  $('s-acaklevel').checked = !!u.acakLevel; $('s-urutlevel').checked = !!u.urutLevel; renderKomposisi();
+}
+/* jatah per level: sama persis dengan perhitungan di server (metode sisa terbesar) */
+function kuotaLevel(ukuran, n) {
+  const total = ukuran.reduce((a, b) => a + b, 0), q = ukuran.map(u => Math.floor(n * u / total));
+  let sisa = n - q.reduce((a, b) => a + b, 0);
+  ukuran.map((u, i) => ({ i, r: n * u / total - q[i] })).sort((x, y) => y.r - x.r || x.i - y.i).forEach(o => { if (sisa > 0 && q[o.i] < ukuran[o.i]) { q[o.i]++; sisa--; } });
+  return q;
+}
+const levelKey = l => { l = String(l || '').trim().toUpperCase(); if (!l) return 1e9; const m = l.match(/\d+/); return m ? Number(m[0]) : 1e8; };
+function renderKomposisi() {
+  const el = $('s-komposisi'), g = {};
+  A.soal.forEach(q => { const k = String(q.level || '').trim().toUpperCase(); g[k] = (g[k] || 0) + 1; });
+  const ks = Object.keys(g).sort((a, b) => levelKey(a) - levelKey(b) || (a < b ? -1 : 1)), lab = k => k || '(tanpa level)';
+  if (!A.soal.length) { el.textContent = 'Belum ada soal. Unggah soal di tab Soal.'; return; }
+  const n = Math.min(Number($('s-jumlah').value) || A.soal.length, A.soal.length);
+  let t = 'Bank soal: ' + ks.map(k => `${lab(k)} ${g[k]}`).join(' · ') + ` (total ${A.soal.length}).`;
+  if ($('s-acaklevel').checked) {
+    if (ks.length === 1 && ks[0] === '') t += ' <b>Opsi berimbang tidak berpengaruh karena kolom Level kosong.</b>';
+    else if (n < A.soal.length) { const q = kuotaLevel(ks.map(k => g[k]), n); t += ` Tiap siswa mendapat ${n} soal: ` + ks.map((k, i) => `${lab(k)} ${q[i]}`).join(' · ') + '.'; }
+    else t += ' Semua soal ditampilkan, sehingga komposisi otomatis sama.';
+  }
+  if ($('s-urutlevel').checked && ks.length === 1 && ks[0] === '') t += ' <b>Urutan mudah→sulit tidak berpengaruh karena kolom Level kosong.</b>';
+  el.innerHTML = t;
+}
+['s-acaklevel', 's-urutlevel', 's-jumlah'].forEach(id => $(id).addEventListener('input', renderKomposisi));
+
 $('s-simpan').addEventListener('click', async () => {
-  const s = { judul: $('s-judul-in').value.trim(), kelas_tingkat: $('s-tingkat').value.trim(), durasi_menit: $('s-durasi').value, jumlah_soal: $('s-jumlah').value, maks_pelanggaran: $('s-maks').value,
-              kkm: $('s-kkm').value, ujian_aktif: $('s-aktif').checked, tampil_nilai: $('s-tampil').checked };
+  const s = { judul: $('s-judul-in').value.trim(), durasi: $('s-durasi').value, jumlah: $('s-jumlah').value, maks: $('s-maks').value, kkm: $('s-kkm').value, kelas: $('s-kelas').value, maxAbsen: $('s-absen').value, aktif: $('s-aktif').checked, tampil_nilai: $('s-tampil').checked, acak_level: $('s-acaklevel').checked, urut_level: $('s-urutlevel').checked };
   $('s-msg').style.color = ''; $('s-msg').textContent = 'Menyimpan…';
   try {
-    const r = await adm('admin_set_setting', { setting: s });
-    if (gagalAdmin(r)) return;
-    $('s-msg').textContent = r.ok ? 'Pengaturan disimpan.' : 'Gagal menyimpan: ' + r.error;
-    $('s-msg').style.color = r.ok ? 'var(--ok)' : 'var(--bad)';
+    const r = await adm('ul_simpan', { kode: A.kode, setting: s });
+    $('s-msg').textContent = r.ok ? 'Pengaturan disimpan.' : pesanGalat(r.error); $('s-msg').style.color = r.ok ? 'var(--ok)' : 'var(--bad)';
+    if (r.ok) { A.ul = r.ul; renderKomposisi(); $('d-judul').textContent = r.ul.judul; const opt = '<option value="">Semua kelas</option>' + r.ul.kelas.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join(''); ['p-kelas', 'h-kelas'].forEach(id => $(id).innerHTML = opt); }
   } catch (e) { $('s-msg').textContent = 'Tidak dapat terhubung ke server.'; $('s-msg').style.color = 'var(--bad)'; }
 });
+$('btn-kosong-ul').addEventListener('click', () => modal(`<h2>Kosongkan hasil ulangan ini?</h2><p>Semua peserta dan nilai pada ulangan <b>${esc(A.ul.judul)}</b> akan dihapus. Soal dan pengaturan tetap ada.</p>
+  <div class="aksi"><button class="btn" data-x="batal">Batal</button><button class="btn danger" data-x="ya">Kosongkan</button></div>`, async x => {
+  if (x !== 'ya') return; const r = await adm('ul_kosongkan', { kode: A.kode }); info(r.ok ? 'Selesai' : 'Gagal', r.ok ? `${r.dihapus} peserta dihapus.` : pesanGalat(r.error));
+}));
+$('btn-hapus-ul').addEventListener('click', () => modal(`<h2>Hapus ulangan ini?</h2><p>Ulangan <b>${esc(A.ul.judul)}</b> beserta soal dan seluruh hasilnya dihapus permanen. Ketik kodenya (<b>${esc(A.kode)}</b>) untuk konfirmasi.</p>
+  <input type="text" name="k" autocomplete="off"><div class="aksi"><button class="btn" data-x="batal">Batal</button><button class="btn danger" data-x="ya">Hapus permanen</button></div>`, async (x, v) => {
+  if (x !== 'ya') return; if (String(v.k).trim().toUpperCase() !== A.kode) return info('Dibatalkan', 'Kode yang diketik tidak sama.');
+  const r = await adm('ul_hapus', { kode: A.kode }); if (r.ok) muatList(); else info('Gagal', pesanGalat(r.error));
+}));
+
+/* ---------- akun ---------- */
+$('pw-simpan').addEventListener('click', async () => {
+  const m = $('pw-msg'); m.style.color = ''; m.textContent = 'Menyimpan…';
+  const r = await adm('akun_ganti_password', { lama: $('pw-lama').value, baru: $('pw-baru').value });
+  m.textContent = r.ok ? 'Kata sandi diganti.' : pesanGalat(r.error); m.style.color = r.ok ? 'var(--ok)' : 'var(--bad)';
+  if (r.ok) { $('pw-lama').value = ''; $('pw-baru').value = ''; }
+});
+
+/* ---------- admin: akun guru & kosongkan database ---------- */
+async function muatAdmin() {
+  const [rg, ak] = await Promise.all([adm('ad_ringkasan'), adm('ad_akun_list')]);
+  if (rg.ok) $('ad-ringkasan').innerHTML = [['Akun', rg.akun], ['Ulangan', rg.ulangan], ['Baris soal', rg.soal], ['Peserta', rg.peserta], ['Hasil', rg.hasil]].map(c => `<div class="c"><b class="num">${c[1]}</b><span>${c[0]}</span></div>`).join('');
+  if (!ak.ok) return;
+  $('ak-tabel').innerHTML = '<thead><tr><th>Username</th><th>Nama</th><th>Peran</th><th class="r">Ulangan</th><th>Status</th><th></th></tr></thead><tbody>' +
+    ak.akun.map(a => `<tr><td>${esc(a.username)}</td><td>${esc(a.nama)}</td><td><span class="badge ${a.peran === 'admin' ? 'run' : 'mute'}">${esc(a.peran)}</span></td><td class="r num">${a.ulangan}</td>
+      <td><span class="badge ${a.aktif ? 'ok' : 'warn'}">${a.aktif ? 'Aktif' : 'Nonaktif'}</span></td>
+      <td style="white-space:nowrap"><button class="btn small" data-aksi="reset" data-u="${esc(a.username)}">Reset sandi</button>
+      ${a.username === A.user.username ? '' : `<button class="btn small" data-aksi="aktif" data-u="${esc(a.username)}" data-v="${a.aktif ? 0 : 1}">${a.aktif ? 'Nonaktifkan' : 'Aktifkan'}</button> <button class="btn small danger" data-aksi="hapus" data-u="${esc(a.username)}">Hapus</button>`}</td></tr>`).join('') + '</tbody>';
+}
+$('ak-tambah').addEventListener('click', async () => {
+  const m = $('ak-msg'); m.style.color = ''; m.textContent = 'Menyimpan…';
+  const r = await adm('ad_akun_tambah', { username: $('ak-user').value, nama: $('ak-nama').value, password: $('ak-pass').value, peran: $('ak-peran').value });
+  m.textContent = r.ok ? 'Akun ditambahkan.' : pesanGalat(r.error); m.style.color = r.ok ? 'var(--ok)' : 'var(--bad)';
+  if (r.ok) { ['ak-user', 'ak-nama', 'ak-pass'].forEach(i => $(i).value = ''); muatAdmin(); }
+});
+$('ak-tabel').addEventListener('click', e => {
+  const b = e.target.closest('[data-aksi]'); if (!b) return; const u = b.dataset.u;
+  if (b.dataset.aksi === 'reset') modal(`<h2>Reset kata sandi ${esc(u)}</h2><label for="m-pw">Kata sandi baru (min. 6 karakter)</label><input type="text" id="m-pw" name="pw" autocomplete="off">
+    <div class="aksi"><button class="btn" data-x="batal">Batal</button><button class="btn primary" data-x="ya">Simpan</button></div>`, async (x, v) => { const r = await adm('ad_akun_reset', { username: u, password: v.pw }); info(r.ok ? 'Selesai' : 'Gagal', r.ok ? 'Kata sandi diganti.' : pesanGalat(r.error)); });
+  if (b.dataset.aksi === 'aktif') adm('ad_akun_aktif', { username: u, aktif: b.dataset.v === '1' }).then(r => r.ok ? muatAdmin() : info('Gagal', pesanGalat(r.error)));
+  if (b.dataset.aksi === 'hapus') modal(`<h2>Hapus akun ${esc(u)}?</h2><p>Ulangan milik akun ini dipindahkan ke akunmu. Tindakan ini tidak bisa dibatalkan.</p><div class="aksi"><button class="btn" data-x="batal">Batal</button><button class="btn danger" data-x="ya">Hapus akun</button></div>`,
+    async x => { if (x === 'ya') { const r = await adm('ad_akun_hapus', { username: u }); if (r.ok) muatAdmin(); else info('Gagal', pesanGalat(r.error)); } });
+});
+function konfirmKosongkan(mode, judul, uraian) {
+  modal(`<h2>${esc(judul)}</h2><p>${uraian}</p><p>Tindakan ini <b>tidak bisa dibatalkan</b>. Ketik <b>KOSONGKAN</b> untuk melanjutkan.</p>
+    <input type="text" name="k" autocomplete="off" placeholder="KOSONGKAN"><div class="aksi"><button class="btn" data-x="batal">Batal</button><button class="btn danger" data-x="ya">Kosongkan sekarang</button></div>`, async (x, v) => {
+    if (x !== 'ya') return;
+    const r = await adm('ad_kosongkan', { mode, konfirmasi: String(v.k).trim() });
+    if (!r.ok) return info('Gagal', pesanGalat(r.error));
+    info('Database dikosongkan', `${r.peserta} peserta dan ${r.hasil} hasil dihapus` + (mode === 'semua' ? `, ${r.ulangan} ulangan dan ${r.soal} baris soal dihapus.` : '.')); muatAdmin();
+  });
+}
+$('btn-kosong-siswa').addEventListener('click', () => konfirmKosongkan('siswa', 'Kosongkan data siswa & hasil?', 'Semua peserta dan nilai <b>milik semua guru</b> dihapus. Ulangan, soal, dan akun tetap ada.'));
+$('btn-kosong-semua').addEventListener('click', () => konfirmKosongkan('semua', 'Kosongkan semua ulangan & soal?', 'Semua peserta, nilai, <b>ulangan, dan soal milik semua guru</b> dihapus. Hanya akun guru yang tetap ada.'));
 
 /* ---------------------------- mulai ---------------------------- */
 (function init() {
-  if (!CONFIG.API_URL) {
-    const b = $('demo-banner'); b.hidden = false;
-    b.textContent = 'MODE DEMO: data hanya tersimpan di browser ini. Isi API_URL di index.html untuk memakai Google Spreadsheet. Kata sandi guru demo: ' + CONFIG.DEMO_ADMIN_PASSWORD;
-  }
+  if (!CONFIG.API_URL) { const b = $('banner'); b.hidden = false; b.textContent = 'Aplikasi belum dihubungkan ke database: isi API_URL di bagian atas file ini (lihat PANDUAN.md).'; }
   window.addEventListener('hashchange', route);
   route();
 })();
