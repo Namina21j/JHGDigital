@@ -14,7 +14,7 @@ button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:disabled{
 button.g{background:var(--bd);color:var(--tx)}button.r{background:var(--er)}button.s{padding:5px 10px;font-size:12.5px;border-radius:8px}
 .hero{background:linear-gradient(135deg,var(--pr),var(--p2));color:#fff;border-radius:20px;padding:28px 22px 56px;text-align:center}
 .hero h1{margin:6px 0 4px;font-size:26px}.hero p{margin:0;opacity:.85}.lg{font-size:38px}.up{margin-top:-38px}
-.r2{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.r5{display:grid;grid-template-columns:2fr 1fr 2fr 1fr 1fr;gap:10px}.r4{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px}
+.r2{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.r5{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.r4{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px}
 .f{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .sc{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu)}
 th,td{border-bottom:1px solid var(--bd);padding:9px 8px;text-align:left;vertical-align:top}tr:hover td{background:#6366f10a}
@@ -30,6 +30,7 @@ th,td{border-bottom:1px solid var(--bd);padding:9px 8px;text-align:left;vertical
 .nv button{width:40px;margin:3px;padding:7px 0}.nv .d{background:var(--ok);color:#fff}.nv .cur{outline:3px solid var(--pr);outline-offset:1px}
 img.q{max-width:100%;max-height:320px;margin:8px 0;border-radius:10px;pointer-events:none}
 body.ex{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}body.hid #v-x>*{filter:blur(28px);pointer-events:none}
+body.lock #xq,body.lock #xv{pointer-events:none;opacity:.5}
 #ov{position:fixed;inset:0;background:#000e;color:#fff;display:none;place-items:center;text-align:center;padding:20px;z-index:30}
 #ld{position:fixed;inset:0;z-index:20;display:none;place-items:center;background:#0b102066;backdrop-filter:blur(5px)}#ld.on{display:grid}
 .lb{background:var(--cd);padding:22px 30px;border-radius:18px;box-shadow:var(--sh);display:flex;gap:16px;align-items:center;font-weight:600;animation:fi .25s}
@@ -40,9 +41,10 @@ body.ex{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}bod
 </style></head><body>
 <div class="w">
 <div id="v-s"><div class="hero"><div class="lg">📝</div><h1>Ulangan Harian</h1><p>Isi data diri, pilih ulangan, lalu masukkan token dari guru</p></div>
-<div class="c up"><label style="margin-top:0">Nama lengkap</label><input id="nm" autocomplete="off" placeholder="Nama sesuai absen">
+<div id="rc" class="c up" hidden style="text-align:center"><div style="font-size:40px">⏳</div><h3>Ulangan Anda masih berlangsung</h3><p class="mu">Waktu tetap berjalan. Memuat ulang halaman dihitung sebagai 1 pelanggaran.</p><button onclick="rsm()" style="width:100%;padding:13px">Lanjutkan Ulangan →</button><div class="er" id="re"></div></div>
+<div id="sf" class="c up"><label style="margin-top:0">Nama lengkap</label><input id="nm" autocomplete="off" placeholder="Nama sesuai absen">
 <div class="r2"><div><label>Tingkat</label><select id="tg"></select></div><div><label>Kelas</label><select id="kl"></select></div><div><label>No. Absen</label><select id="ab"></select></div></div>
-<label>Pilih ulangan</label><select id="ts"><option>Memuat...</option></select><label>Token</label><input id="tk" autocomplete="off" placeholder="Token dari guru">
+<label>Mata pelajaran</label><select id="mp"></select><label>Pilih ulangan</label><select id="ts"><option>Memuat...</option></select><label>Token</label><input id="tk" autocomplete="off" placeholder="Token dari guru">
 <p><button id="gb" onclick="go()" style="width:100%;padding:13px">Mulai Ulangan →</button></p><div class="er" id="se"></div>
 <div class="nt">🔒 Selama ulangan dilarang berpindah tab/aplikasi, keluar layar penuh, menyalin, atau tangkap layar. Pelanggaran ke-3 mengumpulkan ulangan otomatis.</div>
 <p style="text-align:center;margin:12px 0 0"><button class="g s" onclick="show('l')">Login Guru</button></p></div></div>
@@ -55,12 +57,12 @@ body.ex{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}bod
 <div class="c f" style="padding:12px 18px"><b id="un"></b><span><button class="g s" onclick="cp()">Ganti Password</button> <button class="g s" onclick="out()">Keluar</button></span></div>
 <div class="tabs" id="tb2"></div>
 <div id="p0"><div class="c"><h3 id="ft">Buat Ulangan Baru</h3>
-<div class="r5"><div><label>Judul ulangan</label><input id="fj"></div><div><label>Tingkat</label><select id="fg"><option>7</option><option>8</option><option>9</option><option>Semua</option></select></div><div><label>Token</label><input id="fk"></div><div><label>Waktu (menit)</label><input id="fd" type="number" value="30"></div><div><label>Soal tampil</label><input id="fn" type="number" value="10"></div></div>
+<div class="r5"><div><label>Judul ulangan</label><input id="fj"></div><div><label>Mata pelajaran</label><select id="fm"></select></div><div><label>Tingkat</label><select id="fg"><option>7</option><option>8</option><option>9</option><option>Semua</option></select></div><div><label>Token</label><input id="fk"></div><div><label>Waktu (menit)</label><input id="fd" type="number" value="30"></div><div><label>Soal tampil</label><input id="fn" type="number" value="10"></div></div>
 <p><label style="display:inline"><input type="checkbox" id="fa" checked> Aktif (bisa dikerjakan siswa)</label></p>
 <button onclick="st()">Simpan</button> <button class="g" onclick="rf()">Batal</button> <button class="g" onclick="tpl()">⬇ Template Soal</button></div>
 <div class="c sc"><table id="tl"></table></div><input type="file" id="fu" accept=".xlsx,.xls" hidden></div>
-<div id="p1" hidden><div class="c"><div class="f"><select id="rs" style="max-width:360px" onchange="lr()"></select><span><button class="s" onclick="xl()">Excel</button> <button class="s" onclick="pd()">PDF</button> <button class="s g" onclick="pr()">Cetak</button></span></div>
-<div class="sg" id="sa" style="margin-top:14px"></div><div class="sc"><table id="rt"></table></div><p class="mu">Diperbarui otomatis tiap 10 detik.</p></div></div>
+<div id="p1" hidden><div class="c"><div class="f"><select id="rs" style="max-width:360px" onchange="lr()"></select><span><button class="s g" onclick="ff()">✔ Selesaikan semua yang terputus</button> <button class="s" onclick="xl()">Excel</button> <button class="s" onclick="pd()">PDF</button> <button class="s g" onclick="pr()">Cetak</button></span></div>
+<div class="sg" id="sa" style="margin-top:14px"></div><div class="sc"><table id="rt"></table></div><p class="mu">Diperbarui otomatis tiap 20 detik.</p></div></div>
 <div id="p2" hidden><div class="c"><div class="f"><select id="as" style="max-width:360px" onchange="la()"></select><button class="s" onclick="ap()">⬇ Unduh PDF Analisis</button></div>
 <p id="aw" class="er"></p><div class="sg" id="ast" style="margin-top:12px"></div><div class="sc"><table id="at"></table></div>
 <div class="nt" style="margin-top:14px"><b>Cara membaca:</b><br>• <b>Tingkat kesukaran (P)</b>: persentase siswa yang menjawab benar. &gt;70% mudah, 30–70% sedang, &lt;30% sukar.<br>• <b>Daya pembeda (D)</b>: kemampuan soal membedakan siswa yang paham dan belum paham. D ≥ 0,30 baik; &lt; 0,20 perlu direvisi; negatif berarti kunci/redaksi perlu dicek.<br>• <b>Sebaran jawaban</b>: jumlah pemilih tiap opsi (huruf tebal = kunci). Pengecoh yang tidak dipilih siapa pun perlu diperbaiki.</div></div></div>
@@ -75,47 +77,57 @@ const $=i=>document.getElementById(i),E=s=>String(s??'').replace(/[&<>"]/g,c=>({
 const show=v=>['s','x','d','l','t'].forEach(k=>$('v-'+k).hidden=k!=v);
 const L=u=>new Promise(r=>{const s=document.createElement('script');s.src=u;s.onload=r;document.head.appendChild(s)});
 const opt=a=>a.map(v=>`<option>${v}</option>`).join('');
+const MAPEL=['Pend. Agama Islam','Pend. Pancasila','B. Indonesia','Matematika','IPA','IPS','B. Inggris','Informatika','PJOK','Seni Budaya','B. Sunda'];
 /* loading */
 let LC=0,LT;const MS={start:'Menyiapkan soal ulangan...',login:'Memeriksa akun...',me:'Memulihkan sesi...',tests:'Memuat data ulangan...',saveTest:'Menyimpan ulangan...',delTest:'Menghapus ulangan...',uploadQ:'Mengimpor soal...',results:'Memuat hasil...',analisis:'Menghitung analisis butir soal...',finish:'Menyimpan jawaban dan menghitung nilai...',resetDb:'Mengosongkan database...',users:'Memuat pengguna...'};
 const ld=(on,m)=>{if(on){if(++LC==1)LT=setTimeout(()=>{$('lt').textContent=m||'Memproses...';$('ld').classList.add('on')},180)}else if(!(LC=Math.max(0,LC-1))){clearTimeout(LT);$('ld').classList.remove('on')}};
 /* api */
 const NR=['saveTest','addUser'];
-async function call(f,a){const body=JSON.stringify({f,a:f=='start'?{...a,cid:crypto.randomUUID?crypto.randomUUID():Date.now()+''+Math.random()}:a}),n=NR.includes(f)?1:4;let err='';
+async function call(f,a){const body=JSON.stringify({f,a:f=='start'?{...a,cid:crypto.randomUUID?crypto.randomUUID():Date.now()+''+Math.random()}:a}),n=NR.includes(f)?1:f=='finish'?8:(f=='start'||f=='resume')?5:3;let err='';
 for(let i=0;i<n;i++){const ac=new AbortController(),to=setTimeout(()=>ac.abort(),30000);
 try{const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body,signal:ac.signal});clearTimeout(to);
 const tx=await res.text(),r=tx?JSON.parse(tx):{ok:1};if(r&&r.error)throw{app:r.error};return r}
-catch(e){clearTimeout(to);if(e&&e.app)throw e.app;err=e.name=='AbortError'?'waktu habis':(e.message||'tidak diketahui');if(i<n-1)await new Promise(z=>setTimeout(z,700*(i+1)))}}
+catch(e){clearTimeout(to);if(e&&e.app)throw e.app;err=e.name=='AbortError'?'waktu habis':(e.message||'tidak diketahui');if(i<n-1){if(LC)$('lt').textContent='Server sibuk, mencoba lagi ('+(i+2)+'/'+n+')...';await new Promise(z=>setTimeout(z,Math.min(15000,1000*2**i)+Math.random()*1500))}}}
 throw 'Gagal terhubung ke server ('+err+'). Coba lagi.'}
 const api=async(f,a={},q)=>{if(!q)ld(1,MS[f]);try{return await call(f,a)}finally{if(!q)ld(0)}};
 
 /* ===== SISWA ===== */
-$('tg').innerHTML=opt([7,8,9]);$('kl').innerHTML=opt('ABCDEFGHI'.split(''));$('ab').innerHTML=opt(Array.from({length:32},(_,i)=>String(i+1).padStart(2,'0')));
-let PB=[];const ft=()=>{const g=$('tg').value,l=PB.filter(t=>t.tingkat=='Semua'||t.tingkat==g);
-$('ts').innerHTML=l.length?l.map(t=>`<option value="${t.id}">${E(t.judul)} (${E(t.guru)})</option>`).join(''):`<option value="">(Belum ada ulangan untuk tingkat ${g})</option>`};
-$('tg').onchange=ft;api('pub',{},1).then(r=>{PB=r;ft()}).catch(e=>$('se').textContent=e);
-let X,G=0,tm,iv2,sd,lv=0;const MAX=3;
+$('tg').innerHTML=opt([7,8,9]);$('mp').innerHTML=opt(MAPEL);$('fm').innerHTML=opt(MAPEL);$('kl').innerHTML=opt('ABCDEFGHI'.split(''));$('ab').innerHTML=opt(Array.from({length:32},(_,i)=>String(i+1).padStart(2,'0')));
+let PB=[];const ft=()=>{const g=$('tg').value,m=$('mp').value,l=PB.filter(t=>(t.tingkat=='Semua'||t.tingkat==g)&&(!t.mapel||t.mapel==m));
+$('ts').innerHTML=l.length?l.map(t=>`<option value="${t.id}">${E(t.judul)} (${E(t.guru)})</option>`).join(''):`<option value="">(Belum ada ulangan ${m} untuk tingkat ${g})</option>`};
+$('tg').onchange=$('mp').onchange=ft;api('pub',{},1).then(r=>{PB=r;ft()}).catch(e=>$('se').textContent=e);
+let X,G=0,tm,sd,lv=0;const MAX=3,LK='uj',TID=Math.random().toString(36).slice(2);
 const fs=()=>{try{document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}};
 const gi=u=>{const m=/drive\.google\.com.*?(?:\/d\/|[?&]id=)([\w-]+)/.exec(u);return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w1000`:u};
 async function go(){const nama=$('nm').value.trim();if(!nama||!$('ts').value||!$('tk').value)return $('se').textContent='Lengkapi semua isian.';
 $('gb').disabled=true;$('se').textContent='';fs();
 try{begin(await api('start',{testId:$('ts').value,token:$('tk').value,nama,tingkat:$('tg').value,kelas:$('kl').value,absen:$('ab').value}))}
 catch(e){$('se').textContent=e;$('gb').disabled=false;try{document.exitFullscreen()}catch(x){}}}
-function begin(r){X={...r,a:{},i:0,v:0,end:Date.now()+r.durasi*6e4};$('xn').textContent=r.judul;$('xs').textContent=$('nm').value.trim()+' • '+$('tg').value+$('kl').value+'/'+$('ab').value;document.body.classList.add('ex');show('x');G=1;rn();tm=setInterval(tk,1000);tk();iv2=setInterval(sv,20000)}
-function tk(){const s=Math.max(0,Math.round((X.end-Date.now())/1000));$('xt').textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0');$('xt').classList.toggle('lw',s<60);if(!s)fin(1)}
+const bk=()=>sg(LK,JSON.stringify({rid:X.rid,row:X.row,a:X.a}));
+function begin(r){X={...r,a:r.a||{},i:0,v:r.v||0,end:Date.now()+r.left,id:r.i};$('xn').textContent=r.judul;$('xs').textContent=X.id.nm+' • '+X.id.tg+X.id.kl+'/'+X.id.ab;
+document.body.classList.add('ex');show('x');G=1;sg('uj_tab',TID);bk();rn();tm=setInterval(tk,1000);tk();sch();X.tc=setInterval(()=>{if(G&&gg('uj_tab')!=TID)tab2()},2000)}
+function tab2(){G=0;X.f=1;clearInterval(tm);clearTimeout(X.t);clearInterval(X.tc);document.body.classList.add('hid');$('ot').textContent='Ulangan dibuka di tab lain';$('op').textContent='Gunakan tab yang baru. Tab ini dinonaktifkan.';$('ob').hidden=true;$('ov').style.display='grid'}
+function dn(r){try{localStorage.removeItem(LK)}catch(e){}G=0;clearInterval(tm);if(X){clearTimeout(X.t);clearInterval(X.tc)}document.body.classList.remove('ex','hid','lock');try{document.exitFullscreen()}catch(e){}
+$('dr').innerHTML=`Nilai: <b>${r.skor}</b><br><small class="mu">Benar ${r.benar} dari ${r.total} soal</small>`;show('d')}
+async function rsm(){let b;try{b=JSON.parse(gg(LK))}catch(e){}fs();$('re').textContent='';
+try{const r=await api('resume',{rid:b.rid,row:b.row,j:b.a});r.done?dn(r):begin(r)}
+catch(e){$('re').textContent=e;try{document.exitFullscreen()}catch(x){}if(/tidak ditemukan|tidak dapat/i.test(e)){try{localStorage.removeItem(LK)}catch(x){}$('rc').hidden=true;$('sf').hidden=false}}}
+function sch(){X.t=setTimeout(()=>{sv();sch()},30000+Math.random()*15000)}
+function tk(){const s=Math.max(0,Math.round((X.end-Date.now())/1000));$('xt').textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0');$('xt').classList.toggle('lw',s<60);
+if(!s&&!X.f0){X.f0=1;X.over=1;document.body.classList.add('lock');$('xs').textContent='Waktu habis — mengirim jawaban...';setTimeout(()=>fin(1),Math.random()*25000)}}
 function rn(){const q=X.q[X.i],n=Object.keys(X.a).length;$('xp').style.width=n/X.q.length*100+'%';
 $('xq').innerHTML=`<small class="mu">Soal ${X.i+1} dari ${X.q.length} • terjawab ${n}</small><p style="font-size:17px;font-weight:500;white-space:pre-wrap">${E(q.soal)}</p>${q.gambar?`<img class="q" src="${E(gi(q.gambar))}" referrerpolicy="no-referrer" draggable="false">`:''}`+
 'ABCDE'.split('').filter(k=>q[k]!=='').map(k=>`<button class="op${X.a[q.no]==k?' on':''}" onclick="pk('${k}')"><b>${k}</b><span>${E(q[k])}</span></button>`).join('');
 $('xv').innerHTML=X.q.map((q,i)=>`<button class="${X.a[q.no]?'d':'g'}${i==X.i?' cur':''}" onclick="X.i=${i};rn()">${i+1}</button>`).join('')}
 const mv=d=>{X.i=Math.min(X.q.length-1,Math.max(0,X.i+d));rn()};
-function pk(k){X.a[X.q[X.i].no]=k;rn();clearTimeout(sd);sd=setTimeout(sv,2500)}
-const qn=()=>X.q.map(x=>x.no),sv=()=>api('save',{rid:X.rid,row:X.row,j:X.a,q:qn(),p:X.v,n:Object.keys(X.a).length},1).catch(()=>{});
+function pk(k){if(X.over)return;X.a[X.q[X.i].no]=k;X.d=1;bk();rn()}
+const qn=()=>X.q.map(x=>x.no),sv=()=>{if(!X.d||X.f)return;X.d=0;return api('save',{rid:X.rid,row:X.row,i:X.id,j:X.a,q:qn(),p:X.v,n:Object.keys(X.a).length},1).then(r=>{if(r&&r.r)X.row=r.r;if(r&&r.v>X.v)X.v=r.v}).catch(()=>{X.d=1})};
 async function fin(force){if(X.f)return;const n=Object.keys(X.a).length;G=0;
 if(!force&&!confirm(`Terjawab ${n} dari ${X.q.length} soal. Kumpulkan sekarang?`)){G=1;return}
-X.f=1;clearInterval(tm);clearInterval(iv2);clearTimeout(sd);
-try{const r=await api('finish',{rid:X.rid,row:X.row,j:X.a,q:qn(),p:X.v});document.body.classList.remove('ex','hid');try{document.exitFullscreen()}catch(e){}
-$('dr').innerHTML=`Nilai: <b>${r.skor}</b><br><small class="mu">Benar ${r.benar} dari ${r.total} soal</small>`;show('d')}
-catch(e){alert('Gagal menyimpan, mencoba lagi: '+e);X.f=0;G=1;tm=setInterval(tk,1000)}}
-function vi(m){if(!G||Date.now()-lv<1500)return;lv=Date.now();X.v++;sv();document.body.classList.add('hid');const last=X.v>=MAX;
+X.f=1;clearInterval(tm);clearTimeout(X.t);
+try{dn(await api('finish',{rid:X.rid,row:X.row,i:X.id,j:X.a,q:qn(),p:X.v}))}
+catch(e){X.f=0;G=1;sch();tm=setInterval(tk,1000);if(X.over)setTimeout(()=>fin(1),4000);else alert('Gagal menyimpan, coba lagi: '+e)}}
+function vi(m){if(!G||Date.now()-lv<1500)return;lv=Date.now();X.v++;X.d=1;sv();document.body.classList.add('hid');const last=X.v>=MAX;
 $('ot').textContent=(last?'Pelanggaran ':'Peringatan ')+X.v+'/'+MAX;
 $('op').textContent=last?'Ulangan dikumpulkan otomatis.':m+' Pelanggaran ke-'+MAX+' akan mengumpulkan ulangan otomatis.';
 $('ob').hidden=last;$('ov').style.display='grid';if(last)setTimeout(()=>{$('ov').style.display='none';fin(1)},2500)}
@@ -137,13 +149,13 @@ async function lg(){try{U=await api('login',{u:$('lu').value.trim(),p:$('lp').va
 function ent(n){TK=U.t;ready=L('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js').then(()=>L('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')).then(()=>L('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'));
 $('un').textContent='👤 '+U.n+' ('+U.r+')';$('tb2').innerHTML=['Ulangan','Hasil & Monitoring','Analisis Soal'].concat(U.r=='admin'?['Pengguna','Database']:[]).map((t,i)=>`<button onclick="tab(${i})">${t}</button>`).join('');show('t');tab(n)}
 function tab(n){sg('tab',n);[0,1,2,3,4].forEach(i=>$('p'+i).hidden=i!=n);[...$('tb2').children].forEach((b,i)=>b.classList.toggle('on',i==n));clearInterval(iv);
-if(n==0)ldT();if(n==1)ldT().then(()=>{lr();iv=setInterval(()=>lr(1),10000)});if(n==2)ldT().then(la);if(n==3)ldU()}
+if(n==0)ldT();if(n==1)ldT().then(()=>{lr();iv=setInterval(()=>document.hidden||lr(1),20000)});if(n==2)ldT().then(la);if(n==3)ldU()}
 async function ldT(){TL=await api('tests',{t:TK});
-$('tl').innerHTML='<tr><th>Judul</th><th>Tingkat</th><th>Token</th><th>Waktu</th><th>Soal</th><th>Status</th><th></th></tr>'+TL.map(t=>`<tr><td><b>${E(t.judul)}</b>${U.r=='admin'?'<br><small class="mu">'+E(t.owner)+'</small>':''}</td><td><span class="bd">${E(t.tingkat)}</span></td><td>${E(t.token)}</td><td>${t.durasi} mnt</td><td>${t.jumlah}/${t.n}</td><td><span class="bd ${t.aktif?'ok':'wa'}">${t.aktif?'Aktif':'Nonaktif'}</span></td><td style="white-space:nowrap"><button class="s g" onclick="ed('${t.id}')">Edit</button> <button class="s g" onclick="up('${t.id}')">Upload soal</button> <button class="s r" onclick="dt('${t.id}')">Hapus</button></td></tr>`).join('');
-['rs','as'].forEach(k=>{const v=$(k).value,h=TL.map(t=>`<option value="${t.id}">${E(t.judul)} (kelas ${E(t.tingkat)})</option>`).join('');$(k).innerHTML=h;if(v)$(k).value=v})}
-function ed(id){const t=TL.find(x=>x.id==id);EID=id;$('ft').textContent='Edit Ulangan';$('fj').value=t.judul;$('fg').value=t.tingkat;$('fk').value=t.token;$('fd').value=t.durasi;$('fn').value=t.jumlah;$('fa').checked=t.aktif;scrollTo(0,0)}
-function rf(){EID='';$('ft').textContent='Buat Ulangan Baru';$('fj').value=$('fk').value='';$('fd').value=30;$('fn').value=10;$('fg').value='7';$('fa').checked=true}
-async function st(){try{await api('saveTest',{t:TK,d:{id:EID,judul:$('fj').value.trim(),tingkat:$('fg').value,token:$('fk').value.trim(),durasi:$('fd').value,jumlah:$('fn').value,aktif:$('fa').checked}});rf();ldT()}catch(e){alert(e)}}
+$('tl').innerHTML='<tr><th>Judul</th><th>Mapel</th><th>Tingkat</th><th>Token</th><th>Waktu</th><th>Soal</th><th>Status</th><th></th></tr>'+TL.map(t=>`<tr><td><b>${E(t.judul)}</b>${U.r=='admin'?'<br><small class="mu">'+E(t.owner)+'</small>':''}</td><td>${E(t.mapel||'-')}</td><td><span class="bd">${E(t.tingkat)}</span></td><td>${E(t.token)}</td><td>${t.durasi} mnt</td><td>${t.jumlah}/${t.n}</td><td><span class="bd ${t.aktif?'ok':'wa'}">${t.aktif?'Aktif':'Nonaktif'}</span></td><td style="white-space:nowrap"><button class="s g" onclick="ed('${t.id}')">Edit</button> <button class="s g" onclick="up('${t.id}')">Upload soal</button> <button class="s r" onclick="dt('${t.id}')">Hapus</button></td></tr>`).join('');
+['rs','as'].forEach(k=>{const v=$(k).value,h=TL.map(t=>`<option value="${t.id}">${E(t.judul)} — ${E(t.mapel||'Umum')} (kelas ${E(t.tingkat)})</option>`).join('');$(k).innerHTML=h;if(v)$(k).value=v})}
+function ed(id){const t=TL.find(x=>x.id==id);EID=id;$('ft').textContent='Edit Ulangan';$('fj').value=t.judul;$('fg').value=t.tingkat;$('fm').value=t.mapel||MAPEL[0];$('fk').value=t.token;$('fd').value=t.durasi;$('fn').value=t.jumlah;$('fa').checked=t.aktif;scrollTo(0,0)}
+function rf(){EID='';$('ft').textContent='Buat Ulangan Baru';$('fj').value=$('fk').value='';$('fd').value=30;$('fn').value=10;$('fg').value='7';$('fm').value=MAPEL[0];$('fa').checked=true}
+async function st(){try{await api('saveTest',{t:TK,d:{id:EID,judul:$('fj').value.trim(),tingkat:$('fg').value,mapel:$('fm').value,token:$('fk').value.trim(),durasi:$('fd').value,jumlah:$('fn').value,aktif:$('fa').checked}});rf();ldT()}catch(e){alert(e)}}
 async function dt(id){if(confirm('Hapus ulangan beserta soalnya? (hasil siswa tetap tersimpan)')){await api('delTest',{t:TK,id});ldT()}}
 function up(id){UP=id;$('fu').click()}
 $('fu').onchange=async e=>{const f=e.target.files[0];if(!f)return;ld(1,'Membaca file Excel...');try{await ready;const wb=XLSX.read(await f.arrayBuffer()),
@@ -160,9 +172,10 @@ const rows=()=>RR.map((r,i)=>[i+1,r.nama,r.tingkat+r.kelas,r.absen,r.status,r.te
 const jd=()=>($('rs').selectedOptions[0]||{}).text||'Hasil',card=(l,v)=>`<div><b>${v}</b><small>${l}</small></div>`;
 async function lr(q){const id=$('rs').value;if(!id){RR=[];$('rt').innerHTML='';return}
 try{RR=(await api('results',{t:TK,id},q)).sort((a,b)=>(a.tingkat+a.kelas+a.absen).localeCompare(b.tingkat+b.kelas+b.absen))}catch(e){return}
-const s=RR.filter(r=>r.status=='Selesai'),av=s.length?(s.reduce((a,r)=>a+Number(r.skor),0)/s.length).toFixed(1):'-';
+const s=RR.filter(r=>/^Selesai/.test(r.status)),av=s.length?(s.reduce((a,r)=>a+Number(r.skor),0)/s.length).toFixed(1):'-';
 $('sa').innerHTML=card('Peserta',RR.length)+card('Selesai',s.length)+card('Mengerjakan',RR.length-s.length)+card('Rata-rata',av);
-$('rt').innerHTML='<tr>'+H.map(h=>`<th>${h}</th>`).join('')+'<th></th></tr>'+rows().map((r,i)=>'<tr>'+r.map((c,j)=>`<td>${j==4?`<span class="bd ${c=='Selesai'?'ok':'wa'}">${E(c)}</span>`:j==8&&c>0?`<span class="bd er2">${c}</span>`:E(c)}</td>`).join('')+`<td><button class="s g" title="Reset (siswa bisa mengulang)" onclick="dr('${RR[i].id}')">🗑</button></td></tr>`).join('')}
+$('rt').innerHTML='<tr>'+H.map(h=>`<th>${h}</th>`).join('')+'<th></th></tr>'+rows().map((r,i)=>'<tr>'+r.map((c,j)=>`<td>${j==4?`<span class="bd ${/^Selesai/.test(c)?'ok':'wa'}">${E(c)}</span>`:j==8&&c>0?`<span class="bd er2">${c}</span>`:E(c)}</td>`).join('')+`<td style="white-space:nowrap">${RR[i].status=='Mengerjakan'?`<button class="s" title="Hitung nilai dari jawaban terakhir yang tersinkron" onclick="ff('${RR[i].id}')">✔ Selesaikan</button> `:''}<button class="s g" title="Reset (siswa bisa mengulang)" onclick="dr('${RR[i].id}')">🗑</button></td></tr>`).join('')}
+async function ff(id){if(!$('rs').value||!confirm(id?'Selesaikan paksa peserta ini? Nilai dihitung dari jawaban terakhir yang tersinkron ke server.':'Selesaikan paksa SEMUA peserta yang masih berstatus Mengerjakan? Nilai dihitung dari jawaban terakhir yang tersinkron.'))return;try{alert(await api('forceFin',{t:TK,id:$('rs').value,ids:id?[id]:null})+' peserta diselesaikan.');lr()}catch(e){alert(e)}}
 async function dr(id){if(confirm('Hapus rekaman ini? Siswa dapat mengerjakan ulang.')){await api('delResult',{t:TK,id});lr()}}
 async function xl(){await ready;const w=XLSX.utils.aoa_to_sheet([[jd()],H,...rows()]);const b=XLSX.utils.book_new();XLSX.utils.book_append_sheet(b,w,'Hasil');XLSX.writeFile(b,'hasil_'+jd()+'.xlsx')}
 async function pd(){await ready;const d=new jspdf.jsPDF('l');d.text('Hasil Ulangan: '+jd(),14,12);d.autoTable({head:[H],body:rows(),startY:18,styles:{fontSize:8}});d.save('hasil_'+jd()+'.pdf')}
@@ -178,7 +191,7 @@ $('at').innerHTML='<tr><th>No</th><th>Soal</th><th>Benar</th><th>Kesukaran</th><
 <td>${r.d===null?'-':r.d.toFixed(2)} <span class="bd ${cl(r.kd,['Sangat baik','Baik'],['Cukup'])}">${r.kd}</span></td>
 <td>${'ABCDE'.split('').map(k=>r.dist[k]||k==r.key?`<span style="${k==r.key?'font-weight:700;color:var(--ok)':''}">${k}:${r.dist[k]}</span>`:'').join(' ')}${r.kosong?` <small class="mu">kosong:${r.kosong}</small>`:''}</td><td>${E(r.rek)}</td></tr>`).join('')}
 async function ap(){if(!AN||!AN.s.n)return alert('Belum ada data untuk dianalisis.');await ready;const d=new jspdf.jsPDF('l','mm','a4'),s=AN.s,R=AN.rows;
-d.setFontSize(14);d.text('Analisis Butir Soal: '+AN.judul,14,14);d.setFontSize(9);
+d.setFontSize(14);d.text('Analisis Butir Soal: '+AN.judul+(AN.mapel?' - '+AN.mapel:''),14,14);d.setFontSize(9);
 d.text(`Peserta: ${s.n}  |  Rata-rata: ${s.avg}  |  Tertinggi: ${s.max}  |  Terendah: ${s.min}  |  Soal baik: ${R.filter(r=>r.rek.startsWith('Soal baik')).length} dari ${R.length}`,14,20);
 d.autoTable({startY:24,head:[['No','Soal','Benar','P (%)','Kesukaran','Daya Beda','Kriteria','A','B','C','D','E','Kosong','Rekomendasi']],
 body:R.map(r=>[r.no,r.soal,r.benar+'/'+r.n,Math.round(r.p*100),r.kp,r.d===null?'-':r.d.toFixed(2),r.kd,...'ABCDE'.split('').map(k=>(r.dist[k]||0)+(k==r.key?' *':'')),r.kosong,r.rek]),
@@ -196,5 +209,6 @@ async function rst(mode){if(prompt('Ketik HAPUS untuk mengosongkan database ('+m
 U=s;TK=s.t;show('t');$('un').textContent='👤 '+U.n+' ('+U.r+')';
 try{await api('me',{t:TK});ent(Math.min(+gg('tab')||0,U.r=='admin'?4:2))}
 catch(e){show('l');if(/Sesi/.test(e)){try{localStorage.removeItem('ses')}catch(x){}}$('lm').textContent=/Sesi/.test(e)?'Sesi berakhir, silakan login kembali.':String(e)}})();
+(()=>{let b;try{b=JSON.parse(gg(LK)||'null')}catch(e){}if(b&&b.rid){$('rc').hidden=false;$('sf').hidden=true}})();
 async function cp(){const p=prompt('Password baru (min. 5 karakter):');if(p)try{await api('chPass',{t:TK,p});alert('Password diganti.')}catch(e){alert(e)}}
 </script></body></html>
