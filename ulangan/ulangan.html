@@ -649,7 +649,7 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.8rem 0}
               <div class="f full"><label for="s-judul-in">Judul ulangan</label><input type="text" id="s-judul-in" maxlength="120"></div>
               <div class="f"><label for="s-mapel">Mata pelajaran</label><select id="s-mapel"></select></div>
               <div class="f"><label for="s-tingkat">Tingkat kelas</label><select id="s-tingkat"></select><small>Tidak bisa diubah setelah ada siswa yang mengerjakan.</small></div>
-              <div class="f full"><label for="s-kode">Kode / token ulangan</label><input type="text" id="s-kode" class="kode-in" maxlength="10" autocapitalize="characters" spellcheck="false" style="text-align:left;letter-spacing:.12em"><small>4–10 huruf atau angka, bebas diketik. Dipakai pada tautan siswa dan di kolom "Punya kode ulangan?". Tidak bisa diubah setelah ada siswa yang mengerjakan.</small></div>
+              <div class="f full"><label for="s-kode">Kode / token ulangan</label><input type="text" id="s-kode" class="kode-in" maxlength="10" autocapitalize="characters" spellcheck="false" style="text-align:left;letter-spacing:.12em"><small>4–10 huruf atau angka, bebas diketik dan bisa diganti kapan saja, termasuk setelah ada siswa yang mengerjakan (hasil ikut pindah ke kode baru). Siswa yang sedang mengerjakan tetap bisa melanjutkan, tetapi tautan dan kode lama tidak berlaku lagi untuk siswa baru.</small></div>
             </div></section>
             <section class="grup"><h3>Pelaksanaan</h3><div class="grid2">
               <div class="f"><label for="s-durasi">Durasi (menit)</label><input type="number" id="s-durasi" min="5" max="300"></div>
@@ -811,7 +811,6 @@ const PESAN = {
   KODE_TIDAK_ADA: 'Kode ulangan tidak ditemukan. Periksa kembali kodenya.',
   KODE_TIDAK_VALID: 'Kode harus 4–10 karakter huruf atau angka (tanpa spasi).',
   KODE_ADA: 'Kode itu sudah dipakai ulangan lain. Pilih kode yang berbeda.',
-  KODE_TERKUNCI: 'Kode tidak bisa diubah setelah ada siswa yang mengerjakan. Kosongkan hasil terlebih dahulu.',
   TINGKAT_TERKUNCI: 'Tingkat kelas tidak bisa diubah setelah ada siswa yang mengerjakan. Kosongkan hasil terlebih dahulu.',
   MAPEL_TIDAK_VALID: 'Pilih mata pelajaran dari daftar.',
   TINGKAT_TIDAK_VALID: 'Pilih tingkat kelas 7, 8, atau 9.',
@@ -1008,6 +1007,7 @@ async function mulaiSesi(d, errEl, btn) {
       if (r.error === 'SUDAH_SELESAI') localStorage.removeItem('ulangan_sesi');
       pulih(); return;
     }
+    d = Object.assign({}, d, { kode: r.kode || d.kode });   // kode bisa berubah (diganti guru) — pakai kode terbaru dari server
     localStorage.setItem('ulangan_sesi', JSON.stringify(d));
     masukUjian(r, d); pulih();
   } catch (e) {
