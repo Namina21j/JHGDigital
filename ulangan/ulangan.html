@@ -273,6 +273,15 @@ body.blocked #view-ujian .exam-bar,body.blocked #view-ujian .exam-wrap{visibilit
 .skel{height:176px;border-radius:var(--r);border:1px solid var(--line);background:linear-gradient(90deg,#EDF1F7 25%,#F7F9FC 50%,#EDF1F7 75%);background-size:200% 100%;animation:kilau 1.3s linear infinite}
 @keyframes kilau{to{background-position:-200% 0}}
 .segar{color:var(--ink-3);font-size:.86rem;font-weight:600;margin-right:auto;margin-left:.4rem}
+.sw{display:inline-flex;align-items:center;gap:.5rem;background:none;border:0;padding:.15rem 0;font-weight:700;font-size:.82rem;color:var(--ink-2);cursor:pointer}
+.sw .trk{width:42px;height:24px;border-radius:99px;background:#BFC9D8;position:relative;flex:none;transition:background .18s}
+.sw .trk::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(14,27,46,.35);transition:transform .18s}
+.sw[aria-checked=true] .trk{background:var(--ok)}
+.sw[aria-checked=true] .trk::after{transform:translateX(18px)}
+.sw[aria-checked=true]{color:#0B6C4A}
+.sw.proses .trk{opacity:.55}
+.sw:disabled{cursor:progress}
+.toast-info{position:fixed;left:50%;bottom:1.4rem;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.6rem 1.2rem;border-radius:99px;z-index:310;font-weight:600;box-shadow:var(--sh-lg);animation:naik .18s ease-out}
 .kosong{padding:2.4rem 1rem;text-align:center;color:var(--ink-2)}
 .ul-head{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:1.1rem 1.3rem;margin-bottom:1.2rem;display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center;box-shadow:var(--sh-sm)}
 .ul-head h2{font-size:1.35rem;flex:1;min-width:230px;font-weight:800;letter-spacing:-.02em}
@@ -707,6 +716,7 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.8rem 0}
   </div>
 </section>
 
+<div id="toast-info" class="toast-info" hidden role="status"></div>
 <div id="modal-host"></div>
 <div id="printArea"></div>
 <script>
@@ -861,6 +871,8 @@ function modal(html, onAksi) {
   const f = w.querySelector('input,button'); if (f) f.focus();
 }
 function tutupModal() { const m = $('modal-aktif'); if (m) m.remove(); }
+let _toastT = 0;
+function toast(pesan) { const el = $('toast-info'); el.textContent = pesan; el.hidden = false; clearTimeout(_toastT); _toastT = setTimeout(() => { el.hidden = true; }, 2200); }
 function info(judul, teks) { modal(`<h2>${esc(judul)}</h2><p>${esc(teks)}</p><div class="aksi"><button class="btn primary" data-x="batal">Tutup</button></div>`); }
 
 /* =====================================================================
@@ -1234,7 +1246,7 @@ let _seqList = 0;
 function renderList(list) {
   if (!list.length) { $('ul-grid').innerHTML = '<p class="kosong">Belum ada ulangan. Klik “Buat ulangan baru” untuk memulai.</p>'; return; }
   $('ul-grid').innerHTML = list.map(u => `<div class="ul-card${u.aktif ? '' : ' tutup'}">
-      <div style="display:flex;justify-content:space-between;gap:.5rem;align-items:start"><span class="kode">${esc(u.kode)}</span><span class="badge ${u.aktif ? 'ok' : 'mute'}">${u.aktif ? 'Dibuka' : 'Ditutup'}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:.5rem;align-items:start"><span class="kode">${esc(u.kode)}</span><button type="button" class="sw" role="switch" aria-checked="${u.aktif ? 'true' : 'false'}" data-sw="${esc(u.kode)}" aria-label="Buka atau tutup ulangan ${esc(u.judul)}"><span class="trk"></span><span class="swt">${u.aktif ? 'Dibuka' : 'Ditutup'}</span></button></div>
       <h3>${esc(u.judul)}</h3>
       <div class="meta">${esc(u.mapel || '—')} · Kelas ${esc(u.tingkat || '—')}</div>
       <div class="meta num">${u.soal} soal bank · ${u.jumlah ? u.jumlah + ' soal/siswa' : 'semua soal'} · ${u.durasi} menit<br>${u.jalan} mengerjakan · ${u.selesai} selesai${isAdmin() ? '<br>Pemilik: ' + esc(u.pemilik) : ''}</div>
@@ -1259,7 +1271,21 @@ async function muatList() {
 }
 function lupakanDaftar() { A.daftar = null; sessionStorage.removeItem('adm_daftar'); }
 
+/* Saklar buka/tutup di kartu: tampilan langsung berubah, dikembalikan bila server gagal. */
+async function ubahBuka(btn) {
+  if (btn.disabled) return;
+  const kode = btn.dataset.sw, baru = btn.getAttribute('aria-checked') !== 'true', card = btn.closest('.ul-card');
+  const set = v => { btn.setAttribute('aria-checked', v ? 'true' : 'false'); btn.querySelector('.swt').textContent = v ? 'Dibuka' : 'Ditutup'; card.classList.toggle('tutup', !v); };
+  set(baru); btn.disabled = true; btn.classList.add('proses');
+  let r; try { r = await adm('ul_buka', { kode, aktif: baru }, { diam: true }); } catch (e) { r = { ok: false, error: 'SERVER_SIBUK' }; }
+  btn.disabled = false; btn.classList.remove('proses');
+  if (!r.ok) { set(!baru); if (r.error !== 'SESI_HABIS') info('Gagal mengubah status', r.error === 'SERVER_SIBUK' ? 'Tidak dapat terhubung ke server. Coba lagi.' : pesanGalat(r.error)); return; }
+  set(r.aktif);
+  const u = (A.daftar || []).find(x => x.kode === kode); if (u) { u.aktif = r.aktif; try { sessionStorage.setItem('adm_daftar', JSON.stringify(A.daftar)); } catch (e) {} }
+  toast(r.aktif ? 'Ulangan dibuka untuk siswa' : 'Ulangan ditutup');
+}
 $('ul-grid').addEventListener('click', e => {
+  const sw = e.target.closest('[data-sw]'); if (sw) return ubahBuka(sw);
   const b = e.target.closest('[data-buka]'), s = e.target.closest('[data-salin]');
   if (b) bukaUlangan(b.dataset.buka);
   if (s) salin(linkSiswa(s.dataset.salin), s);
