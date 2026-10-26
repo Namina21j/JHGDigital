@@ -155,8 +155,8 @@ body.sibuk{cursor:progress}
 .foot{margin-top:2.4rem;color:var(--ink-3);font-size:.88rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem}
 
 /* ---------- layar ujian ---------- */
-.exam-mode,.exam-mode *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-.exam-mode ::selection{background:transparent}
+.exam-mode,.exam-mode *,.tinjau-mode,.tinjau-mode *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.exam-mode ::selection,.tinjau-mode ::selection{background:transparent}
 #view-ujian{min-height:100vh;background:var(--bg)}
 .exam-bar{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;box-shadow:0 4px 18px rgba(14,27,46,.25)}
 .exam-bar .in{max-width:1200px;margin:0 auto;padding:.7rem 1.25rem;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap}
@@ -221,6 +221,39 @@ body.sibuk{cursor:progress}
 #cover .hitung{font-size:1.05rem;color:#FFB4A9;font-weight:700}
 body.blocked #cover{display:grid}
 body.blocked #view-ujian .exam-bar,body.blocked #view-ujian .exam-wrap{visibility:hidden}
+
+/* ---------- hasil sebelumnya & tinjauan ---------- */
+.hasil-lama{margin-bottom:1.3rem;padding-bottom:1.1rem;border-bottom:1px solid var(--line)}
+.hasil-lama h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);margin-bottom:.6rem}
+.hasil-baris{display:flex;justify-content:space-between;align-items:center;gap:.8rem;border:1px solid var(--line);border-radius:var(--r-sm);padding:.6rem .85rem;margin-top:.5rem;background:var(--tint)}
+.hasil-baris b{display:block;font-size:.95rem;line-height:1.3}
+.hasil-baris .meta{color:var(--ink-2);font-size:.84rem}
+.form .hasil-baris .btn{width:auto;margin-top:0}
+.tinjau{max-width:860px}
+.tj-head{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;margin:.4rem 0 1.2rem}
+.tj-head h1{font-size:1.6rem;font-weight:800}
+.tj-head p{color:var(--ink-2)}
+.tj-ringkas{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.8rem;margin-bottom:1rem}
+.tj-ringkas .c{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:.8rem 1rem;box-shadow:var(--sh-sm)}
+.tj-ringkas .c b{display:block;font-size:1.7rem;line-height:1.1;font-weight:800}
+.tj-ringkas .c span{color:var(--ink-2);font-size:.85rem}
+.tj-ringkas .c.n b{color:var(--brand-600)}.tj-ringkas .c.b b{color:var(--ok)}.tj-ringkas .c.s b{color:var(--bad)}
+.tj-catatan{background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-600);border-radius:var(--r-sm);padding:.7rem 1rem;margin-bottom:1.1rem;font-size:.93rem}
+.tj-item{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:1.2rem 1.4rem;margin-bottom:1rem;box-shadow:var(--sh-sm)}
+.tj-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem}
+.tj-no{font-weight:700;color:var(--ink-2);font-size:.9rem}
+.tj-item .soal-teks{font-size:1.08rem;margin-bottom:1rem}
+.tj-opsi{display:grid;gap:.5rem}
+.tj-op{display:flex;gap:.8rem;align-items:center;border:1.5px solid var(--line);border-radius:10px;padding:.6rem .85rem}
+.tj-op .huruf{flex:none;width:30px;height:30px;border-radius:8px;border:1.5px solid var(--line-2);display:grid;place-items:center;font-weight:700;background:var(--tint);font-size:.9rem}
+.tj-op em{margin-left:auto;font-style:normal;font-size:.8rem;font-weight:700;white-space:nowrap}
+.tj-op.pilih-benar{border-color:#8BD0B3;background:var(--ok-50)}
+.tj-op.pilih-benar .huruf{background:var(--ok);border-color:var(--ok);color:#fff}
+.tj-op.pilih-benar em{color:#0B6C4A}
+.tj-op.pilih-salah{border-color:#EBB6B1;background:var(--bad-50)}
+.tj-op.pilih-salah .huruf{background:var(--bad);border-color:var(--bad);color:#fff}
+.tj-op.pilih-salah em{color:#98281F}
+.tj-kosong{color:var(--ink-3);margin:.8rem 0 0;font-size:.9rem}
 
 /* ---------- selesai ---------- */
 #view-selesai{min-height:100vh;background:radial-gradient(800px 380px at 50% -10%,#DDF3E8 0,transparent 65%),var(--bg)}
@@ -348,7 +381,7 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.8rem 0}
 /* ---------- cetak ---------- */
 #printArea{display:none}
 @media print{
-  body.exam-mode{display:none!important}
+  body.exam-mode,body.tinjau-mode{display:none!important}
   body.printing > *:not(#printArea){display:none!important}
   body.printing #printArea{display:block}
   body.printing{background:#fff;color:#000;font-size:11pt}
@@ -449,6 +482,8 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.8rem 0}
           <button class="btn primary" id="btn-lanjut" type="button">Lanjutkan ulangan</button>
         </div>
 
+        <div id="hasil-lama" class="hasil-lama" hidden><h3>Hasil ulangan sebelumnya</h3><div id="hasil-lama-daftar"></div></div>
+
         <form class="form" id="form-kode" autocomplete="off" novalidate>
           <label for="in-kode">Kode ulangan</label>
           <input type="text" id="in-kode" class="kode-in" maxlength="10" placeholder="ABC123" autocapitalize="characters" spellcheck="false" autocomplete="off" autofocus>
@@ -535,8 +570,22 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.8rem 0}
       <small>nilai kamu</small>
       <div class="rinci"><span><b class="num" id="s-benar">0</b>Benar</span><span><b class="num" id="s-salah">0</b>Salah</span><span><b class="num" id="s-kosong">0</b>Kosong</span></div>
     </div>
+    <button class="btn primary" id="btn-tinjau" type="button" hidden style="margin-top:1.3rem">Lihat soal &amp; jawabanmu</button>
     <p style="color:var(--ink-3);margin-top:1.5rem;font-size:.92rem">Kamu boleh menutup halaman ini.</p>
   </div></div>
+</section>
+
+<section id="view-tinjau" hidden>
+  <div class="kabel" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="page tinjau">
+    <div class="tj-head">
+      <button class="btn small" id="tj-kembali" type="button"><svg class="ic"><use href="#i-back"/></svg>Kembali</button>
+      <div><h1 id="tj-judul">Hasil ulanganmu</h1><p id="tj-sub"></p></div>
+    </div>
+    <div class="tj-ringkas" id="tj-ringkas"></div>
+    <p class="tj-catatan" id="tj-catatan"></p>
+    <div id="tj-daftar"></div>
+  </div>
 </section>
 
 <!-- ===================== GURU / ADMIN ===================== -->
@@ -660,6 +709,7 @@ details.analisis summary{cursor:pointer;font-weight:700;padding:.8rem 0}
             <section class="grup"><h3>Akses</h3><div class="grid2">
               <div class="f full"><label class="tog"><input type="checkbox" id="s-aktif"> Ulangan dibuka untuk siswa</label><small>Siswa yang sudah mulai tetap bisa melanjutkan.</small></div>
               <div class="f full"><label class="tog"><input type="checkbox" id="s-tampil"> Tampilkan nilai kepada siswa setelah selesai</label></div>
+              <div class="f full"><label class="tog"><input type="checkbox" id="s-tampilhasil"> Tampilkan hasil kepada siswa</label><small>Siswa dapat melihat soal beserta jawabannya sendiri setelah selesai. Pada soal yang dijawab salah, jawaban yang benar <b>tidak</b> ditampilkan. Siswa juga melihat status benar/salah tiap soal. Aktifkan setelah semua kelas selesai mengerjakan agar soal tidak bocor ke kelas yang belum ujian; siswa yang sudah selesai bisa membukanya kapan saja lewat tombol "Hasil ulangan sebelumnya" di halaman awal.</small></div>
             </div></section>
             <div class="aksi-bar"><button class="btn primary" id="s-simpan" type="button">Simpan pengaturan</button><span id="s-msg" style="font-weight:600"></span></div>
           </div>
@@ -802,6 +852,8 @@ const PESAN = {
   NAMA_TIDAK_VALID: 'Nama tidak valid. Gunakan huruf, angka, spasi, titik, atau tanda hubung (3–60 karakter).',
   KELAS_TIDAK_VALID: 'Pilih kelas dari daftar.',
   ABSEN_TIDAK_VALID: 'Pilih nomor absen dari daftar.',
+  BELUM_SELESAI: 'Selesaikan ulangan terlebih dahulu.',
+  HASIL_TIDAK_DITAMPILKAN: 'Guru belum menampilkan hasil ulangan ini. Coba lagi nanti.',
   KODE_TIDAK_ADA: 'Kode ulangan tidak ditemukan. Periksa kembali kodenya.',
   KODE_TIDAK_VALID: 'Kode harus 4–10 karakter huruf atau angka (tanpa spasi).',
   KODE_ADA: 'Kode itu sudah dipakai ulangan lain. Pilih kode yang berbeda.',
@@ -844,7 +896,7 @@ function pesanGalat(code) {
 }
 
 /* ---------------------------- tampilan & routing ---------------------------- */
-const VIEWS = ['view-daftar', 'view-ujian', 'view-selesai', 'view-login', 'view-app'];
+const VIEWS = ['view-daftar', 'view-ujian', 'view-selesai', 'view-tinjau', 'view-login', 'view-app'];
 function show(id) { VIEWS.forEach(v => $(v).hidden = (v !== id)); window.scrollTo(0, 0); }
 function route() {
   if (S.active) return;
@@ -933,6 +985,7 @@ async function muatKodeLangsung(kode, btn, errEl) {
   }, 'Memuat…');
 }
 function initDaftar() {
+  renderHasilLama();
   const t = tersimpan();
   $('lanjut-box').hidden = !t;
   if (t) $('lanjut-info').textContent = `${t.nama} · Kelas ${t.kelas} · No. ${t.absen}`;
@@ -979,11 +1032,48 @@ async function mulaiSesi(d, errEl, btn) {
   }
 }
 
+/* ---------- hasil tersimpan di perangkat & tinjauan jawaban ---------- */
+const hasilTersimpan = () => { try { return JSON.parse(localStorage.getItem('ulangan_hasil')) || []; } catch (e) { return []; } };
+function simpanHasil(item) {
+  const l = hasilTersimpan().filter(x => x.token !== item.token); l.unshift(item);
+  try { localStorage.setItem('ulangan_hasil', JSON.stringify(l.slice(0, 5))); } catch (e) {}
+}
+function renderHasilLama() {
+  const l = hasilTersimpan(); $('hasil-lama').hidden = !l.length;
+  $('hasil-lama-daftar').innerHTML = l.map(x => `<div class="hasil-baris"><div><b>${esc(x.judul)}</b><div class="meta">${esc(x.nama)} · ${esc(new Date(x.waktu).toLocaleDateString('id-ID'))}</div></div><button class="btn small" type="button" data-tinjau="${esc(x.token)}">Lihat hasil</button></div>`).join('');
+}
+$('hasil-lama-daftar').addEventListener('click', e => { const b = e.target.closest('[data-tinjau]'); if (!b) return; const it = hasilTersimpan().find(x => x.token === b.dataset.tinjau); if (it) dgMuat(b, () => bukaTinjauan(it, 'daftar'), 'Memuat…'); });
+$('btn-tinjau').addEventListener('click', e => dgMuat(e.currentTarget, () => bukaTinjauan(S.hasilItem, 'selesai'), 'Memuat…'));
+async function bukaTinjauan(item, dari) {
+  let r;
+  try { r = await api('tinjauan', { token: item.token }); } catch (e) { return info('Tidak dapat memuat', 'Periksa internet lalu coba lagi.'); }
+  if (!r.ok) return info('Hasil belum tersedia', pesanGalat(r.error));
+  S.tinjauDari = dari; renderTinjauan(r); document.body.classList.add('tinjau-mode'); show('view-tinjau');
+}
+const STATUS_TJ = { benar: { cls: 'ok', label: 'Benar' }, salah: { cls: 'bad', label: 'Salah' }, kosong: { cls: 'mute', label: 'Tidak dijawab' } };
+function renderTinjauan(r) {
+  $('tj-judul').textContent = r.judul; $('tj-sub').textContent = `${r.nama} · ${r.mapel ? r.mapel + ' · ' : ''}Kelas ${r.tingkat}`;
+  const rk = r.ringkasan;
+  $('tj-ringkas').innerHTML = (rk.nilai !== undefined ? `<div class="c n"><b class="num">${fmtNilai(rk.nilai)}</b><span>Nilai</span></div>` : '') +
+    `<div class="c b"><b class="num">${rk.benar}</b><span>Benar</span></div><div class="c s"><b class="num">${rk.salah}</b><span>Salah</span></div><div class="c"><b class="num">${rk.kosong}</b><span>Tidak dijawab</span></div>`;
+  $('tj-catatan').textContent = 'Jawabanmu ditandai pada setiap soal. Jawaban yang benar tidak ditampilkan pada soal yang kamu jawab salah.';
+  $('tj-daftar').innerHTML = r.soal.map(q => {
+    const st = STATUS_TJ[q.status], g = urlGambar(q.gambar);
+    return `<article class="tj-item"><div class="tj-top"><span class="tj-no">Soal ${q.urut}</span><span class="badge ${st.cls}">${st.label}</span></div>
+      ${g ? `<div class="gambar"><img src="${esc(g)}" alt="Gambar soal" draggable="false" referrerpolicy="no-referrer" decoding="async"></div>` : ''}
+      <p class="soal-teks">${esc(q.soal)}</p>
+      <div class="tj-opsi">${q.pilihan.map((t, i) => { const h = 'ABCD'[i], pil = q.jawaban === h; return `<div class="tj-op${pil ? (q.status === 'benar' ? ' pilih-benar' : ' pilih-salah') : ''}"><span class="huruf">${h}</span><span>${esc(t)}</span>${pil ? '<em>Jawabanmu</em>' : ''}</div>`; }).join('')}</div>
+      ${q.status === 'kosong' ? '<p class="tj-kosong">Kamu tidak menjawab soal ini.</p>' : ''}</article>`;
+  }).join('');
+  window.scrollTo(0, 0);
+}
+$('tj-kembali').addEventListener('click', () => { document.body.classList.remove('tinjau-mode'); if (S.tinjauDari === 'selesai') show('view-selesai'); else { show('view-daftar'); initDaftar(); } });
+
 /* ---------- layar ujian ---------- */
 function masukUjian(r, d) {
   let lokal = {}; try { lokal = JSON.parse(localStorage.getItem('ulangan_jawaban_' + r.token)) || {}; } catch (e) {}
   Object.assign(S, {
-    active: true, submitting: false, token: r.token, kode: d.kode, nama: d.nama, kelas: d.kelas, absen: pad2(d.absen), soal: r.soal,
+    active: true, submitting: false, token: r.token, judul: r.judul, kode: d.kode, nama: d.nama, kelas: d.kelas, absen: pad2(d.absen), soal: r.soal,
     jawaban: Object.assign({}, r.jawaban, lokal), idx: 0, mulai: r.mulai, durMs: r.durasi * 60000, offset: r.serverNow - Date.now(),
     pel: r.pelanggaran || 0, maxPel: r.maks, log: [], lastViol: 0, syncing: false, again: false, rev: 1, synced: 0, habisT: null
   });
@@ -1130,6 +1220,8 @@ function selesaiUI(r, alasan) {
   $('s-teks').innerHTML = `Terima kasih, <b>${esc(S.nama)}</b>. Jawabanmu sudah tersimpan.`;
   if (/PELANGGARAN/.test(alasan)) $('s-teks').innerHTML += '<br>Ulangan dikumpulkan otomatis karena batas pelanggaran tercapai.';
   else if (/WAKTU/.test(alasan)) $('s-teks').innerHTML += '<br>Waktu ulangan telah habis.';
+  S.hasilItem = { token: S.token, kode: S.kode, judul: S.judul || 'Ulangan', nama: S.nama, waktu: Date.now() }; simpanHasil(S.hasilItem);
+  $('btn-tinjau').hidden = !r.tinjau;
   const box = $('s-nilai-box');
   if (r.tampil_nilai && r.nilai !== undefined) { box.hidden = false; $('s-nilai').textContent = fmtNilai(r.nilai); $('s-benar').textContent = r.benar; $('s-salah').textContent = r.salah; $('s-kosong').textContent = r.kosong; }
   else box.hidden = true;
@@ -1172,7 +1264,7 @@ window.addEventListener('blur', () => { if (!aktifUjian()) return; setTimeout(()
 window.addEventListener('beforeprint', () => { if (aktifUjian()) catat('Mencoba mencetak halaman'); });
 window.addEventListener('beforeunload', e => { if (S.active && !S.submitting) { e.preventDefault(); e.returnValue = ''; } });
 window.addEventListener('popstate', () => { if (S.active) history.pushState({ ujian: 1 }, '', location.href); else route(); });
-['contextmenu', 'selectstart', 'dragstart', 'copy', 'cut', 'paste'].forEach(ev => document.addEventListener(ev, e => { if (S.active) e.preventDefault(); }, true));
+['contextmenu', 'selectstart', 'dragstart', 'copy', 'cut', 'paste'].forEach(ev => document.addEventListener(ev, e => { if (S.active || document.body.classList.contains('tinjau-mode')) e.preventDefault(); }, true));
 function bersihkanClipboard() { try { navigator.clipboard && navigator.clipboard.writeText(' ').catch(() => {}); } catch (e) {} }
 document.addEventListener('keyup', e => { if (S.active && (e.key === 'PrintScreen' || e.code === 'PrintScreen')) { bersihkanClipboard(); catat('Menekan tombol Print Screen'); } }, true);
 document.addEventListener('keydown', e => {
@@ -1584,7 +1676,7 @@ function isiPengaturan() {
   $('s-mapel').value = u.mapel; $('s-tingkat').value = u.tingkat; $('s-kode').value = u.kode;
   $('s-judul-in').value = u.judul; $('s-durasi').value = u.durasi; $('s-jumlah').value = u.jumlah; $('s-maks').value = u.maks; $('s-kkm').value = u.kkm;
   $('s-kelas').value = u.kelas.join(', '); $('s-absen').value = u.maxAbsen; $('s-aktif').checked = !!u.aktif; $('s-tampil').checked = !!u.tampil_nilai;
-  $('s-acaklevel').checked = !!u.acakLevel; $('s-urutlevel').checked = !!u.urutLevel; renderKomposisi();
+  $('s-tampilhasil').checked = !!u.tampilHasil; $('s-acaklevel').checked = !!u.acakLevel; $('s-urutlevel').checked = !!u.urutLevel; renderKomposisi();
 }
 /* jatah per level: sama persis dengan perhitungan di server (metode sisa terbesar) */
 function kuotaLevel(ukuran, n) {
@@ -1612,7 +1704,7 @@ function renderKomposisi() {
 ['s-acaklevel', 's-urutlevel', 's-jumlah'].forEach(id => $(id).addEventListener('input', renderKomposisi));
 
 $('s-simpan').addEventListener('click', e => dgMuat(e.currentTarget, async () => {
-  const s = { judul: $('s-judul-in').value.trim(), mapel: $('s-mapel').value, tingkat: $('s-tingkat').value, kode: $('s-kode').value.trim().toUpperCase(), durasi: $('s-durasi').value, jumlah: $('s-jumlah').value, maks: $('s-maks').value, kkm: $('s-kkm').value, kelas: $('s-kelas').value, maxAbsen: $('s-absen').value, aktif: $('s-aktif').checked, tampil_nilai: $('s-tampil').checked, acak_level: $('s-acaklevel').checked, urut_level: $('s-urutlevel').checked };
+  const s = { judul: $('s-judul-in').value.trim(), mapel: $('s-mapel').value, tingkat: $('s-tingkat').value, kode: $('s-kode').value.trim().toUpperCase(), durasi: $('s-durasi').value, jumlah: $('s-jumlah').value, maks: $('s-maks').value, kkm: $('s-kkm').value, kelas: $('s-kelas').value, maxAbsen: $('s-absen').value, aktif: $('s-aktif').checked, tampil_nilai: $('s-tampil').checked, tampil_hasil: $('s-tampilhasil').checked, acak_level: $('s-acaklevel').checked, urut_level: $('s-urutlevel').checked };
   $('s-msg').style.color = ''; $('s-msg').textContent = 'Menyimpan…';
   try {
     const r = await adm('ul_simpan', { kode: A.kode, setting: s });
